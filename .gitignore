@@ -1,0 +1,16 @@
+﻿backup
+debug
+release
+*.dll
+kys_promise.exe
+kys_promise-debug.dbg
+kys_promise-debug.exe
+Promise_Config.exe
+kys_promise_project.tvsconfig
+kys_promise.otares
+kys_promise.rsm
+kys_promise.res
+kys_promise.identcache
+kys_promise.dproj.local
+*.dbg
+*.lps
