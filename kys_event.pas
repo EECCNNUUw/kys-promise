@@ -1803,7 +1803,6 @@ begin
         else
           x50[e5] := Ritemlist[i div 4].Amount;
       end;
-
       if (t1 >= $1E4A04) and (t1 < $1E6A04) then
       begin
         i := (t1 - $1E4A04) div 2;
@@ -1811,7 +1810,6 @@ begin
         x50[e5] := Bfield[2, i mod 64, i div 64];
       end;
     end;
-
     27: //Read name to string.
     begin
       e3 := e_getValue(0, e1, e3);

@@ -1,7 +1,7 @@
 program kys_promise;
 
-{$APPTYPE GUI}
-//{$APPTYPE CONSOLE}
+//{$APPTYPE GUI}
+{$APPTYPE CONSOLE}
 
 uses
   SysUtils,

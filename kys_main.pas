@@ -287,7 +287,7 @@ procedure CloudCreateOnSide(num: integer);
 {$ELSE}
 function FileExistsUTF8(filename: pansichar): boolean; overload;
 function FileExistsUTF8(filename: ansistring): boolean; overload;
-function str: WideString: WideString;
+//function str: WideString: WideString;
 {$ENDIF}
 
 
@@ -4903,7 +4903,7 @@ begin
   fileclose(idx);
   fileclose(grp);
   i := 0;
-
+  writeln('event ', num);
   //普通事件写成子程, 需跳转事件写成函数
   while e[i] >= 0 do
   begin
@@ -6120,10 +6120,10 @@ begin
   Result := FileExists(filename);
 end;
 
-function str: WideString: WideString;
-begin
-  Result := str;
-end;
+//function str: WideString: WideString;
+//begin
+//  Result := str;
+//end;
 {$ENDIF}
 
 end.

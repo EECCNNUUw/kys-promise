@@ -14,3 +14,5 @@ kys_promise.identcache
 kys_promise.dproj.local
 *.dbg
 *.lps
+__history
+*.dcu
