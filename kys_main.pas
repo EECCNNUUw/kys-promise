@@ -4903,7 +4903,6 @@ begin
   fileclose(idx);
   fileclose(grp);
   i := 0;
-  writeln('event ', num);
   //普通事件写成子程, 需跳转事件写成函数
   while e[i] >= 0 do
   begin

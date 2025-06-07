@@ -235,7 +235,6 @@ begin
         try
           Music[i] := BASS_MIDI_StreamCreateFile(False, pansichar(str), 0, 0, 0, 0);
           BASS_MIDI_StreamSetFonts(Music[i], sf, 1);
-          //showmessage(inttostr(Music[i]));
         finally
 
         end;
@@ -243,12 +242,11 @@ begin
       else
         Music[i] := 0;
     end;
-    //showmessage(inttostr(music[i]));
   end;
 
   for i := low(ESound) to high(ESound) do
   begin
-    str := AppPath + formatfloat('sound/e00', i) + '.wav';
+    str := AppPath + format('sound/e%.3d', [i]) + '.wav';
     if fileexists(pansichar(str)) then
       ESound[i] := BASS_SampleLoad(False, pansichar(str), 0, 0, 1, Flag)
     else
@@ -257,7 +255,7 @@ begin
   end;
   for i := low(ASound) to high(ASound) do
   begin
-    str := AppPath + formatfloat('sound/atk00', i) + '.wav';
+    str := AppPath + format('sound/atk%.3d', [i]) + '.wav';
     if fileexists(pansichar(str)) then
       ASound[i] := BASS_SampleLoad(False, pansichar(str), 0, 0, 1, Flag)
     else
@@ -277,11 +275,11 @@ begin
   else
     repeatable := False;
   try
-    if (MusicNum in [Low(Music)..High(Music)]) and (MusicVOLUME > 0) then
+    if (MusicNum >= Low(Music)) and (MusicNum <= High(Music)) and (MusicVOLUME > 0) then
       if Music[MusicNum] <> 0 then
       begin
         //BASS_ChannelSlideAttribute(Music[nowmusic], BASS_ATTRIB_VOL, 0, 1000);
-        if nowmusic in [Low(Music)..High(Music)] then
+        if (nowmusic >= Low(Music)) and (nowmusic <= High(Music)) then
         begin
           BASS_ChannelStop(Music[nowmusic]);
           BASS_ChannelSetPosition(Music[nowmusic], 0, BASS_POS_BYTE);
@@ -306,103 +304,14 @@ begin
 
 end;
 
-{procedure PlayMP3(MusicNum, times: integer);
-var
-  i: integer;
-  str: ansistring;
-  sf: BASS_MIDI_FONT;
-  repeatable: boolean;
-begin
-  BASS_StreamFree(Music);
-  sf.font := BASS_MIDI_FontInit(pansichar(AppPath + 'music/mid.sf2'), 0);
-  BASS_MIDI_StreamSetFonts(0, sf, 1);
-  sf.preset := -1; // use all presets
-  sf.bank := 0;
-
-  str := 'music/' + inttostr(musicnum) + '.mp3';
-  if FileExistsUTF8(AppPath + str) then
-  begin
-    Music := BASS_StreamCreateFile(False, pansichar(AppPath + str), 0, 0, 0);
-  end
-  else
-  begin
-    str := 'music/' + inttostr(musicnum) + '.mid';
-    if FileExistsUTF8(AppPath + str) then
-    begin
-      Music := BASS_MIDI_StreamCreateFile(false, pansichar(AppPath + str), 0, 0, 0, 0);
-      BASS_MIDI_StreamSetFonts(Music, sf, 1);
-    end
-    else
-    begin
-      Music := 0;
-    end;
-  end;
-
-  if Music <> 0 then
-  begin
-    BASS_ChannelSetAttribute(Music, BASS_ATTRIB_VOL, MusicVOLUME / 128.0);
-    if times = -1 then
-      repeatable := true
-    else
-      repeatable := false;
-    if repeatable then
-      BASS_ChannelFlags(Music, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP)
-    else
-      BASS_ChannelFlags(Music, 0, BASS_SAMPLE_LOOP);
-    BASS_ChannelPlay(Music, repeatable);
-  end;
-
-end;}
-
 //停止当前播放的音乐
 procedure StopMP3;
 begin
   //BASS_ChannelStop(Music);
   //BASS_ChannelSetPosition(Music, 0, BASS_POS_BYTE);
-
 end;
 
 //播放wav音效
-
-{procedure PlaySound(SoundNum, times: integer); overload;
-var
-  i: integer;
-  str: ansistring;
-  ch: HCHANNEL;
-  repeatable: boolean;
-begin
-  BASS_SampleFree(Esound);
-  if times = -1 then
-    repeatable := true
-  else
-    repeatable := false;
-  str := 'sound/e' + format('%3d', [SoundNum]) + '.wav';
-  for i := 0 to length(str) - 1 do
-    if str[i] = ' ' then str[i] := '0';
-  if FileExistsUTF8(AppPath + str) then
-  begin
-    Esound := BASS_SampleLoad(FALSE, pansichar(AppPath + str), 0, 0, 1, 0);
-    ch := BASS_SampleGetChannel(Esound, False);
-  end
-  else
-    Esound := 0;
-  if Esound <> 0 then
-  begin
-    if repeatable then
-      BASS_ChannelFlags(ch, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP)
-    else
-      BASS_ChannelFlags(ch, 0, BASS_SAMPLE_LOOP);
-    BASS_ChannelSetAttribute(ch, BASS_ATTRIB_VOL, SoundVolume / 100.0);
-    BASS_ChannelPlay(ch, repeatable);
-  end;
-end;
-
-procedure PlaySound(SoundNum: integer); overload;
-begin
-  PlaySound(SoundNum, 0);
-end;
-}
-
 procedure PlaySoundE(SoundNum, times: integer); overload;
 var
   ch: HCHANNEL;
@@ -412,7 +321,7 @@ begin
     repeatable := True
   else
     repeatable := False;
-  if (SoundNum in [Low(Esound)..High(Esound)]) and (SoundVOLUME > 0) then
+  if (SoundNum >= 0) and (SoundNum < length(Esound)) and (SoundVOLUME > 0) then
     if Esound[SoundNum] <> 0 then
     begin
       //Mix_VolumeChunk(Esound[SoundNum], Volume);
@@ -450,7 +359,7 @@ begin
     repeatable := True
   else
     repeatable := False;
-  if (SoundNum in [Low(Asound)..High(Asound)]) and (SoundVOLUME > 0) then
+  if (SoundNum >= Low(Asound)) and (SoundNum <= High(Asound)) and (SoundVOLUME > 0) then
     if Asound[SoundNum] <> 0 then
     begin
       //Mix_VolumeChunk(Esound[SoundNum], Volume);
