@@ -7,11 +7,11 @@ interface
 uses
   SysUtils,
 
-{$IFDEF fpc}
+  {$IFDEF fpc}
   LCLIntf, LCLType, LMessages, FileUtil,
-{$ELSE}
+  {$ELSE}
   Windows,
-{$ENDIF}
+  {$ENDIF}
 
   StrUtils,
   Math,
@@ -62,7 +62,7 @@ procedure CalHurtRole(bnum, mnum, level: integer);
 function CalHurtValue(bnum1, bnum2, mnum, level: integer): integer;
 procedure ShowHurtValue(mode: integer); overload;
 procedure ShowHurtValue(sign, color1, color2: integer); overload;
-procedure ShowHurtValue(str: WideString; color1, color2: integer); overload;
+procedure ShowHurtValue(str: widestring; color1, color2: integer); overload;
 procedure CalPoiHurtLife(bnum: integer);
 procedure ClearDeadRolePic;
 procedure ShowSimpleStatus(rnum, x, y: integer);
@@ -124,7 +124,7 @@ uses kys_event, kys_engine;
 function Battle(battlenum, getexp: integer): boolean;
 var
   i, i1, SelectTeamList, W, x, b, y: integer;
-  word: WideString;
+  word: widestring;
 begin
   for i := 0 to length(brole) - 1 do
     Brole[i].Show := 1;
@@ -241,7 +241,8 @@ begin
 
   if (bstatus = 1) then
     word := ' 戰鬥勝利'
-  else word := ' 戰鬥失敗';
+  else
+    word := ' 戰鬥失敗';
   drawtextwithrect(@word[1], centER_x - 20, 55, 90, colcolor(0, 5), colcolor(0, 7));
   waitanykey;
   redraw;
@@ -268,7 +269,8 @@ begin
   Where := W;
   resetpallet;
   if bstatus = 1 then Result := True
-  else Result := False;
+  else
+    Result := False;
   isbattle := False;
   //SDL_EnableKeyRepeat(30, (30 * GameSpeed) div 10);
 end;
@@ -436,8 +438,7 @@ begin
         if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
-        if ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space)) and
-          (menu <> max) and (menu <> 0) then
+        if ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space)) and (menu <> max) and (menu <> 0) then
         begin
           //选中人物则反转对应bit
           Result := Result xor (1 shl menu);
@@ -501,10 +502,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_X - 75) and
-          (round(event.button.x / (resolutionx / screen.w)) < CENTER_X + 75) and
-          (round(event.button.y / (resolutiony / screen.h)) >= 100) and
-          (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 128) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_X - 75) and (round(event.button.x / (resolutionx / screen.w)) < CENTER_X + 75) and (round(event.button.y / (resolutiony / screen.h)) >= 100) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 128) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - 102) div 22;
@@ -520,7 +518,7 @@ end;
 procedure ShowMultiMenu(max, menu, status: integer);
 var
   i, x, y: integer;
-  str, str1, str2: WideString;
+  str, str1, str2: widestring;
 begin
   x := CENTER_X - 105;
   y := 100;
@@ -591,7 +589,7 @@ end;
 procedure BattleMainControl;
 var
   i, n, i1, i2, add, a, k: integer;
-  word: WideString;
+  word: widestring;
 begin
   //redraw;
   CalMoveAbility; //计算移动能力
@@ -780,10 +778,11 @@ begin
   end;
 
 end; //战斗主控制
+
 procedure OldBattleMainControl;
 var
   i, n, a, add: integer;
-  word: WideString;
+  word: widestring;
 begin
   //redraw;
   for i := 0 to length(brole) - 1 do
@@ -992,8 +991,7 @@ begin
           drawpngpic(SELECTEDMATE_PIC, 20 + (BRole[b[i]].Progress) mod 300 + x, y, 0)
         else
           drawpngpic(MATESIGN_PIC, 20 + (BRole[b[i]].Progress) mod 300 + x, y, 0);
-        ZoomPic(Head_Pic[rrole[Brole[b[i]].rnum].headnum].pic, 0, 20 + (BRole[b[i]].Progress) mod
-          300 + x - 10, y - 30, 29, 30);
+        ZoomPic(Head_Pic[rrole[Brole[b[i]].rnum].headnum].pic, 0, 20 + (BRole[b[i]].Progress) mod 300 + x - 10, y - 30, 29, 30);
       end
       else
       begin
@@ -1001,8 +999,7 @@ begin
           drawpngpic(SELECTEDENEMY_PIC, 20 + (BRole[b[i]].Progress) mod 300 + x, y, 0)
         else
           drawpngpic(ENEMYSIGN_PIC, 20 + (BRole[b[i]].Progress) mod 300 + x, y, 0);
-        ZoomPic(Head_Pic[rrole[Brole[b[i]].rnum].headnum].pic, 0, 20 + (BRole[b[i]].Progress) mod
-          300 + x - 10, y + 30, 29, 30);
+        ZoomPic(Head_Pic[rrole[Brole[b[i]].rnum].headnum].pic, 0, 20 + (BRole[b[i]].Progress) mod 300 + x - 10, y + 30, 29, 30);
       end;
     end;
   end;
@@ -1024,21 +1021,16 @@ begin
       if (Brole[i1].rnum > -1) and (Brole[i1].Dead = 0) then
       begin
         s1 := GetRoleSpeed(Brole[i1].rnum, True);
-        if CheckEquipSet(Rrole[Brole[i1].rnum].Equip[0], Rrole[Brole[i1].rnum].Equip[1],
-          Rrole[Brole[i1].rnum].Equip[2], Rrole[Brole[i1].rnum].Equip[3]) = 5 then
+        if CheckEquipSet(Rrole[Brole[i1].rnum].Equip[0], Rrole[Brole[i1].rnum].Equip[1], Rrole[Brole[i1].rnum].Equip[2], Rrole[Brole[i1].rnum].Equip[3]) = 5 then
           s1 := s1 + 30;
       end;
       if (Brole[i2].rnum > -1) and (Brole[i2].Dead = 0) then
       begin
         s2 := GetRoleSpeed(Brole[i2].rnum, True);
-        if CheckEquipSet(Rrole[Brole[i2].rnum].Equip[0], Rrole[Brole[i2].rnum].Equip[1],
-          Rrole[Brole[i2].rnum].Equip[2], Rrole[Brole[i2].rnum].Equip[3]) = 5 then
+        if CheckEquipSet(Rrole[Brole[i2].rnum].Equip[0], Rrole[Brole[i2].rnum].Equip[1], Rrole[Brole[i2].rnum].Equip[2], Rrole[Brole[i2].rnum].Equip[3]) = 5 then
           s2 := s2 + 30;
       end;
-      if (not ((GetPetSkill(5, 1) and (brole[i1].rnum = 0)) or (GetPetSkill(5, 3) and
-        (brole[i1].Team = 0)))) and
-        ((s1 < s2) or ((GetPetSkill(5, 1) and (brole[i2].rnum = 0)) or
-        (GetPetSkill(5, 3) and (brole[i2].Team = 0)))) then
+      if (not ((GetPetSkill(5, 1) and (brole[i1].rnum = 0)) or (GetPetSkill(5, 3) and (brole[i1].Team = 0)))) and ((s1 < s2) or ((GetPetSkill(5, 1) and (brole[i2].rnum = 0)) or (GetPetSkill(5, 3) and (brole[i2].Team = 0)))) then
       begin
         temp := Brole[i1];
         Brole[i1] := Brole[i2];
@@ -1150,7 +1142,7 @@ function BattleMenu(bnum: integer): integer;
 var
   i, p, menustatus, menu, max, rnum, menup, i1, lv, i2: integer;
   realmenu: array[0..10] of integer;
-  word: WideString;
+  word: widestring;
   str: ansistring;
 begin
 
@@ -1175,8 +1167,7 @@ begin
       if (rrole[rnum].Magic[i] > 0) and (rmagic[rrole[rnum].Magic[i]].NeedMP <= rrole[rnum].CurrentMP) then
       begin
         lv := Rrole[Brole[bnum].rnum].MagLevel[i] div 100;
-        if ((Brole[bnum].Progress + 1) div 3 >= (rmagic[rrole[rnum].Magic[i]].NeedProgress * 10) *
-          lv + 100) or (BattleMode = 0) or (rrole[rnum].Angry = 100) then
+        if ((Brole[bnum].Progress + 1) div 3 >= (rmagic[rrole[rnum].Magic[i]].NeedProgress * 10) * lv + 100) or (BattleMode = 0) or (rrole[rnum].Angry = 100) then
         begin
           p := 1;
           break;
@@ -1275,10 +1266,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and
-          (round(event.button.x / (resolutionx / screen.w)) < 147) and
-          (round(event.button.y / (resolutiony / screen.h)) >= 50 - 22) and
-          (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78 - 22) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 147) and (round(event.button.y / (resolutiony / screen.h)) >= 50 - 22) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78 - 22) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - 52 + 22) div 22;
@@ -1323,7 +1311,7 @@ end;
 procedure ShowBMenu(MenuStatus, menu, max: integer);
 var
   i, p: integer;
-  word: array[0..11] of WideString;
+  word: array[0..11] of widestring;
 begin
   word[0] := ' 移動';
   word[1] := ' 武學';
@@ -1361,7 +1349,7 @@ end;
 procedure ShowBMenu2(MenuStatus, menu, max, bnum: integer);
 var
   i, p: integer;
-  word: array[0..11] of WideString;
+  word: array[0..11] of widestring;
 begin
   word[0] := ' 移動';
   word[1] := ' 武學';
@@ -1454,7 +1442,8 @@ begin
         Brole[bnum].Face := 0
       else if sign(liney[a] - By) < 0 then
         Brole[bnum].Face := 2
-      else Brole[bnum].Face := 1;
+      else
+        Brole[bnum].Face := 1;
       if Bfield[2, Bx, By] = bnum then Bfield[2, Bx, By] := -1;
       Bx := linex[a];
       By := liney[a];
@@ -1585,10 +1574,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -1697,10 +1684,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) and (Bfield[3, Ax, Ay] >= 0) then
         begin
           Ax := Axp;
@@ -1847,10 +1832,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -1890,8 +1873,7 @@ begin
 
   step := Rmagic[mnum].MoveDistance[level - 1];
 
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(step, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(step, 1);
@@ -1929,7 +1911,8 @@ begin
           if (abs(Ax - Bx) + abs(Ay - By) > step) then Ay := Ay + 1;
           if (abs(Ax - Bx) + abs(Ay - By) <= minstep) then
             if Ax >= Bx then Ax := Ax + 1
-            else Ax := Ax - 1;
+            else
+              Ax := Ax - 1;
           DrawBFieldWithCursor(AttAreaType, step, range);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
@@ -1939,7 +1922,8 @@ begin
           if (abs(Ax - Bx) + abs(Ay - By) > step) then Ay := Ay - 1;
           if (abs(Ax - Bx) + abs(Ay - By) <= minstep) then
             if Ax > Bx then Ax := Ax + 1
-            else Ax := Ax - 1;
+            else
+              Ax := Ax - 1;
           DrawBFieldWithCursor(AttAreaType, step, range);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
@@ -1949,7 +1933,8 @@ begin
           if (abs(Ax - Bx) + abs(Ay - By) > step) then Ax := Ax - 1;
           if (abs(Ax - Bx) + abs(Ay - By) <= minstep) then
             if Ay >= By then Ay := Ay + 1
-            else Ay := Ay - 1;
+            else
+              Ay := Ay - 1;
           DrawBFieldWithCursor(AttAreaType, step, range);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
@@ -1959,7 +1944,8 @@ begin
           if (abs(Ax - Bx) + abs(Ay - By) > step) then Ax := Ax + 1;
           if (abs(Ax - Bx) + abs(Ay - By) <= minstep) then
             if Ay > By then Ay := Ay + 1
-            else Ay := Ay - 1;
+            else
+              Ay := Ay - 1;
           DrawBFieldWithCursor(AttAreaType, step, range);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
@@ -1979,10 +1965,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) and (abs(Axp - Bx) + abs(Ayp - By) > minstep) then
         begin
           Ax := Axp;
@@ -2004,7 +1988,7 @@ end;
 //选择方向
 function SelectDirector(bnum, AttAreaType, step, range: integer): boolean;
 var
-  str: WideString;
+  str: widestring;
 begin
   Ax := Bx - 1;
   Ay := By;
@@ -2068,32 +2052,28 @@ begin
         //按照所点击位置设置方向
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and
-            (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
           begin
             Ay := By - 1;
             Ax := Bx;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and
-            (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
           begin
             Ax := Bx + 1;
             Ay := By;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and
-            (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
           begin
             Ax := Bx - 1;
             Ay := By;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and
-            (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
           begin
             Ay := By + 1;
             Ax := Bx;
@@ -2104,26 +2084,22 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and
-          (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
         begin
           Ay := By - 1;
           Ax := Bx;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and
-          (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
         begin
           Ax := Bx + 1;
           Ay := By;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and
-          (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
         begin
           Ax := Bx - 1;
           Ay := By;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and
-          (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
         begin
           Ay := By + 1;
           Ax := Bx;
@@ -2176,7 +2152,6 @@ end;
 //利用队列
 //移动过程中，旁边有敌人，则不能继续移动
 procedure SeekPath2(x, y, step, myteam, mode: integer);
-
 var
   Xlist: array[0..4096] of integer;
   Ylist: array[0..4096] of integer;
@@ -2186,7 +2161,6 @@ var
   Xinc, Yinc: array[1..4] of integer;
   curX, curY, curstep, nextX, nextY: integer;
   i: integer;
-
 begin
   Xinc[1] := 1;
   Xinc[2] := -1;
@@ -2227,10 +2201,7 @@ begin
           else
             Bgrid[i] := 3;
         end
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else
           Bgrid[i] := 0;
@@ -2386,10 +2357,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-          round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -2455,7 +2424,7 @@ procedure Attack(bnum: integer);
 var
   rnum, i, mnum, l1, level, step, range, AttAreaType, i1, i2, twice, temp: integer;
   str: ansistring;
-  str1: WideString;
+  str1: widestring;
 begin
   rnum := brole[bnum].rnum;
   i := SelectMagic(bnum);
@@ -2487,8 +2456,7 @@ begin
       if battlemode > 0 then
       begin
         brole[bnum].speed := GetRoleSpeed(rnum, True);
-        if CheckEquipSet(Rrole[rnum].Equip[0], Rrole[rnum].Equip[1], Rrole[rnum].Equip[2],
-          Rrole[rnum].Equip[3]) = 5 then
+        if CheckEquipSet(Rrole[rnum].Equip[0], Rrole[rnum].Equip[1], Rrole[rnum].Equip[2], Rrole[rnum].Equip[3]) = 5 then
           Inc(brole[bnum].speed, 30);
       end;
     end;
@@ -2554,12 +2522,9 @@ begin
     end;
     8:
     begin
-      //    SetAminationPosition(AttAreaType, step, range);
-
-      calcanselect(bnum, 1, step);
-      //if (Brole[bnum].Team = 0) and (brole[bnum].Auto = -1) then
-      selectaim(bnum, step);
-      Brole[bnum].Acted := 1;
+      //calcanselect(bnum, 1, step);
+      if selectaim(bnum, step) then
+        Brole[bnum].Acted := 1;
     end;
   end;
   //如果行动成功, 武功等级增加, 播放效果
@@ -2586,7 +2551,8 @@ begin
         if RRole[rnum].CurrentHP < 0 then RRole[rnum].CurrentHP := 0;
         if rrole[rnum].CurrentMP < 0 then rrole[rnum].CurrentMP := 0;
       end
-      else AttackAction(bnum, mnum, level);
+      else
+        AttackAction(bnum, mnum, level);
 
       l1 := Rrole[rnum].MagLevel[i] div 100;
       Rrole[rnum].MagLevel[i] := Rrole[rnum].MagLevel[i] + 2;
@@ -2636,8 +2602,7 @@ begin
   begin
     //依据攻击范围进一步选择
     step := Rmagic[mnum].MoveDistance[level - 1];
-    if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-      Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+    if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
       Inc(step, 1);
     if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
       Inc(step, 1);
@@ -2651,31 +2616,27 @@ begin
     begin
     end;
   end;
-
-
   playsound(rmagic[mnum].SoundNum, 0);
   PlayActionAmination(bnum, Rmagic[mnum].MagicType); //动画效果
   PlayMagicAmination(bnum, Rmagic[mnum].bigami, Rmagic[mnum].AmiNum, level); //武功效果
   CalHurtRole(bnum, mnum, level); //计算被打到的人物
   twice := 1;
   if Rrole[Brole[bnum].rnum].AttTwice = 1 then twice := 2;
-  if ((BRole[bnum].Progress + 1) div 3 < ((rmagic[mnum].NeedProgress * 10 * level) + 100) div twice) and
-    (rrole[Brole[bnum].rnum].angry = 100) and (battlemode > 1) then
+  if ((BRole[bnum].Progress + 1) div 3 < ((rmagic[mnum].NeedProgress * 10 * level) + 100) div twice) and (rrole[Brole[bnum].rnum].angry = 100) and (battlemode > 1) then
   begin
     needprogress := ((rmagic[mnum].NeedProgress * 10 * level) + 100) * 3 - 1;
     rrole[Brole[bnum].rnum].angry := 100 - (((needprogress - BRole[bnum].Progress) * 100) div needprogress) div twice;
     BRole[bnum].Progress := 0;
   end
   else
-    BRole[bnum].Progress := BRole[bnum].Progress - (((rmagic[mnum].NeedProgress * 10 * level) + 100) * 3 -
-      1) div twice;
+    BRole[bnum].Progress := BRole[bnum].Progress - (((rmagic[mnum].NeedProgress * 10 * level) + 100) * 3 - 1) div twice;
   BRole[bnum].Progress := max(BRole[bnum].Progress, 0);
 end;
 
 procedure ShowMagicName(mnum: integer);
 var
   l: integer;
-  str: WideString;
+  str: widestring;
 begin
   Redraw;
   str := gbktounicode(@Rmagic[mnum].Name);
@@ -2708,8 +2669,7 @@ begin
         if (rmagic[mnum].NeedMP <= Rrole[Brole[bnum].rnum].CurrentMP) then
         begin
           lv := Rrole[Brole[bnum].rnum].MagLevel[i] div 100;
-          if ((Brole[bnum].Progress + 1) div 3 >= (rmagic[mnum].NeedProgress * 10) * lv + 100) or
-            (BattleMode = 0) or (rrole[Brole[bnum].rnum].Angry = 100) then
+          if ((Brole[bnum].Progress + 1) div 3 >= (rmagic[mnum].NeedProgress * 10) * lv + 100) or (BattleMode = 0) or (rrole[Brole[bnum].rnum].Angry = 100) then
           begin
             setlength(menustring, i + 1);
             setlength(menuengstring, i + 1);
@@ -2788,10 +2748,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and
-          (round(event.button.x / (resolutionx / screen.w)) < 267) and
-          (round(event.button.y / (resolutiony / screen.h)) >= 50) and
-          (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 267) and (round(event.button.y / (resolutiony / screen.h)) >= 50) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - 52) div 22;
@@ -2884,29 +2841,23 @@ begin
         end;
         1: //方向系线型
         begin
-          if ((i1 = Bx) or (i2 = By)) and (sign(Ax - Bx) = sign(i1 - Bx)) and (abs(i1 - Bx) <= step) and
-            (sign(Ay - By) = sign(i2 - By)) and (abs(i2 - By) <= step) then
+          if ((i1 = Bx) or (i2 = By)) and (sign(Ax - Bx) = sign(i1 - Bx)) and (abs(i1 - Bx) <= step) and (sign(Ay - By) = sign(i2 - By)) and (abs(i2 - By) <= step) then
             Bfield[4, i1, i2] := 1;
         end;
         2: //原地系十型、原地系叉型、原地系米型
         begin
-          if (abs(i1 - Bx) = abs(i2 - By)) and (abs(i1 - Bx) <= range) or
-            ((i1 = Bx) and (abs(i2 - By) <= step)) or ((i2 = By) and (abs(i1 - Bx) <= step)) then Bfield[4, i1, i2] := 1;
+          if (abs(i1 - Bx) = abs(i2 - By)) and (abs(i1 - Bx) <= range) or ((i1 = Bx) and (abs(i2 - By) <= step)) or ((i2 = By) and (abs(i1 - Bx) <= step)) then Bfield[4, i1, i2] := 1;
           if ((i1 = Bx) and (i2 = By)) then Bfield[4, i1, i2] := 1;
           ax := bx;
           ay := by;
         end;
         4: //方向系菱型
         begin
-          if ((abs(i1 - Bx) + abs(i2 - By) <= step) and (abs(i1 - Bx) <> abs(i2 - By))) and
-            ((((i1 - Bx) * (Ax - Bx) > 0) and (abs(i1 - Bx) > abs(i2 - By))) or
-            (((i2 - By) * (Ay - By) > 0) and (abs(i1 - Bx) < abs(i2 - By)))) then Bfield[4, i1, i2] := 1;
+          if ((abs(i1 - Bx) + abs(i2 - By) <= step) and (abs(i1 - Bx) <> abs(i2 - By))) and ((((i1 - Bx) * (Ax - Bx) > 0) and (abs(i1 - Bx) > abs(i2 - By))) or (((i2 - By) * (Ay - By) > 0) and (abs(i1 - Bx) < abs(i2 - By)))) then Bfield[4, i1, i2] := 1;
         end;
         5: //方向系角型
         begin
-          if ((abs(i1 - Bx) <= step) and (abs(i2 - By) <= step) and (abs(i1 - Bx) <> abs(i2 - By))) and
-            ((((i1 - Bx) * (Ax - Bx) > 0) and (abs(i1 - Bx) > abs(i2 - By))) or
-            (((i2 - By) * (Ay - By) > 0) and (abs(i1 - Bx) < abs(i2 - By)))) then Bfield[4, i1, i2] := 1;
+          if ((abs(i1 - Bx) <= step) and (abs(i2 - By) <= step) and (abs(i1 - Bx) <> abs(i2 - By))) and ((((i1 - Bx) * (Ax - Bx) > 0) and (abs(i1 - Bx) > abs(i2 - By))) or (((i2 - By) * (Ay - By) > 0) and (abs(i1 - Bx) < abs(i2 - By)))) then Bfield[4, i1, i2] := 1;
         end;
 
         7: //无定向直线
@@ -2915,13 +2866,11 @@ begin
           begin
             if ((abs(i1 - Bx) <= abs(ax - Bx)) and (abs(i2 - By) <= abs(ay - By))) then
             begin
-              if (abs(ax - bx) > abs(ay - by)) and (((i1 - bx) / (ax - bx)) > 0) and
-                (i2 = Round(((i1 - bx) * (ay - by)) / (ax - bx)) + by) then
+              if (abs(ax - bx) > abs(ay - by)) and (((i1 - bx) / (ax - bx)) > 0) and (i2 = Round(((i1 - bx) * (ay - by)) / (ax - bx)) + by) then
               begin
                 Bfield[4, i1, i2] := 1;
               end
-              else if (abs(ax - bx) <= abs(ay - by)) and (((i2 - by) / (ay - by)) > 0) and
-                (i1 = Round(((i2 - by) * (ax - bx)) / (ay - by)) + bx) then
+              else if (abs(ax - bx) <= abs(ay - by)) and (((i2 - by) / (ay - by)) > 0) and (i1 = Round(((i2 - by) * (ax - bx)) / (ay - by)) + bx) then
               begin
                 Bfield[4, i1, i2] := 1;
               end;
@@ -3015,8 +2964,7 @@ begin
   begin
     if (brole[i].Dead = 0) and (brole[i].rnum >= 0) then
     begin
-      if (Bfield[4, Brole[i].X, Brole[i].Y] <> 0) and (Brole[bnum].Team <> Brole[i].Team) and
-        (Brole[i].Dead = 0) and (bnum <> i) then
+      if (Bfield[4, Brole[i].X, Brole[i].Y] <> 0) and (Brole[bnum].Team <> Brole[i].Team) and (Brole[i].Dead = 0) and (bnum <> i) then
       begin
         bang := 0;
         dodge := min(1, brole[i].AddDodge) * 30; //增加闪躲率状态
@@ -3049,9 +2997,7 @@ begin
         if (rmagic[mnum].HurtType = 0) then
         begin
           //某些状态增加伤害   15-18 加成某类型，13 加成所有，2 女性加成所有
-          if (GetGongtiState(rnum, 14 + rmagic[mnum].MagicType)) or (GetGongtiState(rnum, 13)) or
-            ((GetEquipState(rnum, 2) or (GetGongtiState(rnum, 2))) and (rrole[rnum].sexual = 1)) or
-            GetEquipState(rnum, 14 + rmagic[mnum].MagicType) or GetEquipState(rnum, 13) then
+          if (GetGongtiState(rnum, 14 + rmagic[mnum].MagicType)) or (GetGongtiState(rnum, 13)) or ((GetEquipState(rnum, 2) or (GetGongtiState(rnum, 2))) and (rrole[rnum].sexual = 1)) or GetEquipState(rnum, 14 + rmagic[mnum].MagicType) or GetEquipState(rnum, 13) then
           begin
             hurt := trunc(hurt * 1.3);
           end;
@@ -3092,9 +3038,7 @@ begin
         else if (rmagic[mnum].HurtType = 1) then
         begin
           //某些状态增加伤害   15-18 加成某类型，13 加成所有，2 女性加成所有
-          if (GetGongtiState(rnum, 15 + rmagic[mnum].MagicType)) or (GetGongtiState(rnum, 13)) or
-            ((GetEquipState(rnum, 2) or (GetGongtiState(rnum, 2))) and (rrole[rnum].sexual = 1)) or
-            GetEquipState(rnum, 15 + rmagic[mnum].MagicType) or GetEquipState(rnum, 13) then
+          if (GetGongtiState(rnum, 15 + rmagic[mnum].MagicType)) or (GetGongtiState(rnum, 13)) or ((GetEquipState(rnum, 2) or (GetGongtiState(rnum, 2))) and (rrole[rnum].sexual = 1)) or GetEquipState(rnum, 15 + rmagic[mnum].MagicType) or GetEquipState(rnum, 13) then
           begin
             hurt := trunc(hurt * 1.3);
           end;
@@ -3133,9 +3077,7 @@ begin
         //增加己方内力
         addmpvalue := addmpvalue + (rmagic[mnum].AddMpScale * hurt) div 100;
         //如功体有吸内力效果
-        if (rrole[rnum].Gongti > 0) and (rmagic[rrole[rnum].Gongti].NeedExp[
-          rmagic[rrole[rnum].Gongti].MaxLevel] <= GetMagicLevel(rnum, rrole[rnum].Gongti)) and
-          (rmagic[rrole[rnum].Gongti].AddMpScale > 0) then
+        if (rrole[rnum].Gongti > 0) and (rmagic[rrole[rnum].Gongti].NeedExp[rmagic[rrole[rnum].Gongti].MaxLevel] <= GetMagicLevel(rnum, rrole[rnum].Gongti)) and (rmagic[rrole[rnum].Gongti].AddMpScale > 0) then
         begin
           hurtmp := (hurt * rmagic[rrole[rnum].Gongti].AddMpScale) div 100;
           if (hurtmp > Rrole[Brole[i].rnum].CurrentMP) then hurt := hurtmp - Rrole[Brole[i].rnum].CurrentMP;
@@ -3151,16 +3093,13 @@ begin
         if GetEquipState(rnum, 21) or GetGongtiState(rnum, 21) then
           addhpvalue := addhpvalue + hurt div 10;
         //如功体有吸血效果
-        if (rrole[rnum].Gongti > 0) and (rmagic[rrole[rnum].Gongti].MaxLevel =
-          GetGongtiLevel(rnum, rrole[rnum].Gongti)) and (rmagic[rrole[rnum].Gongti].AddHpScale > 0) then
+        if (rrole[rnum].Gongti > 0) and (rmagic[rrole[rnum].Gongti].MaxLevel = GetGongtiLevel(rnum, rrole[rnum].Gongti)) and (rmagic[rrole[rnum].Gongti].AddHpScale > 0) then
           addhpvalue := addhpvalue + (rmagic[mnum].AddHpScale * hurt) div 100;
 
         if hurt > 0 then
         begin
           //中毒，某些状态免疫   12 免除所有负面状态 ,套装4 免除所有负面状态
-          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and
-            (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2],
-            Rrole[Brole[n].rnum].equip[3]) <> 4) then
+          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2], Rrole[Brole[n].rnum].equip[3]) <> 4) then
           begin
             addpoi := GetroleAttPoi(rnum, True) + rmagic[mnum].Poision * level - GetRoleDefPoi(Brole[n].rnum, True);
             if addpoi + rrole[Brole[n].rnum].Poision > 99 then addpoi := 99 - rrole[Brole[n].rnum].Poision;
@@ -3170,16 +3109,12 @@ begin
           end;
 
           //内伤 ，某些状态免疫   12 免除所有负面状态，6 免除内伤  ,套装4 免除所有负面状态
-          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and
-            (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2],
-            Rrole[Brole[n].rnum].equip[3]) <> 4) and (not GetGongtiState(Brole[n].rnum, 6)) and
-            (not GetEquipState(Brole[n].rnum, 6)) then
+          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2], Rrole[Brole[n].rnum].equip[3]) <> 4) and (not GetGongtiState(Brole[n].rnum, 6)) and (not GetEquipState(Brole[n].rnum, 6)) then
           begin
             injury := ((rmagic[mnum].MaxInjury - rmagic[mnum].MinInjury) * (level - 1)) div 9 + rmagic[mnum].MinInjury;
             //内伤 ，某些状态增加内伤率   19增加内伤率  套装3必然内伤
             if GetEquipState(rnum, 19) or (GetGongtiState(rnum, 19)) then injury := injury + 30;
-            if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2],
-              Rrole[rnum].equip[3]) = 3 then
+            if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 3 then
               injury := 100;
             if random(100) < injury then Inc(rrole[Brole[n].rnum].Hurt, round(hurt / 10));
             if rrole[Brole[n].rnum].Hurt > 100 then rrole[Brole[n].rnum].Hurt := 100;
@@ -3187,17 +3122,14 @@ begin
 
 
           //封穴 ，某些状态免疫   12 免除所有负面状态 ,套装4 免除所有负面状态
-          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and
-            (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2],
-            Rrole[Brole[n].rnum].equip[3]) <> 4) then
+          if (not GetGongtiState(Brole[n].rnum, 12)) and (not GetEquipState(Brole[n].rnum, 12)) and (CheckEquipSet(Rrole[Brole[n].rnum].equip[0], Rrole[Brole[n].rnum].equip[1], Rrole[Brole[n].rnum].equip[2], Rrole[Brole[n].rnum].equip[3]) <> 4) then
           begin
             frozen := ((rmagic[mnum].MaxPeg - rmagic[mnum].MinPeg) * (level - 1)) div 9 + rmagic[mnum].MinPeg;
             //封穴 ，某些状态增加封穴率   20增加封穴率
             if GetEquipState(rnum, 20) or (GetGongtiState(rnum, 20)) then frozen := frozen + 10;
             if random(100) < frozen then
             begin
-              frozen := round(((rrole[rnum].CurrentMP - (rrole[brole[n].rnum].CurrentMP div 2)) /
-                (rrole[brole[n].rnum].CurrentMP + 1)) * 200);
+              frozen := round(((rrole[rnum].CurrentMP - (rrole[brole[n].rnum].CurrentMP div 2)) / (rrole[brole[n].rnum].CurrentMP + 1)) * 200);
               Inc(Brole[n].frozen, frozen);
             end;
             Brole[n].frozen := min(500, Brole[n].frozen);
@@ -3270,7 +3202,7 @@ end;
 function ReMoveHurt(bnum, AttackBnum: integer): smallint;
 var
   i1, i2, x, y, i, n, realhurt: integer;
-  str: WideString;
+  str: widestring;
   temp: array of integer;
 begin
   str := ' 轉移';
@@ -3280,9 +3212,7 @@ begin
   if (Random(100) < 30 + Rrole[Brole[bnum].rnum].Aptitude div 5) then
   begin
     for i := 0 to length(brole) - 1 do
-      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum) and
-        (i <> Attackbnum) and (brole[i].Team <> brole[bnum].Team) and
-        ((abs(brole[i].X - brole[bnum].X) + abs(brole[i].Y - brole[bnum].Y)) <= 5) then
+      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum) and (i <> Attackbnum) and (brole[i].Team <> brole[bnum].Team) and ((abs(brole[i].X - brole[bnum].X) + abs(brole[i].Y - brole[bnum].Y)) <= 5) then
       begin
         setlength(temp, n + 1);
         temp[n] := i;
@@ -3309,7 +3239,7 @@ end;
 function RetortHurt(bnum, AttackBnum: integer): smallint;
 var
   i1, i2, x, y, i, realhurt: integer;
-  str: WideString;
+  str: widestring;
 begin
   str := ' 反噬';
   Result := bnum;
@@ -3341,8 +3271,7 @@ end;
 
 function CalHurtValue(bnum1, bnum2, mnum, level: integer): integer;
 var
-  i, rnum1, l1, c, rnum2, mhurt, p, def, mp1, mp2, addatt, att, spd2, wpn2, spd1, wpn1, k1,
-  k2, knowledge, dis: integer;
+  i, rnum1, l1, c, rnum2, mhurt, p, def, mp1, mp2, addatt, att, spd2, wpn2, spd1, wpn1, k1, k2, knowledge, dis: integer;
   a1, s1, m1, w1: double;
 begin
   //计算双方武学常识
@@ -3375,11 +3304,9 @@ begin
   rnum1 := Brole[bnum1].rnum;
   rnum2 := Brole[bnum2].rnum;
   // mhurt := Rmagic[mnum].Attack[level - 1];
-  mhurt := (CalNewHurtValue(level - 1, Rmagic[mnum].MinHurt, Rmagic[mnum].MaxHurt,
-    Rmagic[mnum].HurtModulus) * (100 + (knowledge * 4) div 5)) div 100;
+  mhurt := (CalNewHurtValue(level - 1, Rmagic[mnum].MinHurt, Rmagic[mnum].MaxHurt, Rmagic[mnum].HurtModulus) * (100 + (knowledge * 4) div 5)) div 100;
 
-  p := Rmagic[mnum].AttackModulus * 6 + Rmagic[mnum].MPModulus + Rmagic[mnum].SpeedModulus *
-    2 + Rmagic[mnum].WeaponModulus * 2;
+  p := Rmagic[mnum].AttackModulus * 6 + Rmagic[mnum].MPModulus + Rmagic[mnum].SpeedModulus * 2 + Rmagic[mnum].WeaponModulus * 2;
   att := GetRoleAttack(rnum1, True) + 1;
   def := GetRoleDefence(rnum2, True) + 1;
 
@@ -3387,11 +3314,26 @@ begin
 
 
   case Rmagic[mnum].MagicType of
-    0: begin wpn1 := 0; wpn2 := 0; end;
-    1: begin wpn1 := GetRoleFist(rnum1, True) + 1; wpn2 := GetRoleFist(rnum2, True) + 1; end;
-    2: begin wpn1 := GetRoleSword(rnum1, True) + 1; wpn2 := GetRoleSword(rnum2, True) + 1; end;
-    3: begin wpn1 := GetRoleKnife(rnum1, True) + 1; wpn2 := GetRoleKnife(rnum2, True) + 1; end;
-    4: begin wpn1 := GetRoleUnusual(rnum1, True) + 1; wpn2 := GetRoleUnusual(rnum2, True) + 1; end;
+    0: begin
+      wpn1 := 0;
+      wpn2 := 0;
+    end;
+    1: begin
+      wpn1 := GetRoleFist(rnum1, True) + 1;
+      wpn2 := GetRoleFist(rnum2, True) + 1;
+    end;
+    2: begin
+      wpn1 := GetRoleSword(rnum1, True) + 1;
+      wpn2 := GetRoleSword(rnum2, True) + 1;
+    end;
+    3: begin
+      wpn1 := GetRoleKnife(rnum1, True) + 1;
+      wpn2 := GetRoleKnife(rnum2, True) + 1;
+    end;
+    4: begin
+      wpn1 := GetRoleUnusual(rnum1, True) + 1;
+      wpn2 := GetRoleUnusual(rnum2, True) + 1;
+    end;
   end;
   mp1 := Rrole[rnum1].CurrentMP + 1;
   mp2 := Rrole[rnum2].CurrentMP + 1;
@@ -3506,7 +3448,7 @@ end;
 procedure ShowHurtValue(sign, color1, color2: integer); overload;
 var
   i, i1, x, a, y: integer;
-  word: array of WideString;
+  word: array of widestring;
   str: ansistring;
 begin
   a := 0;
@@ -3522,7 +3464,8 @@ begin
       //x := -(Brole[i].X - Bx) * 18 + (Brole[i].Y - By) * 18 + CENTER_X - 10;
       //y := (Brole[i].X - Bx) * 9 + (Brole[i].Y - By) * 9 + CENTER_Y - 40;
       if Brole[i].ShowNumber = 0 then word[i] := 'Miss'
-      else word[i] := format(str, [Brole[i].ShowNumber]);
+      else
+        word[i] := format(str, [Brole[i].ShowNumber]);
     end
     else
       word[i] := '0';
@@ -3551,10 +3494,10 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
 end;
 
-procedure ShowHurtValue(str: WideString; color1, color2: integer); overload;
+procedure ShowHurtValue(str: widestring; color1, color2: integer); overload;
 var
   i, i1, x, a, y: integer;
-  word: array of WideString;
+  word: array of widestring;
 begin
   a := 0;
   for i1 := 0 to 10 do
@@ -3687,8 +3630,8 @@ var
   i, bnum, n, l, c: integer;
   p: array[0..10] of integer;
   eft: array of integer;
-  str: WideString;
-  strs: WideString;
+  str: widestring;
+  strs: widestring;
   color1, color2: uint32;
   nt, nt2: longint;
 begin
@@ -3865,7 +3808,7 @@ procedure AddExp;
 var
   i, rnum, basicvalue, amount, levels: integer;
   add, additem: integer;
-  str: WideString;
+  str: widestring;
 begin
   levels := 0;
   amount := 0;
@@ -3908,8 +3851,7 @@ begin
         Rrole[rnum].Exp := Rrole[rnum].Exp + add;
         Rrole[rnum].Exp := min(Rrole[rnum].Exp, 50000);
 
-        if not ((Rrole[rnum].PracticeBook >= 0) and (ritem[Rrole[rnum].PracticeBook].Magic >= 0) and
-          (rmagic[ritem[Rrole[rnum].PracticeBook].Magic].MagicType = 5)) then
+        if not ((Rrole[rnum].PracticeBook >= 0) and (ritem[Rrole[rnum].PracticeBook].Magic >= 0) and (rmagic[ritem[Rrole[rnum].PracticeBook].Magic].MagicType = 5)) then
           Rrole[rnum].GongtiExam := Rrole[rnum].GongtiExam + add * 4 div 5;
         Rrole[rnum].GongtiExam := min(Rrole[rnum].GongtiExam, 50000);
 
@@ -3960,8 +3902,7 @@ begin
     begin
       rnum := Brole[i].rnum;
       if rnum >= 0 then
-        while (Rrole[rnum].Level < MAX_LEVEL) and (uint16(Rrole[rnum].Exp) >=
-            uint16(LevelUplist[Rrole[rnum].Level - 1])) do
+        while (Rrole[rnum].Level < MAX_LEVEL) and (uint16(Rrole[rnum].Exp) >= uint16(LevelUplist[Rrole[rnum].Level - 1])) do
         begin
           Rrole[rnum].Exp := Rrole[rnum].Exp - LevelUplist[Rrole[rnum].Level - 1];
           Rrole[rnum].Level := Rrole[rnum].Level + 1;
@@ -3976,7 +3917,7 @@ end;
 procedure LevelUp(bnum: integer);
 var
   i, rnum, add: integer;
-  str: WideString;
+  str: widestring;
 begin
   rnum := brole[bnum].rnum;
   if rnum >= 0 then
@@ -4024,7 +3965,7 @@ end;
 procedure CheckBook;
 var
   i, i1, i2, Aptitude, p, rnum, inum, mnum, mlevel, needexp, needitem, needitemamount, itemamount: integer;
-  str: WideString;
+  str: widestring;
 begin
   for i := 0 to length(brole) - 1 do
   begin
@@ -4043,12 +3984,13 @@ begin
               mlevel := Rrole[rnum].MagLevel[i1] div 100 + 1;
               break;
             end;
-        if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2],
-          Rrole[rnum].equip[3]) = 2 then
+        if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 2 then
           Aptitude := 100
-        else Aptitude := Rrole[rnum].Aptitude;
+        else
+          Aptitude := Rrole[rnum].Aptitude;
         if Ritem[inum].NeedExp > 0 then needexp := mlevel * (Ritem[inum].NeedExp * (8 - Aptitude div 15)) div 2
-        else needexp := mlevel * ((-Ritem[inum].NeedExp) * (1 + Aptitude div 15)) div 2;
+        else
+          needexp := mlevel * ((-Ritem[inum].NeedExp) * (1 + Aptitude div 15)) div 2;
 
         while (Rrole[rnum].PracticeBook >= 0) and (Rrole[rnum].ExpForBook >= needexp) and (mlevel < 10) do
         begin
@@ -4077,7 +4019,8 @@ begin
           end;
           Rrole[rnum].ExpForBook := Rrole[rnum].ExpForBook - needexp;
           if Ritem[inum].NeedExp > 0 then needexp := mlevel * (Ritem[inum].NeedExp * (8 - Aptitude div 15)) div 2
-          else needexp := mlevel * ((-Ritem[inum].NeedExp) * (1 + Aptitude div 15)) div 2;
+          else
+            needexp := mlevel * ((-Ritem[inum].NeedExp) * (1 + Aptitude div 15)) div 2;
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           //ShowStatus(rnum);
           //waitanykey;
@@ -4110,7 +4053,7 @@ end;
 procedure BattleMenuItem(bnum: integer);
 var
   rnum, inum, mode: integer;
-  str: WideString;
+  str: widestring;
 begin
   CurItem := -1;
   MenuItem(3);
@@ -4154,9 +4097,13 @@ begin
   d2 := Ay - By;
   dm := abs(d1) - abs(d2);
   if (dm > 0) then
-    if d1 < 0 then Brole[bnum].Face := 0 else Brole[bnum].Face := 3
+    if d1 < 0 then Brole[bnum].Face := 0
+    else
+      Brole[bnum].Face := 3
   else if (dm < 0) then
-    if d2 < 0 then Brole[bnum].Face := 2 else Brole[bnum].Face := 1;
+    if d2 < 0 then Brole[bnum].Face := 2
+    else
+      Brole[bnum].Face := 1;
 
   Redraw;
   rnum := brole[bnum].rnum;
@@ -4257,9 +4204,7 @@ begin
 
       if brole[bnum1].PerfectDodge > 0 then addpoi := 0;
 
-      if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or
-        (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1],
-        Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
+      if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1], Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
         addpoi := 0;
 
       if addpoi > 0 then Inc(Brole[bnum].ExpGot, max(0, addpoi div 5));
@@ -4320,9 +4265,7 @@ begin
       begin
         for i := 0 to length(brole) - 1 do
         begin
-          if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and
-            (brole[i].Team = brole[bnum1].Team) and (brole[i].X in
-            [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
+          if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
           begin
             addlife := 0;
             rnum1 := brole[i].rnum;
@@ -4437,9 +4380,7 @@ begin
       begin
         for i := 0 to length(brole) - 1 do
         begin
-          if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and
-            (brole[i].Team = brole[bnum1].Team) and (brole[i].X in
-            [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
+          if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
           begin
             rnum1 := brole[i].rnum;
             minuspoi := GetRoleMedPoi(rnum, True);
@@ -4523,9 +4464,7 @@ begin
           if brole[bnum].Team = 1 then
             poi := poi * (200 + rrole[0].difficulty) div 200;
 
-          if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or
-            (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1],
-            Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
+          if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1], Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
             poi := 0;
 
           rrole[rnum1].Poision := rrole[rnum1].Poision + poi;
@@ -4567,7 +4506,7 @@ end;
 procedure AutoBattle(bnum: integer);
 var
   i, p, a, h, temp, rnum, inum, eneamount, aim, mnum, level, Ax1, Ay1, i1, i2, step, step1, dis0, dis: integer;
-  str: WideString;
+  str: widestring;
 begin
   rnum := brole[bnum].rnum;
   showsimplestatus(rnum, 30, 330);
@@ -4699,8 +4638,7 @@ begin
         begin
           level := Rrole[rnum].MagLevel[i1] div 100 + 1;
           a := rmagic[mnum].MoveDistance[level - 1];
-          if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2],
-            Rrole[rnum].equip[3]) = 1 then
+          if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 1 then
             Inc(a, 1);
           if GetEquipState(rnum, 22) or GetGongtiState(rnum, 22) then //增加攻击距离
             Inc(a, 1);
@@ -4735,8 +4673,7 @@ begin
         for i1 := min(Ax, Bx) to max(Ax, Bx) do
           for i2 := min(Ay, By) to max(Ay, By) do
           begin
-            if (abs(i1 - Ax) <= step1) and (abs(i2 - Ay) <= step1) and
-              (abs(i1 - Bx) + abs(i2 - By) <= step + step1) then
+            if (abs(i1 - Ax) <= step1) and (abs(i2 - Ay) <= step1) and (abs(i1 - Bx) + abs(i2 - By) <= step + step1) then
             begin
               if dis < abs(i1 - Bx) + abs(i2 - By) then
               begin
@@ -4765,7 +4702,8 @@ begin
           Rrole[rnum].MagLevel[p] := Rrole[rnum].MagLevel[p] + 2;
           if Rrole[rnum].MagLevel[p] > 999 then Rrole[rnum].MagLevel[p] := 999;
           if rmagic[mnum].EventNum > 0 then callevent(rmagic[mnum].EventNum)
-          else AttackAction(bnum, mnum, level);
+          else
+            AttackAction(bnum, mnum, level);
         end;
       end;
     end;
@@ -4792,7 +4730,7 @@ end;
 procedure AutoUseItem(bnum, list: integer);
 var
   i, p, temp, rnum, inum: integer;
-  str: WideString;
+  str: widestring;
 begin
   rnum := brole[bnum].rnum;
   if Brole[bnum].Team <> 0 then
@@ -4817,8 +4755,7 @@ begin
     p := -1;
     for i := 0 to MAX_ITEM_AMOUNT - 1 do
     begin
-      if (RItemList[i].Amount > 0) and (ritem[RItemList[i].Number].ItemType = 3) and
-        (ritem[RItemList[i].Number].EventNum <= 0) then
+      if (RItemList[i].Amount > 0) and (ritem[RItemList[i].Number].ItemType = 3) and (ritem[RItemList[i].Number].EventNum <= 0) then
       begin
         if ritem[RItemList[i].Number].Data[list] > temp then
         begin
@@ -4856,13 +4793,14 @@ var
   Cmnum, Cmlevel, Cmtype, Cmdis, Cmrange: integer;
   p1, Cmnum1, Cmlevel1, Cmtype1, Cmdis1, Cmrange1: integer;
   Mx, My, Mx1, My1, tempmaxhurt, maxhurt, tempminHP: integer;
-  str, str1: WideString;
+  str, str1: widestring;
   words: ansistring;
 begin
 
   rnum := brole[bnum].rnum;
   if brole[bnum].Team = 0 then showsimplestatus(rnum, 30, 330)
-  else showsimplestatus(rnum, 30, 330);
+  else
+    showsimplestatus(rnum, 30, 330);
   sdl_delay(350);
   //showmessage('');
   //Life is less than 20%, 70% probality to medcine or eat a pill.
@@ -4990,8 +4928,7 @@ begin
         Cmnum := mnum;
         Cmtype := rmagic[mnum].AttAreaType;
         Cmdis := rmagic[mnum].MoveDistance[level - 1];
-        if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2],
-          Rrole[rnum].equip[3]) = 1 then
+        if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 1 then
           Inc(Cmdis, 1);
         if GetEquipState(rnum, 22) or GetGongtiState(rnum, 22) then //增加攻击距离
           Inc(Cmdis, 1);
@@ -5009,8 +4946,7 @@ begin
     begin
       //移动
 
-      if ((Brole[bnum].Progress + 1) div 3 < (rmagic[Cmnum].NeedProgress * 10) * cmlevel + 100) and
-        (BattleMode > 0) and (rrole[rnum].Angry < 100) and (Brole[bnum].Team = 0) then
+      if ((Brole[bnum].Progress + 1) div 3 < (rmagic[Cmnum].NeedProgress * 10) * cmlevel + 100) and (BattleMode > 0) and (rrole[rnum].Angry < 100) and (Brole[bnum].Team = 0) then
       begin
         nearestmove(Mx, My, bnum);
         MoveAmination(bnum);
@@ -5038,9 +4974,9 @@ begin
         for i1 := 0 to Rrole[rnum].AttTwice do
         begin
           if Rmagic[Rrole[rnum].Magic[p]].NeedMP > Rrole[rnum].CurrentMP then break;
-
           if rmagic[Cmnum].EventNum > 0 then callevent(rmagic[Cmnum].EventNum)
-          else AttackAction(bnum, Cmnum, cmlevel);
+          else
+            AttackAction(bnum, Cmnum, cmlevel);
 
 
           l1 := Rrole[rnum].MagLevel[p] div 100;
@@ -5087,9 +5023,7 @@ begin
       Mx1 := -1;
       Ax1 := -1;
       for h := 0 to 3 do
-        if (Rrole[Brole[bnum].rnum].TakingItem[h] > -1) and
-          (Rrole[Brole[bnum].rnum].TakingItemAmount[h] > 0) and
-          (Ritem[Rrole[Brole[bnum].rnum].TakingItem[h]].ItemType = 4) then
+        if (Rrole[Brole[bnum].rnum].TakingItem[h] > -1) and (Rrole[Brole[bnum].rnum].TakingItemAmount[h] > 0) and (Ritem[Rrole[Brole[bnum].rnum].TakingItem[h]].ItemType = 4) then
         begin
           inum := Rrole[Brole[bnum].rnum].TakingItem[h];
           trymoveHidden(Mx1, My1, Ax1, Ay1, bnum, inum);
@@ -5169,7 +5103,8 @@ begin
     Ax := Mx;
     Ay := My;
     if (BRole[bnum].Progress < 1200) and (battlemode > 0) then collect(bnum)
-    else rest(bnum);
+    else
+      rest(bnum);
   end;
 
   //检查是否有esc被按下
@@ -5202,8 +5137,7 @@ var
 begin
   step := brole[bnum].Step;
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5279,10 +5213,7 @@ begin
           else
             Bgrid[i] := 3;
         end
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else
           Bgrid[i] := 0;
@@ -5352,8 +5283,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[brole[bnum].rnum].equip[0], Rrole[brole[bnum].rnum].equip[1],
-    Rrole[brole[bnum].rnum].equip[2], Rrole[brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[brole[bnum].rnum].equip[0], Rrole[brole[bnum].rnum].equip[1], Rrole[brole[bnum].rnum].equip[2], Rrole[brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5442,8 +5372,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5468,12 +5397,10 @@ begin
           begin
             if ((abs(tempX - curX) <= abs(i - curX)) and (abs(tempY - cury) <= abs(j - cury))) then
             begin
-              if (abs(i - curX) > abs(j - cury)) and (((tempX - curx) / (i - curx)) > 0) and
-                (tempY = Round(((tempX - curx) * (j - cury)) / (i - curx)) + cury) then
+              if (abs(i - curX) > abs(j - cury)) and (((tempX - curx) / (i - curx)) > 0) and (tempY = Round(((tempX - curx) * (j - cury)) / (i - curx)) + cury) then
                 temphurt := temphurt + CalHurtValue(bnum, k, mnum, level)
 
-              else if (abs(i - curX) < abs(j - cury)) and (((tempy - cury) / (j - cury)) > 0) and
-                (tempx = Round(((tempy - cury) * (i - curx)) / (j - cury)) + curx) then
+              else if (abs(i - curX) < abs(j - cury)) and (((tempy - cury) / (j - cury)) > 0) and (tempx = Round(((tempy - cury) * (i - curx)) / (j - cury)) + curx) then
                 temphurt := temphurt + CalHurtValue(bnum, k, mnum, level);
             end;
           end;
@@ -5500,8 +5427,7 @@ var
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
   range := rmagic[mnum].AttDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5587,8 +5513,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5608,8 +5533,7 @@ begin
     begin
       tempX := Brole[i].X;
       tempY := Brole[i].Y;
-      if (abs(tempX - curX) <= distance) and (abs(tempY - curY) <= distance) and
-        (abs(tempX - curX) <> abs(tempY - curY)) then
+      if (abs(tempX - curX) <= distance) and (abs(tempY - curY) <= distance) and (abs(tempX - curX) <> abs(tempY - curY)) then
       begin
         if (tempX - curX > 0) and (abs(tempX - curX) > abs(tempY - curY)) then
         begin
@@ -5675,8 +5599,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5722,8 +5645,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5769,8 +5691,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[brole[bnum].rnum].equip[0], Rrole[brole[bnum].rnum].equip[1],
-    Rrole[brole[bnum].rnum].equip[2], Rrole[brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[brole[bnum].rnum].equip[0], Rrole[brole[bnum].rnum].equip[1], Rrole[brole[bnum].rnum].equip[2], Rrole[brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5834,8 +5755,7 @@ var
   distance, range, AttAreaType, myteam: integer;
 begin
   distance := rmagic[mnum].MoveDistance[level - 1];
-  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1],
-    Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
+  if CheckEquipSet(Rrole[Brole[bnum].rnum].equip[0], Rrole[Brole[bnum].rnum].equip[1], Rrole[Brole[bnum].rnum].equip[2], Rrole[Brole[bnum].rnum].equip[3]) = 1 then
     Inc(distance, 1);
   if GetEquipState(Brole[bnum].rnum, 22) or GetGongtiState(Brole[bnum].rnum, 22) then //增加攻击距离
     Inc(distance, 1);
@@ -5890,7 +5810,6 @@ var
   Bgrid: array[1..4] of integer; //0空位，1建筑，2友军，3敌军，4出界，5已走过
   Xinc, Yinc: array[1..4] of integer;
   curX, curY, curstep, nextX, nextY: integer;
-
 begin
   myteam := brole[bnum].Team;
   mindis := 9999;
@@ -5956,10 +5875,7 @@ begin
         else
           Bgrid[i] := 3;
       end
-      else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-        (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-        ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-        ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+      else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
         Bgrid[i] := 6
       else
         Bgrid[i] := 0;
@@ -6012,7 +5928,6 @@ var
   Bgrid: array[1..4] of integer; //0空位，1建筑，2友军，3敌军，4出界，5已走过
   Xinc, Yinc: array[1..4] of integer;
   curX, curY, curstep, nextX, nextY: integer;
-
 begin
   step := brole[bnum].Step;
   myteam := brole[bnum].Team;
@@ -6078,10 +5993,7 @@ begin
           else
             Bgrid[i] := 3;
         end
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else
 
@@ -6122,7 +6034,6 @@ var
   tempX, tempY, tempdis: integer;
   step, myteam, curedis, rnum: integer;
   tempminHP: integer;
-
 begin
   step := brole[bnum].Step;
   myteam := brole[bnum].Team;
@@ -6157,8 +6068,7 @@ begin
     for i := 0 to length(brole) - 1 do
     begin
       rnum := brole[i].rnum;
-      if (brole[i].Team = myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and
-        (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) and (rrole[rnum].CurrentHP < rrole[rnum].MaxHP div 2) then
+      if (brole[i].Team = myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) and (rrole[rnum].CurrentHP < rrole[rnum].MaxHP div 2) then
       begin
         if Rrole[rnum].Hurt - GetRoleMedcine(rnum, True) <= 20 then
         begin
@@ -6188,10 +6098,7 @@ begin
           Bgrid[i] := 5
         else if Bfield[1, nextX, nextY] > 0 then
           Bgrid[i] := 1
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else if Bfield[2, nextX, nextY] >= 0 then
         begin
@@ -6251,9 +6158,7 @@ begin
   begin
     for i := 0 to length(brole) - 1 do
     begin
-      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and
-        (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and
-        (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
+      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
       begin
         addlife := 0;
         rnum1 := brole[i].rnum;
@@ -6284,7 +6189,7 @@ end;
 procedure PetEffect;
 var
   kf, i, n: integer;
-  word1: WideString;
+  word1: widestring;
 begin
   if GetPetSkill(3, 0) then
   begin
@@ -6465,10 +6370,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and
-          (round(event.button.x / (resolutionx / screen.w)) < 267) and
-          (round(event.button.y / (resolutiony / screen.h)) >= 100) and
-          (round(event.button.y / (resolutiony / screen.h)) < 3 * 22 + 100) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 267) and (round(event.button.y / (resolutiony / screen.h)) >= 100) and (round(event.button.y / (resolutiony / screen.h)) < 3 * 22 + 100) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - 103) div 22;
@@ -6476,7 +6378,8 @@ begin
           if menu < 0 then menu := 0;
           if menup <> menu then showModemenu(menu);
         end
-        else menu := -1;
+        else
+          menu := -1;
       end;
     end;
     event.key.keysym.sym := 0;
@@ -6613,16 +6516,14 @@ begin
         if (event.button.button = sdl_button_right) then
         begin
           for i := 0 to amount - 1 do
-            Brole[a[i]].Auto := b[i]; Result := False;
+            Brole[a[i]].Auto := b[i];
+          Result := False;
           break;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) >= y) and
-          (round(event.button.y / (resolutiony / screen.h)) < (amount + 1) * 22 + y) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) >= y) and (round(event.button.y / (resolutiony / screen.h)) < (amount + 1) * 22 + y) then
         begin
           menup := menu;
           //showmessage(inttostr(amount));
@@ -6631,7 +6532,8 @@ begin
           if menu >= amount then menu := -2;
           if menup <> menu then showTeamModemenu(menu);
         end
-        else menu := -1;
+        else
+          menu := -1;
       end;
     end;
 
@@ -6648,9 +6550,9 @@ end;
 procedure ShowTeamModeMenu(menu: integer);
 var
   i, amount, x, y, w, h: integer;
-  modestring: array[-1..2] of WideString;
-  namestr: array of WideString;
-  str: WideString;
+  modestring: array[-1..2] of widestring;
+  namestr: array of widestring;
+  str: widestring;
   a: array of smallint;
 begin
   amount := 0;
@@ -6753,7 +6655,6 @@ var
   tempX, tempY, tempdis: integer;
   step, myteam, rnum: integer;
   tempminHP, hidden, hurt: integer;
-
 begin
   rnum := brole[bnum].rnum;
   hidden := GetRoleHidWeapon(rnum, True);
@@ -6792,8 +6693,7 @@ begin
     for i := 0 to length(brole) - 1 do
     begin
       rnum := brole[i].rnum;
-      if (brole[i].Team <> myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and
-        (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < step) then
+      if (brole[i].Team <> myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < step) then
       begin
         if (rrole[rnum].CurrentHP - hurt < tempminHP) then
         begin
@@ -6827,10 +6727,7 @@ begin
           else
             Bgrid[i] := 3;
         end
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else
           Bgrid[i] := 0;
@@ -6888,9 +6785,7 @@ begin
     if brole[bnum].Team = 1 then
       poi := poi * (200 + rrole[0].difficulty) div 200;
 
-    if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or
-      (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1],
-      Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
+    if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1], Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
       poi := 0;
 
     rrole[rnum1].Poision := rrole[rnum1].Poision + poi;
@@ -6923,7 +6818,6 @@ var
   tempX, tempY, tempdis: integer;
   step, myteam, curedis, rnum: integer;
   tempminHP: integer;
-
 begin
   step := brole[bnum].Step;
   myteam := brole[bnum].Team;
@@ -6958,8 +6852,7 @@ begin
     for i := 0 to length(brole) - 1 do
     begin
       rnum := brole[i].rnum;
-      if (brole[i].Team <> myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and
-        (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) then
+      if (brole[i].Team <> myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) then
       begin
         if (rrole[rnum].CurrentHP > tempminHP) then
         begin
@@ -6993,10 +6886,7 @@ begin
           else
             Bgrid[i] := 3;
         end
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else
           Bgrid[i] := 0;
@@ -7051,9 +6941,7 @@ begin
 
     if brole[bnum1].PerfectDodge > 0 then addpoi := 0;
 
-    if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or
-      (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1],
-      Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
+    if GetGongtiState(Brole[bnum1].rnum, 12) or GetEquipState(Brole[bnum1].rnum, 12) or (CheckEquipSet(Rrole[Brole[bnum1].rnum].equip[0], Rrole[Brole[bnum1].rnum].equip[1], Rrole[Brole[bnum1].rnum].equip[2], Rrole[Brole[bnum1].rnum].equip[3]) = 4) then
       addpoi := 0;
 
     if addpoi > 0 then Inc(Brole[bnum].ExpGot, max(0, addpoi div 5));
@@ -7082,7 +6970,6 @@ var
   tempX, tempY, tempdis: integer;
   step, myteam, curedis, rnum: integer;
   tempminHP: integer;
-
 begin
   step := brole[bnum].Step;
   myteam := brole[bnum].Team;
@@ -7117,8 +7004,7 @@ begin
     for i := 0 to length(brole) - 1 do
     begin
       rnum := brole[i].rnum;
-      if (brole[i].Team = myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and
-        (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) and (rrole[rnum].Poision > 0) then
+      if (brole[i].Team = myteam) and (brole[i].rnum >= 0) and (brole[i].dead = 0) and (abs(brole[i].X - curX) + abs(brole[i].Y - curY) < curedis) and (rrole[rnum].Poision > 0) then
       begin
         if (rrole[rnum].Poision > tempminHP) then
         begin
@@ -7148,10 +7034,7 @@ begin
           Bgrid[i] := 5
         else if Bfield[1, nextX, nextY] > 0 then
           Bgrid[i] := 1
-        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or
-          (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or
-          ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or
-          ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
+        else if ((Bfield[0, nextX, nextY] div 2 >= 179) and (Bfield[0, nextX, nextY] div 2 <= 190)) or (Bfield[0, nextX, nextY] div 2 = 261) or (Bfield[0, nextX, nextY] div 2 = 511) or ((Bfield[0, nextX, nextY] div 2 >= 224) and (Bfield[0, nextX, nextY] div 2 <= 232)) or ((Bfield[0, nextX, nextY] div 2 >= 662) and (Bfield[0, nextX, nextY] div 2 <= 674)) then
           Bgrid[i] := 6
         else if Bfield[2, nextX, nextY] >= 0 then
         begin
@@ -7217,9 +7100,7 @@ begin
   begin
     for i := 0 to length(brole) - 1 do
     begin
-      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and
-        (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and
-        (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
+      if (brole[i].Dead = 0) and (brole[i].rnum >= 0) and (i <> bnum1) and (brole[i].Team = brole[bnum1].Team) and (brole[i].X in [brole[bnum1].X - 3..brole[bnum1].X + 3]) and (brole[i].Y in [brole[bnum1].Y - 3..brole[bnum1].Y + 3]) then
       begin
         rnum1 := brole[i].rnum;
         minuspoi := GetRoleMedPoi(rnum, True);
