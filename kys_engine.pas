@@ -129,7 +129,7 @@ procedure drawPngPic(image: Tpic; x, y, w, h, px, py, mask: integer); overload;
 procedure drawPngPic(image: Tpic; px, py, mask: integer); overload;
 function ReadPicFromByte(p_byte: pbyte; size: integer): PSDL_SURFACE;
 function Simplified2Traditional(mSimplified: ansistring): ansistring;
-function Traditional2Simplified(mTraditional: ansistring): ansistring;
+function Traditional2Simplified(mTraditional: widestring): widestring;
 procedure NewShowMenuSystem(menu: integer);
 function NewMenuSave: boolean;
 procedure NewShowSelect(row, menu: integer; word: array of widestring; Width: integer);
@@ -4425,15 +4425,17 @@ begin
 end; {   Simplified2Traditional   }
 
 //繁体汉字转化成简体汉字
-function Traditional2Simplified(mTraditional: ansistring): ansistring; //返回繁体字符串
+function Traditional2Simplified(mTraditional: widestring): widestring; //返回繁体字符串
 var
   L: integer;
+  str0,str1:ansistring;
 begin
-  L := Length(mTraditional);
-  SetLength(Result, L);
   {$IFDEF windows}
-  LCMapString(GetUserDefaultLCID,
-    $02000000, pansichar(mTraditional), L, @Result[1], L);
+  str0:=utf8tocp936(utf8encode(mTraditional));
+  L := Length(str0);
+  SetLength(str1, L);
+  LCMapString(GetUserDefaultLCID,    $02000000, pansichar(str0), L, @str1[1], L);
+  result:=utf8decode(cp936toutf8(str1));
   {$ELSE}
   Result := mTraditional;
   {$ENDIF}
