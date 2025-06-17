@@ -870,8 +870,6 @@ begin
   DrawRLE8Pic(num, px, py, Pidx, Ppic, RectArea, Image, shadow, mask, @ACol[0]);
 end;
 
-
-
 procedure DrawRLE8Pic(num, px, py: integer; Pidx: Pinteger; Ppic: pbyte; RectArea: TRect; Image: pansichar; shadow: integer); overload;
 begin
   DrawRLE8Pic(num, px, py, Pidx, Ppic, RectArea, Image, shadow, 0);
@@ -1161,7 +1159,6 @@ begin
     DrawRLE8Pic(num, px, py, @SIdx[0], @SPic[0], Area, @SceneImg[0], 0, mask);
 
 end;
-
 
 
 procedure InitialSPic(num, px, py, x, y, w, h: integer);
@@ -4417,8 +4414,7 @@ begin
   L := Length(mSimplified);
   SetLength(Result, L);
   {$IFDEF windows}
-  LCMapString(GetUserDefaultLCID,
-    $04000000, pansichar(mSimplified), L, @Result[1], L);
+  LCMapString(GetUserDefaultLCID, $04000000, pansichar(mSimplified), L, @Result[1], L);
   {$ELSE}
   Result := mSimplified;
   {$ENDIF}
@@ -4428,14 +4424,14 @@ end; {   Simplified2Traditional   }
 function Traditional2Simplified(mTraditional: widestring): widestring; //返回繁体字符串
 var
   L: integer;
-  str0,str1:ansistring;
+  str0, str1: ansistring;
 begin
   {$IFDEF windows}
-  str0:=utf8tocp936(utf8encode(mTraditional));
+  str0 := utf8tocp936(utf8encode(mTraditional));
   L := Length(str0);
   SetLength(str1, L);
-  LCMapString(GetUserDefaultLCID,    $02000000, pansichar(str0), L, @str1[1], L);
-  result:=utf8decode(cp936toutf8(str1));
+  LCMapString(GetUserDefaultLCID, $02000000, pansichar(str0), L, @str1[1], L);
+  Result := utf8decode(cp936toutf8(str1));
   {$ELSE}
   Result := mTraditional;
   {$ENDIF}
@@ -6656,7 +6652,6 @@ begin
   end;
   SDL_UpdateRect2(screen, 110, 0, 530, 440);
 end;
-
 
 
 procedure UpdateBattleScene(xs, ys, oldPic, newpic: integer);

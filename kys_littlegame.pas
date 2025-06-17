@@ -3,14 +3,15 @@
 //{$MODE Delphi}
 
 interface
+
 uses
   SysUtils,
 
-{$IFDEF fpc}
+  {$IFDEF fpc}
   LCLIntf, LCLType, LMessages, FileUtil,
-{$ELSE}
+  {$ELSE}
   Windows,
-{$ENDIF}
+  {$ENDIF}
 
   Math,
   Dialogs,
@@ -38,10 +39,12 @@ var
   background, snakepic, Weipic: tpic;
   femalepic: array[0..7] of tpic;
   EatFemale: integer;
-implementation
-uses kys_event;
-function FemaleSnake: integer;
 
+implementation
+
+uses kys_event;
+
+function FemaleSnake: integer;
 var
   iskey: boolean;
   //MaxX,MaxY: integer;
@@ -257,8 +260,7 @@ begin
   //   messagedlg('Are you sure to quit?', mtConfirmation, [mbOk, mbCancel], 0);
   for i := 1 to length(snake) - 1 do
   begin
-    if ((snake[0].x = snake[i].x) and (snake[0].y = snake[i].y)) or (snake[0].x < 0) or
-      (snake[0].x >= 16) or (snake[0].y < 0) or (snake[0].y >= 16) then
+    if ((snake[0].x = snake[i].x) and (snake[0].y = snake[i].y)) or (snake[0].x < 0) or (snake[0].x >= 16) or (snake[0].y < 0) or (snake[0].y >= 16) then
     begin //waitanykey;
       Result := 1;
     end;
@@ -412,7 +414,7 @@ var
   EaglePic: array[0..1] of array[0..3] of PSDL_Surface;
   BowPic: array[0..1] of PSDL_Surface;
   bombpic: array[0..11] of PSDL_Surface;
-  word: WideString;
+  word: widestring;
   degree, arrowdegree: double;
   arrowspeed, arrowstep, i, i1, bombnum, j, len, grp, idx, readystate: integer; //accu is a value to accurate
   time: uint32;
@@ -517,8 +519,7 @@ begin
 
       if (readystate = 0) or (arrowstep > 0) then
       begin
-        arrowdegree := showarrow(arrowpic, round(event.button.x / (resolutionx / screen.w)),
-          round(event.button.y / (resolutiony / screen.h)), arrowstep, arrowdegree);
+        arrowdegree := showarrow(arrowpic, round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), arrowstep, arrowdegree);
         drawrectangle(5, 415, (6 - arrowspeed) * 15, 20, $330000 * (6 - arrowspeed), $330000 * (6 - arrowspeed), 100);
         if checkgoaL(birdx, arrowstep, arrowdegree) then
         begin
@@ -539,8 +540,7 @@ begin
         birdx := birdx + birdspeed;
         birdstep := birdstep + 1;
         if birdstep > 3 then birdstep := 0;
-        if ((sign(birdspeed) = 1) and (birdx - (EaglePic[0][0].w div 2) > screen.w + 20)) or
-          ((sign(birdspeed) = -1) and (birdx + (EaglePic[0][0].w div 2) < 0)) then
+        if ((sign(birdspeed) = 1) and (birdx - (EaglePic[0][0].w div 2) > screen.w + 20)) or ((sign(birdspeed) = -1) and (birdx + (EaglePic[0][0].w div 2) < 0)) then
         begin
           birdspeed := round(power(-1, random(2))) * (20 + (random(30)));
           birdx := (420 - (EaglePic[0][0].w div 2)) + sign(birdspeed) * (-320);
@@ -619,8 +619,7 @@ begin
           begin
             readystate := 0;
 
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-              round(event.button.y / (resolutiony / screen.h)), degree);
+            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), degree);
             //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
 
           end;
@@ -636,8 +635,7 @@ begin
             readystate := 1;
             Dec(chance);
             arrowstep := arrowstep + arrowspeed;
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-              round(event.button.y / (resolutiony / screen.h)), degree);
+            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), degree);
             //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
           end;
         end;
@@ -655,8 +653,7 @@ begin
             readystate := 1;
             Dec(chance);
             arrowstep := arrowstep + arrowspeed;
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-              round(event.button.y / (resolutiony / screen.h)), 180);
+            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
             //      showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
           end;
       end;
@@ -667,15 +664,13 @@ begin
           begin
             readystate := 0;
 
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-              round(event.button.y / (resolutiony / screen.h)), 180);
+            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
             //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
           end;
       end;
       SDL_MOUSEMOTION:
       begin
-        degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-          round(event.button.y / (resolutiony / screen.h)), 180);
+        degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
 
       end;
     end;
@@ -707,10 +702,10 @@ function Acupuncture(n: integer): boolean;
 var
   AcupunctureList: array[0..1000] of smallint;
   goal, select: array of smallint;
-  str: WideString;
+  str: widestring;
   flag: boolean;
   GamePic: Tpic;
-  word: WideString;
+  word: widestring;
   r, i, i1, b, j, s, len, grp, idx, menu, col, acunum, trytime, accu, actime, chance: integer;
   //accu is a value to accurate
 begin
@@ -855,11 +850,7 @@ begin
         begin
           for i := 0 to acunum - 1 do
           begin
-            if (round(event.button.x / (resolutionx / screen.w)) <=
-              (AcupunctureList[2 * (i + 3)] + accu)) and (round(event.button.x / (resolutionx / screen.w)) >=
-              (AcupunctureList[2 * (i + 3)] - accu)) and (round(event.button.y / (resolutiony / screen.h)) >=
-              (AcupunctureList[2 * (i + 3) + 1] - accu)) and (round(event.button.y / (resolutiony / screen.h)) <=
-              (AcupunctureList[2 * (i + 3) + 1] + accu)) then
+            if (round(event.button.x / (resolutionx / screen.w)) <= (AcupunctureList[2 * (i + 3)] + accu)) and (round(event.button.x / (resolutionx / screen.w)) >= (AcupunctureList[2 * (i + 3)] - accu)) and (round(event.button.y / (resolutiony / screen.h)) >= (AcupunctureList[2 * (i + 3) + 1] - accu)) and (round(event.button.y / (resolutiony / screen.h)) <= (AcupunctureList[2 * (i + 3) + 1] + accu)) then
             begin
               select[s] := i;
               s := s + 1;
@@ -975,50 +966,47 @@ begin
       end; }
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
+        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
 
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) +
-            (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
+          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) + (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
       end;
       SDL_MOUSEBUTTONUP:
       begin
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > x) and
-            (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and
-            (round(event.button.y / (resolutiony / screen.h)) > y) and
-            (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
+          if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
 
-            menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) +
-              (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
+            menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) + (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
           if gamearray[0][menu] = beginpic then temp := pic2
-          else temp := beginpic;
+          else
+            temp := beginpic;
           gamearray[0][menu] := temp;
           if (menu mod c) > 0 then
           begin
             if gamearray[0][menu - 1] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu - 1] := temp;
           end;
           if (menu mod c) < c - 1 then
           begin
             if gamearray[0][menu + 1] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu + 1] := temp;
           end;
           if (menu div c) > 0 then
           begin
             if gamearray[0][menu - c] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu - c] := temp;
           end;
           if (menu div c) < r - 1 then
           begin
             if gamearray[0][menu + c] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu + c] := temp;
           end;
         end;
@@ -1039,30 +1027,35 @@ begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
           if gamearray[0][menu] = beginpic then temp := pic2
-          else temp := beginpic;
+          else
+            temp := beginpic;
           gamearray[0][menu] := temp;
           if (menu mod c) > 0 then
           begin
             if gamearray[0][menu - 1] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu - 1] := temp;
           end;
           if (menu mod c) < c - 1 then
           begin
             if gamearray[0][menu + 1] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu + 1] := temp;
           end;
           if (menu div c) > 0 then
           begin
             if gamearray[0][menu - c] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu - c] := temp;
           end;
           if (menu div c) < r - 1 then
           begin
             if gamearray[0][menu + c] = beginpic then temp := pic2
-            else temp := beginpic;
+            else
+              temp := beginpic;
             gamearray[0][menu + c] := temp;
           end;
         end;
@@ -1120,25 +1113,17 @@ begin
       end; }
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and
-          (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and
-          (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and
-          (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
+        if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
 
-          menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) +
-            (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
+          menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
       end;
       SDL_MOUSEBUTTONUP:
       begin
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and
-            (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and
-            (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and
-            (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
+          if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
 
-            menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) +
-              (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
+            menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
           if (menu1 < Count) and (menu < length(gamearray[1])) then
           begin
             w := gamearray[1][menu];
@@ -1191,7 +1176,7 @@ var
   wd: array[0..1] of smallint;
   poet, t: puint16;
   talkarray: array of byte;
-  str: WideString;
+  str: widestring;
 begin
   if GetPetSkill(4, 2) then chance := chance * 2;
   x := 20;
@@ -1316,22 +1301,14 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and
-          (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and
-          (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and
-          (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * row) then
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) +
-            (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
+        if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * row) then
+          menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
       end;
       SDL_MOUSEBUTTONUP:
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and
-            (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and
-            (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and
-            (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * r1) then
-            menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) +
-              (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
+          if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * r1) then
+            menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
           chance := SelectPoetry(wx1, wy1, (Count div r1), Count, len, menu, chance);
           SDL_UpdateRect2(screen, 0, 0, 640, 440);
         end;
@@ -1350,8 +1327,7 @@ begin
     for i := 0 to Count - 1 do
     begin
       wd[0] := gamearray[2][i];
-      drawgbkShadowText(pansichar(@wd[0]), wx1 + (i mod (Count div r1)) * 40, wy1 +
-        (i div (Count div r1)) * 40, colcolor(0, 5), colcolor(0, 7));
+      drawgbkShadowText(pansichar(@wd[0]), wx1 + (i mod (Count div r1)) * 40, wy1 + (i div (Count div r1)) * 40, colcolor(0, 5), colcolor(0, 7));
     end;
     drawrectangle(wx + (menu mod c) * 40 + 11, wy + (menu div c) * 40 - 9, 39, 39, 0, colcolor(0, 255), 0);
     str := ('機會：');
@@ -1412,7 +1388,7 @@ var
   temp, littlegamepic: psdl_surface;
   gamepic: tpic;
   filename: ansistring;
-  word1, word: WideString;
+  word1, word: widestring;
   srcrect: tsdl_rect;
   drect: tsdl_rect;
   pic: array[0..3] of array[0..24] of psdl_surface;
@@ -1583,13 +1559,9 @@ begin
       SDL_MOUSEMOTION:
       begin
         if menu > -1 then menu1 := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x - 5 + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y - 5 + h) then
+        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x - 5 + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y - 5 + h) then
         begin
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 80) +
-            ((round(event.button.y / (resolutiony / screen.h)) - y - 30) div 80) * 5;
+          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 80) + ((round(event.button.y / (resolutiony / screen.h)) - y - 30) div 80) * 5;
           if menu > 24 then menu := -1;
           if menu <> menu1 then
           begin
@@ -1676,7 +1648,8 @@ begin
 
 
     if right = 25 then Result := True
-    else Result := False;
+    else
+      Result := False;
     if Result then
     begin
       sdl_delay(700);

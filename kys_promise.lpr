@@ -24,8 +24,11 @@ program kys_promise;
 
 uses
   SysUtils,
-  LCLIntf, LCLType, LMessages,
-  Forms, Interfaces,
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Forms,
+  Interfaces,
   kys_main in 'kys_main.pas',
   kys_event in 'kys_event.pas',
   kys_battle in 'kys_battle.pas',
@@ -34,18 +37,17 @@ uses
   kys_littlegame in 'kys_littlegame.pas',
   Dialogs;
 
-//{$R kys_promise.res}
+  //{$R kys_promise.res}
 
 
-{$R *.res}
+  {$R *.res}
 
 begin
   // Application.Title := 'KYS';
   // alpplication..Create(kysw).Enabled;
   // form1.Show;
-{$ifndef android}
+  {$ifndef android}
   Application.Initialize;
   Run;
-{$endif}
+  {$endif}
 end.
-

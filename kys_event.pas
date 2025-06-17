@@ -739,8 +739,6 @@ begin
     end;
 
 
-
-
   Cx := y2;
   Cy := x2;
   //SSx:=0;
@@ -2529,8 +2527,6 @@ begin
 end;
 
 //获取功体级别
-
-
 function GetGongtiLevel(person, mnum: integer): integer;
 var
   i: integer;

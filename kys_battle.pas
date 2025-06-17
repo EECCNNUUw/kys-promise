@@ -885,7 +885,6 @@ begin
       x50[28005] := i;
 
 
-
       //为我方且未阵亡, 非自动战斗, 则显示选单
       if Brole[i].frozen >= 100 then
       begin
@@ -1037,7 +1036,6 @@ begin
         Brole[i2] := temp;
       end;
     end;
-
 
 
   for i1 := 0 to 63 do
@@ -3311,8 +3309,6 @@ begin
   def := GetRoleDefence(rnum2, True) + 1;
 
 
-
-
   case Rmagic[mnum].MagicType of
     0: begin
       wpn1 := 0;
@@ -4335,7 +4331,6 @@ begin
 end;
 
 
-
 //解毒
 procedure MedPoision(bnum: integer);
 var
@@ -5042,7 +5037,6 @@ begin
         end;
     end;
   end;
-
 
 
   //自身用毒大于20，寻找敌人放毒
@@ -6803,8 +6797,6 @@ begin
 end;
 
 
-
-
 procedure trymoveUsePoi(var Mx1, My1, Ax1, Ay1: integer; bnum: integer);
 var
   Xlist: array[0..4096] of integer;
@@ -7128,8 +7120,6 @@ begin
   BRole[bnum].Progress := BRole[bnum].Progress - 240;
 
 end;
-
-
 
 
 end.

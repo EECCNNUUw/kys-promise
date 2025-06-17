@@ -27,11 +27,11 @@ interface
 
 uses
   SysUtils,
-{$IFDEF fpc}
+  {$IFDEF fpc}
   LCLIntf, LCLType, LMessages, LConvEncoding, FileUtil,
-{$ELSE}
+  {$ELSE}
   Windows,
-{$ENDIF}
+  {$ENDIF}
   Math,
   Dialogs,
   SDL2,
@@ -41,6 +41,7 @@ uses
   iniFiles,
   //Lua52,
   bass;
+
 type
   {$ifndef fpc}
   puint16 = pword;
@@ -72,7 +73,7 @@ type
     Picnum: integer;
     Shadow: integer;
     Alpha: integer;
-    MixColor: Uint32;
+    MixColor: uint32;
     MixAlpha: integer;
     Positionx, Positiony, Speedx, Speedy: integer;
   end;
@@ -86,21 +87,21 @@ type
       Element: (ListNum, HeadNum, IncLife, UnUse: smallint;
         Name, Nick: array[0..9] of ansichar;
         Sexual, Level: smallint;
-        Exp: Uint16;
+        Exp: uint16;
         CurrentHP, MaxHP, Hurt, Poision, PhyPower: smallint;
-        ExpForItem: Uint16;
+        ExpForItem: uint16;
         Equip: array[0..4] of smallint;
         Gongti: smallint;
         TeamState: smallint;
         Angry: smallint;
-        GongtiExam: Uint16;
+        GongtiExam: uint16;
         Moveable, AddSkillPoint, PetAmount: smallint;
         Impression, Reset, difficulty: smallint;
         SoundDealy: array[0..1] of smallint;
         MPType, CurrentMP, MaxMP: smallint;
         Attack, Speed, Defence, Medcine, UsePoi, MedPoi, DefPoi, Fist, Sword, Knife, Unusual, HidWeapon: smallint;
         Knowledge, Ethics, AttPoi, AttTwice, Repute, Aptitude, PracticeBook: smallint;
-        ExpForBook: Uint16;
+        ExpForBook: uint16;
         Magic, MagLevel: array[0..9] of smallint;
         TakingItem, TakingItemAmount: array[0..3] of smallint);
       Address: (Data: array[0..90] of smallint);
@@ -194,7 +195,6 @@ type
   end;
 
 
-
 //程序重要子程
 procedure Run; stdcall; export;
 procedure Quit;
@@ -253,9 +253,7 @@ procedure MenuQuit;
 procedure XorCount(Data: pbyte; xornum: byte; length: integer);
 procedure MenuDifficult;
 function TitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow: integer): integer;
-procedure ShowTitleCommonScrollMenu(word: puint16; color1, color2: uint32;
-  tx, ty, tw, max, maxshow, menu, menutop: integer);
-
+procedure ShowTitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow, menu, menutop: integer);
 
 
 //医疗, 解毒, 使用物品的效果等
@@ -270,7 +268,7 @@ procedure CheckHotkey(key: cardinal);
 procedure FourPets;
 function PetStatus(r: integer): boolean;
 procedure ShowPetStatus(r, p: integer);
-procedure DrawFrame(x, y, w: integer; color: Uint32);
+procedure DrawFrame(x, y, w: integer; color: uint32);
 procedure PetLearnSkill(r, s: integer);
 procedure ResistTheater;
 procedure ShowSkillMenu(menu: integer);
@@ -278,7 +276,6 @@ procedure ShowSkillMenu(menu: integer);
 //云的初始化和再次出现
 procedure CloudCreate(num: integer);
 procedure CloudCreateOnSide(num: integer);
-
 
 
 //以下用于与delphi兼容
@@ -293,26 +290,26 @@ function FileExistsUTF8(filename: ansistring): boolean; overload;
 
 var
   HW: integer = 0;
-  CHINESE_FONT: PAnsiChar = 'resource/Chinese.ttf';
+  CHINESE_FONT: pansichar = 'resource/Chinese.ttf';
   CHINESE_FONT_SIZE: integer = 20;
-  ENGLISH_FONT: PAnsiChar = 'resource/English.ttf';
+  ENGLISH_FONT: pansichar = 'resource/English.ttf';
   ENGLISH_FONT_SIZE: integer = 18;
   CENTER_X: integer = 320;
   CENTER_Y: integer = 220;
   //文件名定义
-  KDEF_IDX: PAnsiChar = 'resource/kdef.idx';
-  KDEF_GRP: PAnsiChar = 'resource/kdef.grp';
-  TALK_IDX: PAnsiChar = 'resource/talk.idx';
-  TALK_GRP: PAnsiChar = 'resource/talk.grp';
-  NAME_IDX: PAnsiChar = 'resource/name.idx';
-  NAME_GRP: PAnsiChar = 'resource/name.grp';
-  ITEMS_file: PAnsiChar = 'resource/items.Pic';
-  HEADS_file: PAnsiChar = 'resource/heads.Pic';
-  BackGround_file: PAnsiChar = 'resource/BackGround.Pic';
-  GAME_file: PAnsiChar = 'resource/Game.Pic';
-  MOVIE_file: PAnsiChar = 'resource/Begin.pic';
-  Scene_file: PAnsiChar = 'resource/Scene.pic';
-  Skill_file: PAnsiChar = 'resource/Skill.pic';
+  KDEF_IDX: pansichar = 'resource/kdef.idx';
+  KDEF_GRP: pansichar = 'resource/kdef.grp';
+  TALK_IDX: pansichar = 'resource/talk.idx';
+  TALK_GRP: pansichar = 'resource/talk.grp';
+  NAME_IDX: pansichar = 'resource/name.idx';
+  NAME_GRP: pansichar = 'resource/name.grp';
+  ITEMS_file: pansichar = 'resource/items.Pic';
+  HEADS_file: pansichar = 'resource/heads.Pic';
+  BackGround_file: pansichar = 'resource/BackGround.Pic';
+  GAME_file: pansichar = 'resource/Game.Pic';
+  MOVIE_file: pansichar = 'resource/Begin.pic';
+  Scene_file: pansichar = 'resource/Scene.pic';
+  Skill_file: pansichar = 'resource/Skill.pic';
   //使用50指令时是否自动刷新屏幕，0为自动刷新
   AutoRefresh: integer = 0;
 
@@ -337,8 +334,7 @@ var
   MAX_HP: integer = 999; //最大生命
   MAX_MP: integer = 999; //最大内功
   Showanimation: integer = 0;
-  MaxProList: array[43..58] of integer = (200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
-    200, 200, 100, 100, 100, 1);
+  MaxProList: array[43..58] of integer = (200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 100, 100, 100, 1);
   //最大攻击值~最大左右互博值
   SoundVolume: integer = 32;
   LIFE_HURT: integer = 10; //伤害值比例
@@ -383,14 +379,14 @@ var
   //Scene1, SData[CurScene, 1, , Scene3, Scene4, Scene5, Scene6, Scene7, Scene8: array[0..63, 0..63] of smallint;
   //当前场景数据
   //0-地面, 1-建筑, 2-物品, 3-事件, 4-建筑高度, 5-物品高度
-  SceneImg: array[0..2303, 0..1151] of Uint32;
+  SceneImg: array[0..2303, 0..1151] of uint32;
   MaskArray: array[0..2303, 0..1151] of byte;
   ScenePic: array of Tpic;
   build: psdl_surface;
   //场景的图形映像. 实时重画场景效率较低, 故首先生成映像, 需要时载入
   //SceneD: array[0..199, 0..10] of smallint;
   //当前场景事件
-  BFieldImg: array[0..2303, 0..1151] of Uint32;
+  BFieldImg: array[0..2303, 0..1151] of uint32;
   //战场图形映像
   BField: array[0..7, 0..63, 0..63] of smallint;
   //战场数据
@@ -454,7 +450,7 @@ var
   //离开场景的音乐
   MusicName: ansistring;
 
-  MenuString, MenuEngString: array of WideString;
+  MenuString, MenuEngString: array of widestring;
   //选单所使用的字符串
 
   x50: array[-$8000..$7FFF] of smallint;
@@ -514,7 +510,7 @@ var
 
   GLHR: integer = 1; //是否使用OPENGL绘图
   SMOOTH: integer = 1; //平滑设置 0-完全不平滑, 1-仅标准分辨率不平滑, 2-任何时候都使用平滑
-  ScreenFlag: Uint32;
+  ScreenFlag: uint32;
   RESOLUTIONX: integer;
   RESOLUTIONY: integer;
 
@@ -524,7 +520,8 @@ var
 
   CellPhone: integer = 0;
   ScreenRotate: integer = 0;
-  const
+
+const
   //色值蒙版, 注意透明蒙版在创建RGB表面时需设为0
   RMask: uint32 = $FF0000;
   GMask: uint32 = $FF00;
@@ -537,19 +534,17 @@ implementation
 uses kys_event, kys_battle, kys_littlegame, kys_engine;
 
 
-
-
 //初始化字体, 音效, 视频, 启动游戏
 procedure Run;
 var
   p, p1: pansichar;
   title: ansistring;
 begin
-{$IFDEF UNIX}
+  {$IFDEF UNIX}
   AppPath := ExtractFilePath(ParamStr(0));
-{$ELSE}
+  {$ELSE}
   AppPath := '';
-{$ENDIF}
+  {$ENDIF}
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -585,8 +580,7 @@ begin
 
   title := 'The Story Before That Legend v1.22';
   ScreenFlag := SDL_WINDOW_RESIZABLE;
-  window := SDL_CreateWindow(pansichar(title), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    RESOLUTIONX, RESOLUTIONY, ScreenFlag);
+  window := SDL_CreateWindow(pansichar(title), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RESOLUTIONX, RESOLUTIONY, ScreenFlag);
 
   SDL_GetWindowSize(window, @RESOLUTIONX, @RESOLUTIONY);
 
@@ -599,8 +593,7 @@ begin
 
   render := SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED or SDL_RENDERER_TARGETTEXTURE);
   screen := SDL_CreateRGBSurface(ScreenFlag, CENTER_X * 2, CENTER_Y * 2, 32, RMask, GMask, BMask, 0);
-  screenTex := SDL_CreateTexture(render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
-    CENTER_X * 2, CENTER_Y * 2);
+  screenTex := SDL_CreateTexture(render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, CENTER_X * 2, CENTER_Y * 2);
   //prescreen := SDL_CreateRGBSurface(ScreenFlag, CENTER_X * 2, CENTER_Y * 2, 32, RMask, GMask, BMask, 0);
   //prescreen := SDL_DisplayFormat(screen);
   //freshscreen := SDL_CreateRGBSurface(ScreenFlag, CENTER_X * 2, CENTER_Y * 2, 32, RMask, GMask, BMask, 0);
@@ -636,7 +629,7 @@ end;
 procedure StartAmi;
 var
   x, y, i, len: integer;
-  str: WideString;
+  str: widestring;
   p: integer;
 begin
   instruct_14;
@@ -657,11 +650,11 @@ var
   cc: uint16;
 begin
 
-{$IFDEF fpc}
+  {$IFDEF fpc}
   Filename := AppPath + 'kysmod.ini';
-{$ELSE}
+  {$ELSE}
   Filename := ExtractFilePath(ParamStr(0)) + 'kysmod.ini';
-{$ENDIF}
+  {$ENDIF}
 
   Kys_ini := TIniFile.Create(filename);
 
@@ -697,7 +690,9 @@ begin
     RESOLUTIONX := Kys_ini.ReadInteger('Set', 'RESOLUTIONX', 640);
     RESOLUTIONY := Kys_ini.ReadInteger('set', 'RESOLUTIONY', 440);
     str := Kys_ini.ReadString('Set', 'debug', '0');
-    if (str = '我爱玩前传') or (str = 'I like to play Promise') then debug := 1 else debug := 0;
+    if (str = '我爱玩前传') or (str = 'I like to play Promise') then debug := 1
+    else
+      debug := 0;
 
 
     MaxProList[58] := 1;
@@ -949,17 +944,13 @@ begin
         if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
           Quit;
       //如选择第2项, 则退出(所有编号从0开始)
-      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or
-        (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and
-        (event.button.button = sdl_button_left))) and (menu = 2) then
+      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left))) and (menu = 2) then
       begin
         ingame := 1;
         Quit;
       end;
       //选择第0项, 重新开始游戏
-      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or
-        (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and
-        (event.button.button = sdl_button_left))) and (menu = 0) then
+      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left))) and (menu = 0) then
       begin
         if InitialRole then
         begin
@@ -977,12 +968,7 @@ begin
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
       //选择第1项, 读入进度
-      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or
-        (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and
-        (event.button.button = sdl_button_left) and (round(event.button.x / (resolutionx / screen.w)) > x) and
-        (round(event.button.x / (resolutionx / screen.w)) < x + 80) and
-        (round(event.button.y / (resolutiony / screen.h)) > y) and
-        (round(event.button.y / (resolutiony / screen.h)) < y + 60))) and (menu = 1) then
+      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left) and (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 80) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 60))) and (menu = 1) then
       begin
         showmr := True;
 
@@ -1028,10 +1014,7 @@ begin
       //鼠标移动
       if (event.type_ = SDL_MOUSEMOTION) then
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + 80) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + 60) then
+        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 80) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 60) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - y) div 20;
@@ -1042,7 +1025,8 @@ begin
             SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           end;
         end
-        else menu := -1;
+        else
+          menu := -1;
       end;
 
     end;
@@ -1065,12 +1049,12 @@ function InitialRole: boolean;
 var
   i, battlemode2, x, y, t: integer;
   p: array[0..14] of integer;
-  {str,} str0 {, name}: WideString;
+  {str,} str0 {, name}: widestring;
   str: ansistring;
   {$IFDEF fpc}
   Name: ansistring;
   {$ELSE}
-  Name: WideString;
+  Name: widestring;
   {$ENDIF}
   str1: ansistring;
   p0, p1: pansichar;
@@ -1078,11 +1062,11 @@ var
   lan: ansistring;
   input_name: utf8string;
 begin
-{$IFDEF fpc}
+  {$IFDEF fpc}
   lanID := 1028;
-{$ELSE}
+  {$ELSE}
   lanId := GetSystemDefaultLangID;
-{$ENDIF}
+  {$ENDIF}
   battlemode2 := battlemode;
   if (lanId = 2052) or (lanId = 1028) then
   begin
@@ -1152,7 +1136,7 @@ begin
   end;
   //Result := inputquery('Enter name', str, str1);
   input_name := str1;
-  result := EnterString(input_name, CENTER_X - 113, CENTER_Y + 10, 86, 100);
+  Result := EnterString(input_name, CENTER_X - 113, CENTER_Y + 10, 86, 100);
   str1 := input_name;
   if fullscreen = 1 then
   begin
@@ -1169,11 +1153,11 @@ begin
     Name := str1;
     if gametime = 0 then
       Name := '金' + Name;
-{$IFDEF fpc}
+    {$IFDEF fpc}
     str1 := UTF8ToCP936(Name);
-{$ELSE}
+    {$ELSE}
     str1 := unicodetogbk(@Name[1]);
-{$ENDIF}
+    {$ENDIF}
     p0 := @rrole[0].Name;
     p1 := @str1[1];
     for i := 0 to 4 do
@@ -1200,7 +1184,7 @@ end;
 
 procedure ShowRandomAttribute(ran: boolean);
 var
-  str, tip, str0: WideString;
+  str, tip, str0: widestring;
 begin
   str := ' 資質';
   tip := ' 選定屬性後按回車，Esc返回';
@@ -1239,7 +1223,7 @@ end;
 
 function RandomAttribute: boolean;
 var
-  pwd: WideString;
+  pwd: widestring;
   keyvalue: integer;
 begin
   repeat
@@ -1267,7 +1251,6 @@ begin
 end;
 
 
-
 //读入存档, 如为0则读入起始存档
 procedure LoadR(num: integer);
 var
@@ -1275,7 +1258,7 @@ var
   idx, grp, i1, i2, len, len1: integer;
   BasicOffset, RoleOffset, ItemOffset, SceneOffset, MagicOffset, WeiShopOffset, i: integer;
   str: ansistring;
-  str1: WideString;
+  str1: widestring;
   p1, p0: pansichar;
 begin
   SaveNum := num;
@@ -1368,7 +1351,7 @@ var
   sgrp, dgrp, ridx, rgrp, i1, i2, len, SceneAmount: integer;
   BasicOffset, RoleOffset, ItemOffset, SceneOffset, MagicOffset, WeiShopOffset, i: integer;
   //key: uint16;
-  str: WideString;
+  str: widestring;
   Rkey: uint16;
 begin
   Rkey := uint16(random($FFFF));
@@ -1488,7 +1471,7 @@ end;
 //于主地图行走
 procedure Walk;
 var
-  word: array[0..10] of Uint16;
+  word: array[0..10] of uint16;
   x, y, i1, i, Ayp, menu, Axp, walking, Mx1, My1, Mx2, My2, speed, stillcount, needrefresh: integer;
   now, next_time, next_time2, next_time3: uint32;
   keystate: pansichar;
@@ -1536,8 +1519,7 @@ begin
       begin
         Cloud[i].Positionx := Cloud[i].Positionx + Cloud[i].Speedx;
         Cloud[i].Positiony := Cloud[i].Positiony + Cloud[i].Speedy;
-        if (Cloud[i].Positionx > 17279) or (Cloud[i].Positionx < 0) or (Cloud[i].Positiony > 8639) or
-          (Cloud[i].Positiony < 0) then
+        if (Cloud[i].Positionx > 17279) or (Cloud[i].Positionx < 0) or (Cloud[i].Positiony > 8639) or (Cloud[i].Positiony < 0) then
         begin
           CloudCreateOnSide(i);
         end;
@@ -1717,10 +1699,8 @@ begin
         if event.button.button = sdl_button_left then
         begin
           walking := 1;
-          Axp := MX + (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-            round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
-          Ayp := MY + (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-            round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
+          Axp := MX + (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
+          Ayp := MY + (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
           if (ayp >= 0) and (ayp <= 479) and (axp >= 0) and (axp <= 479) {and canWalk(axp, ayp)} then
           begin
             for i := 0 to 479 do
@@ -1782,7 +1762,8 @@ begin
         MFace := 3
       else if sign(liney[nowstep] - My) > 0 then
         MFace := 1
-      else MFace := 2;
+      else
+        MFace := 2;
       MStep := 6 - nowstep mod 6;
 
       Mx := linex[nowstep];
@@ -1838,8 +1819,7 @@ begin
     canwalk := False;
   if (earth[x, y] = 838) or ((earth[x, y] >= 612) and (earth[x, y] <= 670)) then
     canwalk := False;
-  if ((earth[x, y] >= 358) and (earth[x, y] <= 362)) or ((earth[x, y] >= 506) and (earth[x, y] <= 670)) or
-    ((earth[x, y] >= 1016) and (earth[x, y] <= 1022)) then
+  if ((earth[x, y] >= 358) and (earth[x, y] <= 362)) or ((earth[x, y] >= 506) and (earth[x, y] <= 670)) or ((earth[x, y] >= 1016) and (earth[x, y] <= 1022)) then
   begin
     if (Inship = 1) then //isship
     begin
@@ -1874,9 +1854,7 @@ begin
     end;
     InShip := 0;
   end;
-  if ((surface[x, y] div 2 >= 863) and (surface[x, y] div 2 <= 872)) or
-    ((surface[x, y] div 2 >= 852) and (surface[x, y] div 2 <= 854)) or
-    ((surface[x, y] div 2 >= 858) and (surface[x, y] div 2 <= 860)) then
+  if ((surface[x, y] div 2 >= 863) and (surface[x, y] div 2 <= 872)) or ((surface[x, y] div 2 >= 852) and (surface[x, y] div 2 <= 854)) or ((surface[x, y] div 2 >= 858) and (surface[x, y] div 2 <= 860)) then
     canwalk := True;
 end;
 
@@ -2021,7 +1999,7 @@ var
   grp, idx, offset, axp, ayp, just, i3, i1, i2, x, y, old: integer;
   Sx1, Sy1, updatearea, r, s, i, menu, walking, PreScene, speed: integer;
   filename: ansistring;
-  Scenename: WideString;
+  Scenename: widestring;
   now, next_time, next_time2: uint32;
   //UpDate: PSDL_Thread;
 begin
@@ -2091,9 +2069,7 @@ begin
     //next_time:=sdl_getticks;
 
     //检查是否位于出口, 如是则退出
-    if (((sx = RScene[CurScene].ExitX[0]) and (sy = RScene[CurScene].ExitY[0])) or
-      ((sx = RScene[CurScene].ExitX[1]) and (sy = RScene[CurScene].ExitY[1])) or
-      ((sx = RScene[CurScene].ExitX[2]) and (sy = RScene[CurScene].ExitY[2]))) then
+    if (((sx = RScene[CurScene].ExitX[0]) and (sy = RScene[CurScene].ExitY[0])) or ((sx = RScene[CurScene].ExitX[1]) and (sy = RScene[CurScene].ExitY[1])) or ((sx = RScene[CurScene].ExitX[2]) and (sy = RScene[CurScene].ExitY[2]))) then
     begin
       nowstep := -1;
       ReSetEntrance;
@@ -2155,7 +2131,8 @@ begin
           sFace := 1
         else if sign(liney[nowstep] - SX) > 0 then
           SFace := 3
-        else sFace := 0;
+        else
+          sFace := 0;
 
         SStep := SStep + 1;
 
@@ -2207,8 +2184,8 @@ begin
         3: Sx1 := Sx1 + 1;
       end;
       SStep := Sstep + 1;
-          if SStep = 7 then
-            SStep := 1;
+      if SStep = 7 then
+        SStep := 1;
       if canwalkinScene(Sx1, Sy1) then
       begin
         Sx := Sx1;
@@ -2223,26 +2200,26 @@ begin
       //  walking := 0;
       //needrefresh := 1;
       rs := 1;
-        SDL_Delay((5 * GameSpeed) div 10);
-        if (water < 0) then
-          SDL_Delay((10 * GameSpeed) div 10);
-        DrawScene;
+      SDL_Delay((5 * GameSpeed) div 10);
+      if (water < 0) then
+        SDL_Delay((10 * GameSpeed) div 10);
+      DrawScene;
+      nowstep := -1;
+      SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+      CheckEvent3;
+      if (RandomEvent > 0) and (Random(100) = 0) then
+      begin
+        //   saver(6);
+        callevent(RandomEvent);
         nowstep := -1;
-        SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-        CheckEvent3;
-        if (RandomEvent > 0) and (Random(100) = 0) then
-        begin
-          //   saver(6);
-          callevent(RandomEvent);
-          nowstep := -1;
-        end;
+      end;
     end;
 
     case event.type_ of
       SDL_QUITEV:
         if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
           Quit;
-//
+
       SDL_KEYUP:
       begin
         walking := 0;
@@ -2440,10 +2417,8 @@ begin
           if walking = 0 then
           begin
             walking := 1;
-            Ayp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 *
-              (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sx;
-            Axp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 *
-              (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sy;
+            Ayp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sx;
+            Axp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sy;
             if (ayp in [0..63]) and (axp in [0..63]) then
             begin
               for i := 0 to 63 do
@@ -2466,7 +2441,8 @@ begin
 
     if water >= 0 then SDL_Delay((5 * GameSpeed) div 10)
 
-    else SDL_Delay((10 * GameSpeed) div 10);
+    else
+      SDL_Delay((10 * GameSpeed) div 10);
 
     event.key.keysym.sym := 0;
     event.button.button := 0;
@@ -2487,7 +2463,7 @@ end;
 
 procedure ShowSceneName(snum: integer);
 var
-  Scenename: WideString;
+  Scenename: widestring;
   p: pbyte;
   Name: array[0..9] of byte;
   i: integer;
@@ -2501,8 +2477,7 @@ begin
   end;
   Name[9] := 0;
   Scenename := gbktounicode(@Name[0]);
-  drawtextwithrect(@Scenename[1], 320 - length(pansichar(@Name)) * 5 + 7, 100, length(pansichar(@Name)) *
-    10 + 6, colcolor(0, 5), colcolor(0, 7));
+  drawtextwithrect(@Scenename[1], 320 - length(pansichar(@Name)) * 5 + 7, 100, length(pansichar(@Name)) * 10 + 6, colcolor(0, 5), colcolor(0, 7));
   //waitanykey;
   //改变音乐
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
@@ -2517,7 +2492,7 @@ end;
 
 procedure ShowSaveSuccess;
 var
-  Scenename: WideString;
+  Scenename: widestring;
 begin
   //显示场景名
   Scenename := '  保存成功';
@@ -2542,10 +2517,7 @@ begin
   if (SData[CurScene, 3, x, y] >= 0) and (Result) and (DData[CurScene, SData[CurScene, 3, x, y], 0] = 1) then
     Result := False;
   //直接判定贴图范围
-  if ((SData[CurScene, 0, x, y] >= 358) and (SData[CurScene, 0, x, y] <= 362)) or
-    (SData[CurScene, 0, x, y] = 522) or (SData[CurScene, 0, x, y] = 1022) or
-    ((SData[CurScene, 0, x, y] >= 1324) and (SData[CurScene, 0, x, y] <= 1330)) or
-    (SData[CurScene, 0, x, y] = 1348) then
+  if ((SData[CurScene, 0, x, y] >= 358) and (SData[CurScene, 0, x, y] <= 362)) or (SData[CurScene, 0, x, y] = 522) or (SData[CurScene, 0, x, y] = 1022) or ((SData[CurScene, 0, x, y] >= 1324) and (SData[CurScene, 0, x, y] <= 1330)) or (SData[CurScene, 0, x, y] = 1348) then
     Result := False;
   //if SData[CurScene, 0, x, y] = 1358 * 2 then result := true;
 
@@ -2563,10 +2535,7 @@ begin
   if (SData[CurScene, 3, x, y] >= 0) and (Result) and (DData[CurScene, SData[CurScene, 3, x, y], 0] = 1) then
     Result := False;
   //直接判定贴图范围
-  if ((SData[CurScene, 0, x, y] >= 358) and (SData[CurScene, 0, x, y] <= 362)) or
-    (SData[CurScene, 0, x, y] = 522) or (SData[CurScene, 0, x, y] = 1022) or
-    ((SData[CurScene, 0, x, y] >= 1324) and (SData[CurScene, 0, x, y] <= 1330)) or
-    (SData[CurScene, 0, x, y] = 1348) then
+  if ((SData[CurScene, 0, x, y] >= 358) and (SData[CurScene, 0, x, y] <= 362)) or (SData[CurScene, 0, x, y] = 522) or (SData[CurScene, 0, x, y] = 1022) or ((SData[CurScene, 0, x, y] >= 1324) and (SData[CurScene, 0, x, y] <= 1330)) or (SData[CurScene, 0, x, y] = 1348) then
     Result := False;
   //if SData[CurScene, 0, x, y] = 1358 * 2 then result := true;
 
@@ -2662,10 +2631,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22;
@@ -2759,10 +2725,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22;
@@ -2970,10 +2933,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22 + menutop;
@@ -3050,8 +3010,7 @@ begin
           Quit;
       SDL_KEYDown:
       begin
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_right) or
-          (event.key.keysym.sym = sdlk_kp_6) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) or (event.key.keysym.sym = sdlk_kp_4) then
         begin
           if menu = 1 then
             menu := 0
@@ -3100,10 +3059,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
         begin
           menup := menu;
           menu := (round(event.button.x / (resolutionx / screen.w)) - x - 2) div 50;
@@ -3256,7 +3212,7 @@ end;
 //显示主选单
 procedure ShowMenu(menu: integer);
 var
-  word: array[0..5] of WideString;
+  word: array[0..5] of widestring;
   i, max: integer;
 begin
   word[0] := ' 醫療';
@@ -3291,7 +3247,7 @@ end;
 procedure MenuMedcine;
 var
   role1, role2, menu: integer;
-  str: WideString;
+  str: widestring;
 begin
   str := ' 隊員醫療能力';
   drawtextwithrect(@str[1], 80, 30, 132, colcolor($21), colcolor($23));
@@ -3318,7 +3274,7 @@ end;
 procedure MenuMedPoision;
 var
   role1, role2, menu: integer;
-  str: WideString;
+  str: widestring;
 begin
   str := ' 隊員解毒能力';
   drawtextwithrect(@str[1], 80, 30, 132, colcolor($21), colcolor($23));
@@ -3532,10 +3488,7 @@ begin
           //   result := false;
           if where <> 2 then break;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and
-          (round(event.button.x / (resolutionx / screen.w)) < 612) and
-          (round(event.button.y / (resolutiony / screen.h)) > 90) and
-          (round(event.button.y / (resolutiony / screen.h)) < 316) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) > 90) and (round(event.button.y / (resolutiony / screen.h)) < 316) then
         begin
           xp := x;
           yp := y;
@@ -3556,9 +3509,7 @@ begin
             SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           end;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and
-          (round(event.button.x / (resolutionx / screen.w)) < 612) and
-          (round(event.button.y / (resolutiony / screen.h)) > 312) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) > 312) then
         begin
           //atlu := atlu+col;
           y := y + 1;
@@ -3573,9 +3524,7 @@ begin
           showMenuItem(row, col, x, y, atlu);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and
-          (round(event.button.x / (resolutionx / screen.w)) < 612) and
-          (round(event.button.y / (resolutiony / screen.h)) < 90) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) < 90) then
         begin
           if atlu > 0 then
             atlu := atlu - col;
@@ -3625,10 +3574,10 @@ end;
 procedure ShowMenuItem(row, col, x, y, atlu: integer);
 var
   item, i, i1, i2, len, len2, len3, listnum: integer;
-  str: WideString;
-  words: array[0..10] of WideString;
-  words2: array[0..22] of WideString;
-  words3: array[0..13] of WideString;
+  str: widestring;
+  words: array[0..10] of widestring;
+  words2: array[0..22] of widestring;
+  words3: array[0..13] of widestring;
   p2: array[0..22] of integer;
   p3: array[0..13] of integer;
 begin
@@ -3731,8 +3680,7 @@ begin
     end;
   end;
 
-  if (RItemlist[listnum].Amount > 0) and (listnum < MAX_ITEM_AMOUNT) and (listnum >= 0) and
-    (ritem[item].ItemType > 0) then
+  if (RItemlist[listnum].Amount > 0) and (listnum < MAX_ITEM_AMOUNT) and (listnum >= 0) and (ritem[item].ItemType > 0) then
   begin
     len2 := 0;
     for i := 0 to 22 do
@@ -3760,14 +3708,12 @@ begin
         len3 := len3 + 1;
       end;
     end;
-    if (ritem[item].NeedMPType in [0, 1]) and (ritem[item].ItemType <> 3) and
-      (ritem[item].ItemType <> 0) and (ritem[item].ItemType <> 4) then
+    if (ritem[item].NeedMPType in [0, 1]) and (ritem[item].ItemType <> 3) and (ritem[item].ItemType <> 0) and (ritem[item].ItemType <> 4) then
     begin
       p3[0] := 1;
       len3 := len3 + 1;
     end;
-    if (ritem[item].needSex in [0..2]) and (ritem[item].ItemType <> 3) and (ritem[item].ItemType <> 0) and
-      (ritem[item].ItemType <> 4) then
+    if (ritem[item].needSex in [0..2]) and (ritem[item].ItemType <> 3) and (ritem[item].ItemType <> 0) and (ritem[item].ItemType <> 4) then
     begin
       p3[13] := 1;
       len3 := len3 + 1;
@@ -3790,14 +3736,14 @@ begin
           end
         else if ritem[item].Data[45 + i] > 0 then
           str := '+' + format('%d', [ritem[item].Data[45 + i]])
-        else str := format('%d', [ritem[item].Data[45 + i]]);
+        else
+          str := format('%d', [ritem[item].Data[45 + i]]);
 
         drawshadowtext(@words2[i][1], 97 + i1 mod 5 * 98 + 12, i1 div 5 * 20 + 355, colcolor(0, $5), colcolor(0, $7));
         drawshadowtext(@str[1], 147 + i1 mod 5 * 98 + 12, i1 div 5 * 20 + 355, colcolor(0, $64), colcolor(0, $66));
         i1 := i1 + 1;
       end;
     end;
-
 
 
     i1 := 0;
@@ -3820,12 +3766,11 @@ begin
           end
         else if ritem[item].Data[69 + i] > 0 then
           str := ' ' + format('%d', [ritem[item].Data[69 + i]])
-        else str := format('%d', [ritem[item].Data[69 + i]]);
+        else
+          str := format('%d', [ritem[item].Data[69 + i]]);
 
-        drawshadowtext(@words3[i][1], 97 + i1 mod 5 * 98 + 12, ((len2 + 4) div 5 + i1 div 5) *
-          20 + 355, colcolor(0, $FF), colcolor(0, $50));
-        drawshadowtext(@str[1], 147 + i1 mod 5 * 98 + 12, ((len2 + 4) div 5 + i1 div 5) *
-          20 + 355, colcolor(0, $64), colcolor(0, $66));
+        drawshadowtext(@words3[i][1], 97 + i1 mod 5 * 98 + 12, ((len2 + 4) div 5 + i1 div 5) * 20 + 355, colcolor(0, $FF), colcolor(0, $50));
+        drawshadowtext(@str[1], 147 + i1 mod 5 * 98 + 12, ((len2 + 4) div 5 + i1 div 5) * 20 + 355, colcolor(0, $64), colcolor(0, $66));
         i1 := i1 + 1;
       end;
     end;
@@ -3897,7 +3842,7 @@ end;
 procedure UseItem(inum: integer);
 var
   x, y, menu, rnum, p: integer;
-  str, str1: WideString;
+  str, str1: widestring;
 begin
   CurItem := inum;
   if inum = MAP_ID then
@@ -4072,7 +4017,8 @@ begin
 
   if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 2 then
     Aptitude := 100
-  else Aptitude := Rrole[rnum].Aptitude;
+  else
+    Aptitude := Rrole[rnum].Aptitude;
 
   if sign(Ritem[inum].NeedAptitude) * Aptitude < Ritem[inum].NeedAptitude then
     Result := False;
@@ -4119,7 +4065,7 @@ end;
 //查看状态选单
 procedure MenuStatus;
 var
-  str: WideString;
+  str: widestring;
   menu: integer;
 begin
   str := ' 查看隊員狀態';
@@ -4141,10 +4087,10 @@ var
   i, n, magicnum, Aptitude, mlevel, needexp, x, y: integer;
   p: array[0..10] of integer;
   addatk, adddef, addspeed: integer;
-  str: WideString;
-  strs: array[0..21] of WideString;
+  str: widestring;
+  strs: array[0..21] of widestring;
   color1, color2: uint32;
-  Name: WideString;
+  Name: widestring;
 begin
   strs[0] := ' 等級';
   strs[1] := ' 生命';
@@ -4365,7 +4311,8 @@ begin
         end;
     if CheckEquipSet(Rrole[rnum].equip[0], Rrole[rnum].equip[1], Rrole[rnum].equip[2], Rrole[rnum].equip[3]) = 2 then
       Aptitude := 100
-    else Aptitude := Rrole[rnum].Aptitude;
+    else
+      Aptitude := Rrole[rnum].Aptitude;
     if Ritem[Rrole[rnum].PracticeBook].NeedExp > 0 then
       needexp := mlevel * (Ritem[Rrole[rnum].PracticeBook].NeedExp * (8 - Aptitude div 15)) div 2
     else
@@ -4498,10 +4445,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 80) and
-          (round(event.button.x / (resolutionx / screen.w)) < 127) and
-          (round(event.button.y / (resolutiony / screen.h)) > 47) and
-          (round(event.button.y / (resolutiony / screen.h)) < 120) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= 80) and (round(event.button.x / (resolutionx / screen.w)) < 127) and (round(event.button.y / (resolutiony / screen.h)) > 47) and (round(event.button.y / (resolutiony / screen.h)) < 120) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - 32) div 22;
@@ -4521,7 +4465,7 @@ end;
 //显示系统选单
 procedure ShowMenuSystem(menu: integer);
 var
-  word: array[0..3] of WideString;
+  word: array[0..3] of widestring;
   i: integer;
 begin
   word[0] := ' 讀取';
@@ -4641,7 +4585,7 @@ end;
 //医疗的效果
 procedure EffectMedcine(role1, role2: integer);
 var
-  word: WideString;
+  word: widestring;
   addlife: integer;
 begin
   if Rrole[role1].PhyPower < 50 then exit;
@@ -4663,7 +4607,7 @@ end;
 //解毒的效果
 procedure EffectMedPoision(role1, role2: integer);
 var
-  word: WideString;
+  word: widestring;
   minuspoi: integer;
 begin
   if Rrole[role1].PhyPower < 50 then exit;
@@ -4684,9 +4628,9 @@ end;
 procedure EatOneItem(rnum, inum: integer);
 var
   i, p, l, x, y: integer;
-  word: array[0..23] of WideString;
+  word: array[0..23] of widestring;
   addvalue, rolelist: array[0..23] of integer;
-  str: WideString;
+  str: widestring;
 begin
 
   word[0] := ' 增加生命';
@@ -4847,7 +4791,8 @@ begin
       if (rrole[rnum].Data[rolelist[i]] <> 2) then rrole[rnum].Data[rolelist[i]] := addvalue[i];
       if addvalue[i] = 0 then str := word[i] + ' 陽性'
       else if addvalue[i] = 1 then str := word[i] + ' 陰性'
-      else str := word[i] + ' 調和';
+      else
+        str := word[i] + ' 調和';
       drawshadowtext(@str[1], 83 + x + (1 - (where div 2)) * 180, 124 + y + p * 22, colcolor(5), colcolor(7));
       p := p + 1;
     end;
@@ -4926,8 +4871,7 @@ begin
       end;
       3:
       begin
-        instruct_3([e[i + 1], e[i + 2], e[i + 3], e[i + 4], e[i + 5], e[i + 6], e[i + 7],
-          e[i + 8], e[i + 9], e[i + 10], e[i + 11], e[i + 12], e[i + 13]]);
+        instruct_3([e[i + 1], e[i + 2], e[i + 3], e[i + 4], e[i + 5], e[i + 6], e[i + 7], e[i + 8], e[i + 9], e[i + 10], e[i + 11], e[i + 12], e[i + 13]]);
         i := i + 14;
       end;
       4:
@@ -5342,10 +5286,7 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and
-            (round(event.button.x / (resolutionx / screen.w)) < 90) and
-            (round(event.button.y / (resolutiony / screen.h)) > 20) and
-            (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
+          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and (round(event.button.x / (resolutionx / screen.w)) < 90) and (round(event.button.y / (resolutiony / screen.h)) > 20) and (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
           begin
             r1 := r;
             r := (round(event.button.y / (resolutiony / screen.h)) - 20) div 23;
@@ -5363,10 +5304,7 @@ begin
       begin
         if (round(event.button.x / (resolutionx / screen.w)) < 120) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and
-            (round(event.button.x / (resolutionx / screen.w)) < 90) and
-            (round(event.button.y / (resolutiony / screen.h)) >= 20) and
-            (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
+          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and (round(event.button.x / (resolutionx / screen.w)) < 90) and (round(event.button.y / (resolutiony / screen.h)) >= 20) and (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
           begin
             r1 := r;
             r := (round(event.button.y / (resolutiony / screen.h)) - 20) div 23;
@@ -5476,10 +5414,7 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-            (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and
-            (round(event.button.y / (resolutiony / screen.h)) > y) and
-            (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
+          if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
           begin
             menup := menu;
             menu := (round(event.button.x / (resolutionx / screen.w)) - x) div w;
@@ -5501,10 +5436,7 @@ begin
           Result := True;
           break;
         end
-        else if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
+        else if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
         begin
           menup := menu;
           menu := (round(event.button.x / (resolutionx / screen.w)) - x) div w;
@@ -5525,8 +5457,8 @@ end;
 procedure ShowPetStatus(r, p: integer);
 var
   i, x, y, w, col1, col2: integer;
-  words: array[1..5, 0..4] of WideString;
-  str: WideString;
+  words: array[1..5, 0..4] of widestring;
+  str: widestring;
 begin
   ShowSkillMenu(r - 1);
   x := 100;
@@ -5584,12 +5516,7 @@ begin
   str := ' 剩餘技能點數：';
   rrole[0].AddSkillPoint := min(rrole[0].AddSkillPoint, 10);
   DrawShadowText(@str[1], 180 + 40, 130 - 60, colcolor(0, 5), colcolor(0, 7));
-  str := format('%3d', [rrole[0].AddSkillPoint + rrole[0].level - rrole[1].Magic[0] -
-    rrole[2].Magic[0] - rrole[3].Magic[0] - rrole[4].Magic[0] - rrole[5].Magic[0] -
-    (rrole[1].Magic[1] + rrole[2].Magic[1] + rrole[3].Magic[1] + rrole[4].Magic[1] + rrole[5].Magic[1]) *
-    2 - (rrole[1].Magic[2] + rrole[2].Magic[2] + rrole[3].Magic[2] + rrole[4].Magic[2] + rrole[5].Magic[2]) *
-    3 - (rrole[1].Magic[3] + rrole[2].Magic[3] + rrole[3].Magic[3] + rrole[4].Magic[3] + rrole[5].Magic[3]) *
-    4 - (rrole[1].Magic[4] + rrole[2].Magic[4] + rrole[3].Magic[4] + rrole[4].Magic[4] + rrole[5].Magic[4]) * 5]);
+  str := format('%3d', [rrole[0].AddSkillPoint + rrole[0].level - rrole[1].Magic[0] - rrole[2].Magic[0] - rrole[3].Magic[0] - rrole[4].Magic[0] - rrole[5].Magic[0] - (rrole[1].Magic[1] + rrole[2].Magic[1] + rrole[3].Magic[1] + rrole[4].Magic[1] + rrole[5].Magic[1]) * 2 - (rrole[1].Magic[2] + rrole[2].Magic[2] + rrole[3].Magic[2] + rrole[4].Magic[2] + rrole[5].Magic[2]) * 3 - (rrole[1].Magic[3] + rrole[2].Magic[3] + rrole[3].Magic[3] + rrole[4].Magic[3] + rrole[5].Magic[3]) * 4 - (rrole[1].Magic[4] + rrole[2].Magic[4] + rrole[3].Magic[4] + rrole[4].Magic[4] + rrole[5].Magic[4]) * 5]);
   DrawShadowText(@str[1], 180 + 140 + 40, 130 - 60, colcolor(0, 5), colcolor(0, 7));
 
   for i := 0 to 4 do
@@ -5618,7 +5545,7 @@ begin
 
 end;
 
-procedure DrawFrame(x, y, w: integer; color: Uint32);
+procedure DrawFrame(x, y, w: integer; color: uint32);
 var
   i: integer;
 begin
@@ -5647,14 +5574,7 @@ begin
     menustring[1] := ' 取消';
 
 
-    if ((s = 0) or (rrole[r].Magic[s - 1] > 0)) and
-      (s < (rrole[0].AddSkillPoint + rrole[0].level - rrole[1].Magic[0] - rrole[2].Magic[0] -
-      rrole[3].Magic[0] - rrole[4].Magic[0] - rrole[5].Magic[0] - (rrole[1].Magic[1] +
-      rrole[2].Magic[1] + rrole[3].Magic[1] + rrole[4].Magic[1] + rrole[5].Magic[1]) * 2 -
-      (rrole[1].Magic[2] + rrole[2].Magic[2] + rrole[3].Magic[2] + rrole[4].Magic[2] + rrole[5].Magic[2]) *
-      3 - (rrole[1].Magic[3] + rrole[2].Magic[3] + rrole[3].Magic[3] + rrole[4].Magic[3] + rrole[5].Magic[3]) *
-      4 - (rrole[1].Magic[4] + rrole[2].Magic[4] + rrole[3].Magic[4] + rrole[4].Magic[4] +
-      rrole[5].Magic[4]) * 5)) then
+    if ((s = 0) or (rrole[r].Magic[s - 1] > 0)) and (s < (rrole[0].AddSkillPoint + rrole[0].level - rrole[1].Magic[0] - rrole[2].Magic[0] - rrole[3].Magic[0] - rrole[4].Magic[0] - rrole[5].Magic[0] - (rrole[1].Magic[1] + rrole[2].Magic[1] + rrole[3].Magic[1] + rrole[4].Magic[1] + rrole[5].Magic[1]) * 2 - (rrole[1].Magic[2] + rrole[2].Magic[2] + rrole[3].Magic[2] + rrole[4].Magic[2] + rrole[5].Magic[2]) * 3 - (rrole[1].Magic[3] + rrole[2].Magic[3] + rrole[3].Magic[3] + rrole[4].Magic[3] + rrole[5].Magic[3]) * 4 - (rrole[1].Magic[4] + rrole[2].Magic[4] + rrole[3].Magic[4] + rrole[4].Magic[4] + rrole[5].Magic[4]) * 5)) then
       if StadySkillMenu(x + 30 + w * s, y + 18, 98) = 0 then
       begin
         rrole[r].Magic[s] := 1;
@@ -5668,7 +5588,7 @@ end;
 procedure ResistTheater;
 var
   i: integer;
-  str: array[0..9] of WideString;
+  str: array[0..9] of widestring;
 begin
 
 end;
@@ -5682,9 +5602,9 @@ begin
       Entrance[i1, i2] := -1;
   for i := 0 to length(RScene) - 1 do
   begin
-    if InRegion(RScene[i].MainEntranceX1,0,479) and InRegion(RScene[i].MainEntranceY1,0,479) then      
+    if InRegion(RScene[i].MainEntranceX1, 0, 479) and InRegion(RScene[i].MainEntranceY1, 0, 479) then
       Entrance[RScene[i].MainEntranceX1, RScene[i].MainEntranceY1] := i;
-    if InRegion(RScene[i].MainEntranceX2,0,479) and InRegion(RScene[i].MainEntranceY2,0,479) then
+    if InRegion(RScene[i].MainEntranceX2, 0, 479) and InRegion(RScene[i].MainEntranceY2, 0, 479) then
       Entrance[RScene[i].MainEntranceX2, RScene[i].MainEntranceY2] := i;
   end;
 end;
@@ -5752,8 +5672,7 @@ begin
           Quit;
       SDL_KEYDown:
       begin
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) or
-          (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
         begin
           if menu = 1 then
             menu := 0
@@ -5798,10 +5717,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
         begin
           menup := menu;
           menu := (round(event.button.x / (resolutionx / screen.w)) - x - 2) div 50;
@@ -5828,7 +5744,7 @@ end;
 
 procedure MenuDifficult;
 var
-  str: WideString;
+  str: widestring;
   menu: integer;
 begin
   str := ' 選擇難度';
@@ -6012,10 +5928,7 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and
-          (round(event.button.x / (resolutionx / screen.w)) < x + w) and
-          (round(event.button.y / (resolutiony / screen.h)) > y) and
-          (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
         begin
           menup := menu;
           menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22 + menutop;
@@ -6039,10 +5952,7 @@ begin
 end;
 
 
-
-
-procedure ShowTitleCommonScrollMenu(word: puint16; color1, color2: uint32;
-  tx, ty, tw, max, maxshow, menu, menutop: integer);
+procedure ShowTitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow, menu, menutop: integer);
 var
   i, p, m, x, y, w: integer;
 begin
@@ -6081,14 +5991,14 @@ end;
 procedure CloudCreate(num: integer);
 begin
   CloudCreateOnSide(num);
-  if inregion(num ,low(Cloud),high(Cloud)) then
+  if inregion(num, low(Cloud), high(Cloud)) then
     Cloud[num].Positionx := random(17280);
 
 end;
 
 procedure CloudCreateOnSide(num: integer);
 begin
-  if inregion(num ,low(Cloud),high(Cloud)) then
+  if inregion(num, low(Cloud), high(Cloud)) then
   begin
     Cloud[num].Picnum := random(9);
     Cloud[num].Shadow := 0;
@@ -6101,7 +6011,6 @@ begin
     Cloud[num].Speedy := 0;
   end;
 end;
-
 
 
 //以下用于与delphi兼容
