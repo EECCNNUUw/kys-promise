@@ -1405,14 +1405,8 @@ begin
   t := sdl_getticks;
   while (SDL_pollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_KEYUP:
         if (event.key.keysym.sym = sdlk_escape) then break;
     end;
@@ -3920,14 +3914,8 @@ begin
 
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym >= sdlk_0) and (event.key.keysym.sym <= sdlk_9) then
@@ -4298,13 +4286,7 @@ begin
   event.button.button := 0;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-    {if event.type_ = SDL_VIDEORESIZE then
-    begin
-      ResizeWindow(event.resize.w, event.resize.h);
-    end; }
-    if (event.type_ = SDL_QUITEV) then
-      if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-        Quit;
+    CheckBasicEvent;
     if (event.type_ = SDL_KEYUP) then
     begin
       if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
@@ -4838,14 +4820,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_KP_4) or (event.key.keysym.sym = sdlk_KP_6) then

@@ -103,16 +103,8 @@ begin
         break;
       end;
     end;
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-      begin
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      end;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         //now := sdl_getticks;
@@ -588,15 +580,8 @@ begin
     drawshadowtext(@word[1], 570, 393, colcolor(0, 255), colcolor(0, 111));
     word := IntToStr(aim);
     drawshadowtext(@word[1], 570, 371, colcolor(0, 255), colcolor(0, 111));
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
@@ -839,13 +824,7 @@ begin
     begin
       while (SDL_WaitEvent(@event) >= 0) do
       begin
-        if (event.type_ = SDL_QUITEV) then
-          if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-            Quit;
-        {if event.type_ = SDL_VIDEORESIZE then
-        begin
-          ResizeWindow(event.resize.w, event.resize.h);
-        end;}
+        CheckBasicEvent;
         if (event.type_ = SDL_mousebuttonUP) then
         begin
           for i := 0 to acunum - 1 do
@@ -956,14 +935,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_MOUSEMOTION:
       begin
         if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
@@ -1103,14 +1076,8 @@ begin
 
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_MOUSEMOTION:
       begin
         if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
@@ -1269,15 +1236,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, 640, 440);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_KEYUP:
       begin
         if event.key.keysym.sym = sdlk_escape then
@@ -1497,14 +1457,8 @@ begin
 
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYUP:
       begin
         menu1 := menu;

@@ -7,7 +7,7 @@ interface
 uses
   SysUtils,
   {$IFDEF fpc}
-  LCLIntf, LCLType, LMessages, LConvEncoding, FileUtil,
+  LCLIntf, LCLType, LConvEncoding, FileUtil,
   {$ENDIF}
   {$IFDEF mswindows}
   Windows,
@@ -178,6 +178,9 @@ function InRegion(x, x0, x1: integer): boolean; overload;
 procedure ConsoleLog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
 procedure ConsoleLog(formatstring: string = ''; cr: boolean = True); overload;
 
+procedure DrawVirtualKey;
+function CheckBasicEvent: uint32;
+procedure QuitConfirm;
 
 implementation
 
@@ -1883,13 +1886,18 @@ procedure Redraw;
 var
   i: integer;
 begin
-
   case where of
     0: DrawMMap;
     1: DrawScene;
     2: DrawWholeBField;
-    3: display_imgfromSurface(BEGIN_PIC.pic, 0, 0);
-    4: display_imgfromSurface(DEATH_PIC.pic, 0, 0);
+    3: begin
+      display_imgfromSurface(BEGIN_PIC.pic, 0, 0);
+      DrawVirtualKey;
+    end;
+    4: begin
+      display_imgfromSurface(DEATH_PIC.pic, 0, 0);
+      DrawVirtualKey;
+    end;
   end;
 
 end;
@@ -2002,6 +2010,7 @@ begin
     end;
 
   DrawClouds;
+  DrawVirtualKey;
 end;
 
 //画场景到屏幕
@@ -2037,7 +2046,7 @@ begin
     word := formatfloat('0', time div 60) + ':' + formatfloat('00', time mod 60);
     drawshadowtext(@word[1], 5, 5, colcolor(0, 5), colcolor(0, 7));
   end;
-
+  DrawVirtualKey;
 end;
 //画不含主角的场景(与DrawSceneByCenter相同)
 procedure DrawSceneWithoutRole(x, y: integer);
@@ -3042,14 +3051,8 @@ begin
   NewShowStatus(Teamlist[menu]);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - 1;
@@ -3321,14 +3324,8 @@ begin
   NewShowMagic(teamlist[menu]);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - 1;
@@ -3415,13 +3412,8 @@ begin
   end;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
@@ -4023,13 +4015,8 @@ begin
   end;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
@@ -4172,13 +4159,8 @@ begin
   end;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
@@ -4449,14 +4431,8 @@ begin
   //SDL_EnableKeyRepeat(10, 100);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -4634,14 +4610,8 @@ begin
   NewShowSelect(1, menu, word, 97);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -4733,14 +4703,8 @@ begin
   NewShowSelect(0, menu, word, 81);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -4851,14 +4815,8 @@ begin
   NewShowSelect(2, menu, word, w);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -4947,14 +4905,8 @@ begin
   NewShowSelect(3, menu, word, w);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -5124,16 +5076,8 @@ begin
     n := n + 1;
     if n = 1000 then
       n := 0;
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      //方向键使用压下按键事件
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end;}
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_escape) or (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then break;
@@ -5241,14 +5185,8 @@ begin
 
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-      {SDL_VIDEORESIZE:
-      begin
-        ResizeWindow(event.resize.w, event.resize.h);
-      end; }
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -5731,10 +5669,8 @@ begin
       begin
         while SDL_PollEVENT(@event) > 0 do
         begin
+          CheckBasicEvent;
           case event.type_ of
-            SDL_QUITEV:
-              if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-                Quit;
             //方向键使用压下按键事件
             SDL_KEYUP:
             begin
@@ -5762,10 +5698,8 @@ begin
       begin
         while SDL_PollEVENT(@event) > 0 do
         begin
+          CheckBasicEvent;
           case event.type_ of
-            SDL_QUITEV:
-              if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-                Quit;
             //方向键使用压下按键事件
             SDL_KEYUP:
             begin
@@ -5835,10 +5769,8 @@ begin
 
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -6131,10 +6063,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   while SDL_WaitEvent(@event) >= 0 do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -6259,10 +6189,8 @@ begin
   showSelectItemUser(x, y, inum, menu, len, @teammatelist[0]);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -7158,6 +7086,249 @@ var
   str: utf8string;
 begin
   SDL_log('%s', [@formatstring[1]]);
+end;
+
+procedure DrawVirtualKey;
+var
+  u, d, l, r: integer;
+  rect: TSDL_Rect;
+begin
+  if ShowVirtualKey <> 0 then
+  begin
+    u := 128;
+    d := 128;
+    l := 128;
+    r := 128;
+    case VirtualKeyValue of
+      SDLK_UP: u := 0;
+      SDLK_LEFT: l := 0;
+      SDLK_DOWN: d := 0;
+      SDLK_RIGHT: r := 0;
+    end;
+    SDL_SetSurfaceAlphaMod(VirtualKeyU, 255 - u);
+    SDL_SetSurfaceAlphaMod(VirtualKeyD, 255 - d);
+    SDL_SetSurfaceAlphaMod(VirtualKeyL, 255 - l);
+    SDL_SetSurfaceAlphaMod(VirtualKeyR, 255 - r);
+    SDL_SetSurfaceAlphaMod(VirtualKeyA, 128);
+    SDL_SetSurfaceAlphaMod(VirtualKeyB, 128);
+
+    rect.x := VirtualKeyX;
+    rect.y := VirtualKeyY;
+    SDL_BlitSurface(VirtualKeyU, nil, screen, @rect);
+
+    rect.x := VirtualKeyX - VirtualKeySize;
+    rect.y := VirtualKeyY + VirtualKeySize;
+    SDL_BlitSurface(VirtualKeyL, nil, screen, @rect);
+
+    rect.x := VirtualKeyX;
+    SDL_BlitSurface(VirtualKeyD, nil, screen, @rect);
+
+    rect.x := VirtualKeyX + VirtualKeySize;
+    SDL_BlitSurface(VirtualKeyR, nil, screen, @rect);
+
+    rect.x := 0;
+    rect.y := 0;
+    SDL_BlitSurface(VirtualKeyB, nil, screen, @rect);
+
+    rect.x := CENTER_X * 2 - 100;
+    rect.y := CENTER_Y * 2 - 100;
+    SDL_BlitSurface(VirtualKeyA, nil, screen, @rect);
+  end;
+end;
+
+
+function CheckBasicEvent: uint32;
+var
+  i, x, y: integer;
+  msCount: uint32;
+  msWait: uint32;
+
+  function inReturn(x, y: integer): boolean; inline;
+  begin
+    Result := (x > CENTER_X * 2 - 100) and (y > CENTER_Y * 2 - 100);
+  end;
+
+  function inEscape(x, y: integer): boolean; inline;
+  begin
+    Result := (x < 100) and (y < 100);
+  end;
+
+  function inSwitchShowVirtualKey(x, y: integer): boolean; inline;
+  begin
+    Result := (x > CENTER_X * 2 - 100) and (y < 100);
+    Result := False;
+  end;
+
+  function InRegion(x1, y1, x, y, w, h: integer): boolean;
+  begin
+    Result := (x1 >= x) and (y1 >= y) and (x1 < x + w) and (y1 < y + h);
+  end;
+
+  function inVirtualKey(x, y: integer; var key: uint32): uint32;
+  begin
+    Result := 0;
+    if InRegion(x, y, VirtualKeyX, VirtualKeyY, VirtualKeySize, VirtualKeySize) then
+      Result := SDLK_UP;
+    if InRegion(x, y, VirtualKeyX - VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
+      Result := SDLK_LEFT;
+    if InRegion(x, y, VirtualKeyX, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
+      Result := SDLK_DOWN;
+    if InRegion(x, y, VirtualKeyX + VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
+      Result := SDLK_RIGHT;
+    key := Result;
+  end;
+
+begin
+  //if not ((LoadingTiles) or (LoadingScene)) then
+  SDL_FlushEvent(SDL_MOUSEWHEEL);
+  SDL_FlushEvent(SDL_JOYAXISMOTION);
+  SDL_FlushEvent(SDL_FINGERMOTION);
+  //SDL_FlushEvent(SDL_FINGERDOWN);
+  //SDL_FlushEvent(SDL_FINGERUP);
+  if CellPhone = 1 then
+    SDL_FlushEvent(SDL_MOUSEMOTION);
+  //writeln(inttohex(event.type_, 4));
+  //JoyAxisMouse;
+  Result := event.type_;
+  case event.type_ of
+    SDL_JOYHATMOTION:
+    begin
+      event.type_ := SDL_KEYDOWN;
+      case event.jhat.Value of
+        SDL_HAT_UP: event.key.keysym.sym := SDLK_UP;
+        SDL_HAT_DOWN: event.key.keysym.sym := SDLK_DOWN;
+        SDL_HAT_LEFT: event.key.keysym.sym := SDLK_LEFT;
+        SDL_HAT_RIGHT: event.key.keysym.sym := SDLK_RIGHT;
+      end;
+    end;
+    SDL_FINGERUP: ;
+    SDL_MULTIGESTURE: ;
+    SDL_QUITEV: QuitConfirm;
+    SDL_WindowEvent:
+    begin
+      if event.window.event = SDL_WINDOWEVENT_RESIZED then
+      begin
+        ResizeWindow(event.window.data1, event.window.data2);
+      end;
+    end;
+    SDL_APP_DIDENTERFOREGROUND: PlayMP3(nowmusic, -1);
+    SDL_APP_DIDENTERBACKGROUND: StopMP3();
+    {SDL_MOUSEBUTTONDOWN:
+      if (CellPhone = 1) and (event.button.button = SDL_BUTTON_LEFT) then
+      begin
+      SDL_GetMouseState(@x, @y);
+      end;}
+    SDL_MOUSEMOTION:
+    begin
+      if CellPhone = 1 then
+      begin
+        FingerCount := 0;
+        SDL_GetMouseState2(x, y);
+        if inEscape(x, y) or inReturn(x, y) then
+          event.type_ := 0;
+        inVirtualKey(x, y, VirtualKeyValue);
+      end;
+    end;
+    SDL_MOUSEBUTTONDOWN:
+    begin
+      if (CellPhone = 1) and (showVirtualKey <> 0) then
+      begin
+        SDL_GetMouseState2(x, y);
+        inVirtualKey(x, y, VirtualKeyValue);
+        if VirtualKeyValue <> 0 then
+        begin
+          event.type_ := SDL_KEYDOWN;
+          event.key.keysym.sym := VirtualKeyValue;
+        end;
+      end;
+    end;
+    SDL_KEYUP, SDL_MOUSEBUTTONUP:
+    begin
+      if (CellPhone = 1) and (event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = SDL_BUTTON_LEFT) then
+      begin
+        SDL_GetMouseState2(x, y);
+        if inEscape(x, y) then
+        begin
+          //event.button.x := RESOLUTIONX div 2;
+          //event.button.y := RESOLUTIONY div 2;
+          event.button.button := SDL_BUTTON_RIGHT;
+          event.key.keysym.sym := SDLK_ESCAPE;
+          ConsoleLog('Change to escape');
+        end
+        else if inReturn(x, y) then
+        begin
+          //event.button.x := RESOLUTIONX div 2;
+          //event.button.y := RESOLUTIONY div 2;
+          event.type_ := SDL_KEYUP;
+          event.key.keysym.sym := SDLK_RETURN;
+          ConsoleLog('Change to return');
+        end
+        else if (showVirtualKey <> 0) and (inVirtualKey(x, y, VirtualKeyValue) <> 0) then
+        begin
+          if VirtualKeyValue <> 0 then
+          begin
+            event.type_ := SDL_KEYUP;
+            event.key.keysym.sym := VirtualKeyValue;
+          end;
+        end
+        else if inSwitchShowVirtualKey(x, y) then
+        begin
+          showVirtualKey := not showVirtualKey;
+        end
+        //手机在战场仅有确认键有用
+        else if (where = 2) {and (BattleSelecting)} then
+        begin
+          event.button.button := 0;
+        end;
+        //第二指不触发事件
+        if FingerCount >= 1 then
+          event.button.button := 0;
+      end;
+      if (where = 2) and ((event.key.keysym.sym = SDLK_ESCAPE) or (event.button.button = SDL_BUTTON_RIGHT)) then
+      begin
+        for i := 0 to BRoleAmount - 1 do
+        begin
+          if Brole[i].Team = 0 then
+            Brole[i].Auto := 0;
+        end;
+      end;
+      if event.key.keysym.sym = SDLK_KP_ENTER then
+        event.key.keysym.sym := SDLK_RETURN;
+    end;
+  end;
+  //CheckRenderTextures;
+end;
+
+procedure QuitConfirm;
+var
+  tempscr: PSDL_Surface;
+begin
+  if (EXIT_GAME = 0) or (AskingQuit = True) then
+  begin
+    if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
+      Quit;
+  end
+  else
+  begin
+    if AskingQuit then
+      exit;
+    AskingQuit := True;
+    tempscr := SDL_ConvertSurface(screen, screen.format, screen.flags);
+    SDL_BlitSurface(tempscr, nil, screen, nil);
+    DrawRectangleWithoutFrame(0, 0, screen.w, screen.h, 0, 50);
+    SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+    setlength(menustring, 2);
+    menuString[0] := ' 取消';
+    menuString[1] := ' 確認';
+    if CommonMenu(CENTER_X * 2 - 50, 2, 45, 1) = 1 then
+      Quit;
+    Redraw();
+    SDL_BlitSurface(tempscr, nil, screen, nil);
+    SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+    SDL_FreeSurface(tempscr);
+    AskingQuit := False;
+  end;
+
 end;
 
 end.

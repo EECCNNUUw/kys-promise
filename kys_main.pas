@@ -521,6 +521,20 @@ var
   CellPhone: integer = 0;
   ScreenRotate: integer = 0;
 
+  FingerCount: integer = 0; //双指操作计数
+  FingerTick: uint32 = 0; //双指操作间隔
+
+  VirtualKeyU, VirtualKeyD, VirtualKeyL, VirtualKeyR, VirtualKeyA, VirtualKeyB: PSDL_Surface;
+  //虚拟按键相关
+  ShowVirtualKey: integer = 0;
+  VirtualKeyValue: uint32 = 0;
+  VirtualKeyX: integer = 150;
+  VirtualKeyY: integer = 250;
+  VIrtualKeySize: integer = 60;
+
+  EXIT_GAME: integer = 1; //退出时的提问方式
+  AskingQuit: boolean = False; //是否正在提问退出
+
 const
   //色值蒙版, 注意透明蒙版在创建RGB表面时需设为0
   RMask: uint32 = $FF0000;
@@ -557,7 +571,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-
+  CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -707,10 +721,28 @@ begin
     else
       debug := 0;
 
-
     MaxProList[58] := 1;
     setlength(ITEM_PIC, MAX_ITEM_AMOUNT);
 
+    if CellPhone <> 0 then
+    begin
+      ShowVirtualKey := Kys_ini.ReadInteger('system', 'Virtual_Key', 1);
+      VirtualKeyX := Kys_ini.ReadInteger('system', 'Virtual_Key_X', 80);
+      VirtualKeyY := Kys_ini.ReadInteger('system', 'Virtual_Key_Y', 250);
+      if FileExists(AppPath + 'resource/u.png') then
+      begin
+        VirtualKeyU := IMG_Load(putf8char(AppPath + 'resource/u.png'));
+        VirtualKeyD := IMG_Load(putf8char(AppPath + 'resource/d.png'));
+        VirtualKeyL := IMG_Load(putf8char(AppPath + 'resource/l.png'));
+        VirtualKeyR := IMG_Load(putf8char(AppPath + 'resource/r.png'));
+        VirtualKeyA := IMG_Load(putf8char(AppPath + 'resource/a.png'));
+        VirtualKeyB := IMG_Load(putf8char(AppPath + 'resource/b.png'));
+      end
+      else
+        ShowVirtualKey := 0;
+    end
+    else
+      ShowVirtualKey := 0;
   finally
     //Kys_ini.Free;
   end;
@@ -952,10 +984,7 @@ begin
   begin
     while (SDL_WaitEvent(@event) >= 0) do
     begin
-      //关闭窗口事件
-      if event.type_ = SDL_QUITEV then
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
+      CheckBasicEvent;
       //如选择第2项, 则退出(所有编号从0开始)
       if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left))) and (menu = 2) then
       begin
@@ -1441,9 +1470,7 @@ begin
   event.button.button := 0;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-    if (event.type_ = SDL_QUITEV) then
-      if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-        Quit;
+    CheckBasicEvent;
     if (event.type_ = SDL_KEYUP) or (event.type_ = SDL_mousebuttonUP) then
       if (event.key.keysym.sym <> 0) or (event.button.button <> 0) then
         break;
@@ -1460,9 +1487,7 @@ begin
   event.button.button := 0;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-    if (event.type_ = SDL_QUITEV) then
-      if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-        Quit;
+    CheckBasicEvent;
     if (event.type_ = SDL_KEYUP) and (event.key.keysym.sym <> 0) then
     begin
       keycode^ := event.key.keysym.sym;
@@ -1559,10 +1584,9 @@ begin
       //needrefresh := 1;
     end;
 
+    CheckBasicEvent;
+
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       //方向键使用压下按键事件
       SDL_KEYDOWN:
       begin
@@ -1734,32 +1758,38 @@ begin
       stillcount := 0;
       Mx1 := Mx;
       My1 := My;
-      case mface of
-        0: Mx1 := Mx1 - 1;
-        1: My1 := My1 + 1;
-        2: My1 := My1 - 1;
-        3: Mx1 := Mx1 + 1;
-      end;
-      Mstep := Mstep + 1;
-      if Mstep > 6 then
-        Mstep := 1;
-      if canwalk(Mx1, My1) = True then
+      if (Speed = 1) or (Speed >= 5) then
       begin
-        Mx := Mx1;
-        My := My1;
-      end;
-      if (speed <= 1) then
-        walking := 0;
-      if inship = 1 then
-      begin
-        shipx := my;
-        shipy := mx;
+        case mface of
+          0: Mx1 := Mx1 - 1;
+          1: My1 := My1 + 1;
+          2: My1 := My1 - 1;
+          3: Mx1 := Mx1 + 1;
+        end;
+        Mstep := Mstep + 1;
+        if Mstep > 6 then
+          Mstep := 1;
+        if canwalk(Mx1, My1) = True then
+        begin
+          Mx := Mx1;
+          My := My1;
+        end;
+        //if (speed <= 1) then
+        //walking := 0;
+        if inship = 1 then
+        begin
+          shipx := my;
+          shipy := mx;
+        end;
       end;
       //每走一步均重画屏幕, 并检测是否处于某场景入口
       DrawMMap;
       SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       if CheckEntrance then
+      begin
         walking := 0;
+        speed := 0;
+      end;
       //needrefresh := 1;
     end;
 
@@ -2190,22 +2220,25 @@ begin
       speed := speed + 1;
       Sx1 := Sx;
       Sy1 := Sy;
-      case Sface of
-        0: Sx1 := Sx1 - 1;
-        1: Sy1 := Sy1 + 1;
-        2: Sy1 := Sy1 - 1;
-        3: Sx1 := Sx1 + 1;
-      end;
-      SStep := Sstep + 1;
-      if SStep = 7 then
-        SStep := 1;
-      if canwalkinScene(Sx1, Sy1) then
+      if (Speed = 1) or (Speed >= 5) then
       begin
-        Sx := Sx1;
-        Sy := Sy1;
+        case Sface of
+          0: Sx1 := Sx1 - 1;
+          1: Sy1 := Sy1 + 1;
+          2: Sy1 := Sy1 - 1;
+          3: Sx1 := Sx1 + 1;
+        end;
+        SStep := Sstep + 1;
+        if SStep = 7 then
+          SStep := 1;
+        if canwalkinScene(Sx1, Sy1) then
+        begin
+          Sx := Sx1;
+          Sy := Sy1;
+        end;
       end;
-      if (speed <= 1) then
-        walking := 0;
+      //if (speed <= 1) then
+      //  walking := 0;
       //每走一步均重画屏幕, 并检测是否处于某场景入口
       DrawScene;
       SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
@@ -2228,11 +2261,8 @@ begin
       end;
     end;
 
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
-
       SDL_KEYUP:
       begin
         walking := 0;
@@ -2584,10 +2614,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -2678,10 +2706,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -2806,10 +2832,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYdown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -3017,10 +3041,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) or (event.key.keysym.sym = sdlk_kp_4) then
@@ -3333,11 +3355,8 @@ begin
   Result := True;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
-
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -4376,10 +4395,8 @@ begin
   begin
     if where = 3 then
       break;
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -5257,10 +5274,8 @@ begin
   //SDL_EnableKeyRepeat(10, 100);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
@@ -5387,10 +5402,8 @@ begin
   ShowPetStatus(r, menu);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -5679,10 +5692,8 @@ begin
   SDL_UpdateRect2(screen, x, y, w + 1, 29);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYDown:
       begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
@@ -5801,10 +5812,8 @@ begin
   SDL_UpdateRect2(screen, tx, ty, tw + 1, h);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
-          Quit;
       SDL_KEYdown:
       begin
         if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
