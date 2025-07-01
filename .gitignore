@@ -17,3 +17,8 @@ kys_promise.dproj.local
 __history
 *.dcu
 前传
+android
+arm64-android
+link*.res
+libkys_promise.so
+*.ctps

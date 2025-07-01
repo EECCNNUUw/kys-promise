@@ -538,13 +538,26 @@ uses kys_event, kys_battle, kys_littlegame, kys_engine;
 procedure Run;
 var
   p, p1: pansichar;
-  title: ansistring;
+  title, str: ansistring;
 begin
   {$IFDEF UNIX}
   AppPath := ExtractFilePath(ParamStr(0));
   {$ELSE}
   AppPath := '';
   {$ENDIF}
+  {$IFDEF android}
+  AppPath := '/sdcard/kys-promise/';
+  //for i := 1 to 4 do
+  //AppPath:= ExtractFileDir(AppPath);
+  ConsoleLog(apppath);
+  str := SDL_AndroidGetExternalStoragePath() + '/place_game_here';
+  //if not fileexists(str) then
+  FileClose(filecreate(str));
+  CellPhone := 1;
+  SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
+  {$ENDIF}
+
+
   ReadFiles;
   //初始化字体
   TTF_Init();

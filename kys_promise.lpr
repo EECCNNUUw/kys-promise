@@ -10,10 +10,6 @@ program kys_promise;
 {$LINKLIB SDL2}
 {$LINKLIB SDL2_ttf}
 {$LINKLIB SDL2_image}
-//{$LINKLIB SDL_mixer}
-//{$LINKLIB SDL2_gfx}
-//{$LINKLIB smpeg}
-//{$LINKLIB lua}
 {$LINKLIB bass}
 {$LINKLIB bassmidi}
 {$ELSE}
@@ -41,6 +37,11 @@ uses
 
 
   {$R *.res}
+
+  {$IFDEF android}
+exports
+  Run;
+  {$ENDIF}
 
 begin
   // Application.Title := 'KYS';

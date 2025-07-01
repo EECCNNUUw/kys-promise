@@ -175,6 +175,9 @@ procedure SwitchFullscreen;
 
 function InRegion(x, x0, x1: integer): boolean; overload;
 
+procedure ConsoleLog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
+procedure ConsoleLog(formatstring: string = ''; cr: boolean = True); overload;
+
 
 implementation
 
@@ -7138,6 +7141,23 @@ begin
     Result := True
   else
     Result := False;
+end;
+
+procedure ConsoleLog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
+var
+  i: integer;
+  str: utf8string;
+begin
+  str := format(formatstring, content);
+  SDL_log('%s', [@str[1]]);
+end;
+
+procedure ConsoleLog(formatstring: string = ''; cr: boolean = True); overload;
+var
+  i: integer;
+  str: utf8string;
+begin
+  SDL_log('%s', [@formatstring[1]]);
 end;
 
 end.
