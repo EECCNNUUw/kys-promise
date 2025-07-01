@@ -561,6 +561,8 @@ begin
   {$ENDIF}
   {$IFDEF android}
   AppPath := '/sdcard/kys-promise/';
+  if not fileexists(AppPath+'kysmod.ini') then
+    AppPath := SDL_AndroidGetExternalStoragePath() + '/';
   //for i := 1 to 4 do
   //AppPath:= ExtractFileDir(AppPath);
   ConsoleLog(apppath);
@@ -970,7 +972,7 @@ begin
   begin
     CloudCreate(i);
   end;
-
+  DrawVirtualKey;
   x := 275;
   y := 290;
   //drawrectanglewithoutframe(270, 150, 100, 70, 0, 20);
@@ -1013,7 +1015,6 @@ begin
       if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left) and (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 80) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 60))) and (menu = 1) then
       begin
         showmr := True;
-
         //LoadR(1);
         if menuloadAtBeginning then
         begin
@@ -1030,7 +1031,7 @@ begin
         begin
           drawtitlepic(0, x, y);
           drawtitlepic(menu + 1, x, y + menu * 20);
-          SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+        SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
       end;
       //按下方向键上
@@ -1051,7 +1052,7 @@ begin
           menu := 0;
         drawtitlepic(0, x, y);
         drawtitlepic(menu + 1, x, y + menu * 20);
-        SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
       //鼠标移动
       if (event.type_ = SDL_MOUSEMOTION) then

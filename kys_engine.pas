@@ -2369,7 +2369,6 @@ var
   i, i1, i2: integer;
 begin
   DrawBFieldWithoutRole(Bx, By);
-
   for i1 := 0 to 63 do
     for i2 := 0 to 63 do
     begin
@@ -2384,6 +2383,7 @@ begin
           DrawRoleOnBfield(i1, i2);
       end;
     end;
+  DrawVirtualKey;
 end;
 
 //画不含主角的战场
@@ -2709,6 +2709,7 @@ begin
       end;
     end;
   showprogress;
+  DrawVirtualKey;
 end;
 
 //画带效果的战场
@@ -7121,9 +7122,11 @@ begin
     SDL_BlitSurface(VirtualKeyL, nil, screen, @rect);
 
     rect.x := VirtualKeyX;
+    rect.y := VirtualKeyY+VirtualKeySize*2;
     SDL_BlitSurface(VirtualKeyD, nil, screen, @rect);
 
     rect.x := VirtualKeyX + VirtualKeySize;
+     rect.y := VirtualKeyY+VirtualKeySize;
     SDL_BlitSurface(VirtualKeyR, nil, screen, @rect);
 
     rect.x := 0;
@@ -7171,7 +7174,7 @@ var
       Result := SDLK_UP;
     if InRegion(x, y, VirtualKeyX - VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_LEFT;
-    if InRegion(x, y, VirtualKeyX, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
+    if InRegion(x, y, VirtualKeyX, VirtualKeyY + VirtualKeySize*2, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_DOWN;
     if InRegion(x, y, VirtualKeyX + VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_RIGHT;

@@ -1617,9 +1617,8 @@ begin
   //SDL_EnableKeyRepeat(10, 100);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -1717,9 +1716,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -1768,9 +1766,8 @@ begin
 
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -1881,9 +1878,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -1992,9 +1988,8 @@ begin
   Result := False;
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_escape) then
@@ -2290,9 +2285,8 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -2697,9 +2691,8 @@ begin
   //SDL_UpdateRect2(screen,0,0,screen.w,screen.h);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -3857,9 +3850,8 @@ begin
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         while (SDL_PollEvent(@event) >= 0) do
         begin
+          CheckBasicEvent;
           case event.type_ of
-            SDL_QUITEV:
-              if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
             SDL_KEYUP:
               if event.key.keysym.sym > 0 then break;
             SDL_MouseButtonUP:
@@ -4706,9 +4698,7 @@ begin
   //检查是否有esc被按下
   if SDL_PollEvent(@event) >= 0 then
   begin
-
-    if (event.type_ = SDL_QUITEV) then
-      if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
+    CheckBasicEvent;
     if (event.key.keysym.sym = sdlk_Escape) then
     begin
       brole[bnum].Auto := -1;
@@ -5097,9 +5087,7 @@ begin
   end;
 
   //检查是否有esc被按下
-
-  if (event.type_ = SDL_QUITEV) then
-    if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
+  CheckBasicEvent;
   if (event.key.keysym.sym = sdlk_Escape) or (event.button.button = sdl_button_right) then
   begin
     brole[bnum].Auto := -1;
@@ -6315,9 +6303,8 @@ begin
   //SDL_UpdateRect2(screen,0,0,screen.w,screen.h);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -6440,9 +6427,8 @@ begin
   showTeamModemenu(menu);
   while (SDL_PollEvent(@event) >= 0) do
   begin
+    CheckBasicEvent;
     case event.type_ of
-      SDL_QUITEV:
-        if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then Quit;
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
