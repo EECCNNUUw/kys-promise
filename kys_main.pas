@@ -561,7 +561,7 @@ begin
   {$ENDIF}
   {$IFDEF android}
   AppPath := '/sdcard/kys-promise/';
-  if not fileexists(AppPath+'kysmod.ini') then
+  if not fileexists(AppPath + 'kysmod.ini') then
     AppPath := SDL_AndroidGetExternalStoragePath() + '/';
   //for i := 1 to 4 do
   //AppPath:= ExtractFileDir(AppPath);
