@@ -2000,7 +2000,7 @@ begin
       Pos := GetPositionOnScreen(i1, i2, Mx, My);
       if (i1 >= 0) and (i1 < 480) and (i2 >= 0) and (i2 < 480) then
       begin
-        if (sum >= -27) and (sum <= 28) and (i >= -9) and (i <= 9) then
+        if (sum >= -27) and (sum <= 28) and (i >= -11) and (i <= 11) then
         begin
           if surface[i1, i2] > 0 then
             DrawMPic(surface[i1, i2] div 2, pos.x, pos.y, 3);
@@ -6816,12 +6816,10 @@ var
   i, a, b: integer;
   temp: array[0..2] of byte;
 begin
-
   a := $E7 * 3;
   temp[0] := ACol[a];
   temp[1] := ACol[a + 1];
   temp[2] := ACol[a + 2];
-
   for i := $E7 downto $E1 do
   begin
     b := i * 3;
@@ -6830,17 +6828,14 @@ begin
     ACol[b + 1] := ACol[a + 1];
     ACol[b + 2] := ACol[a + 2];
   end;
-
   b := $E0 * 3;
   ACol[b] := temp[0];
   ACol[b + 1] := temp[1];
   ACol[b + 2] := temp[2];
-
   a := $FC * 3;
   temp[0] := ACol[a];
   temp[1] := ACol[a + 1];
   temp[2] := ACol[a + 2];
-
   for i := $FC downto $F5 do
   begin
     b := i * 3;
@@ -6849,12 +6844,10 @@ begin
     ACol[b + 1] := ACol[a + 1];
     ACol[b + 2] := ACol[a + 2];
   end;
-
   b := $F4 * 3;
   ACol[b] := temp[0];
   ACol[b + 1] := temp[1];
   ACol[b + 2] := temp[2];
-
 end;
 
 //这是改写的绘制RLE8图片程序, 增加了选调色板, 遮挡控制, 亮度, 半透明, 混合色等

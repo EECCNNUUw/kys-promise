@@ -716,8 +716,8 @@ begin
     HW := Kys_ini.ReadInteger('Set', 'HW', 0);
     SMOOTH := Kys_ini.ReadInteger('set', 'SMOOTH', 1);
     GLHR := Kys_ini.ReadInteger('set', 'GLHR', 1);
-    RESOLUTIONX := Kys_ini.ReadInteger('Set', 'RESOLUTIONX', 640);
-    RESOLUTIONY := Kys_ini.ReadInteger('set', 'RESOLUTIONY', 440);
+    RESOLUTIONX := Kys_ini.ReadInteger('Set', 'RESOLUTIONX', CENTER_X * 2);
+    RESOLUTIONY := Kys_ini.ReadInteger('set', 'RESOLUTIONY', CENTER_Y * 2);
     str := Kys_ini.ReadString('Set', 'debug', '0');
     if (str = '我爱玩前传') or (str = 'I like to play Promise') then debug := 1
     else
@@ -1031,7 +1031,7 @@ begin
         begin
           drawtitlepic(0, x, y);
           drawtitlepic(menu + 1, x, y + menu * 20);
-        SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+          SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
       end;
       //按下方向键上
@@ -1052,7 +1052,7 @@ begin
           menu := 0;
         drawtitlepic(0, x, y);
         drawtitlepic(menu + 1, x, y + menu * 20);
-         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
+        SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
       //鼠标移动
       if (event.type_ = SDL_MOUSEMOTION) then
