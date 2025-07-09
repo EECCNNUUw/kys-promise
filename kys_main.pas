@@ -2631,7 +2631,7 @@ var
   menu, menup, x1, y1, h: integer;
 begin
   menu := 0;
-  h:=22;
+  h := 22;
   //DrawMMap;
   showcommonMenu(x, y, w, max, menu);
   SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);

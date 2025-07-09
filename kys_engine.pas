@@ -6059,8 +6059,6 @@ var
 begin
   menu := 0;
   max := 5;
-  setlength(menustring, 0);
-
   setlength(menustring, 6);
   setlength(menuengstring, 0);
   menustring[0] := ' 全部物品';
@@ -6159,6 +6157,7 @@ begin
   max := 5;
 
   display_imgFromSurface(MENUITEM_PIC, 0, 0);
+  DrawVirtualKey;
   DrawRectangle(x, y, w, max * 22 + 28, 0, colcolor(255), 30);
   for i := 0 to 5 do
     if i = menu then
@@ -6174,6 +6173,7 @@ begin
   menu := menu - 1;
   iamount := ReadItemList(menu);
   showMenuItem(3, 6, 0, 0, 0);
+
 end;
 
 function SelectItemUser(inum: integer): smallint;
@@ -6334,6 +6334,7 @@ var
   equip: array[0..3] of integer;
 begin
   display_imgFromSurface(MENUITEM_PIC, 110, 0, 110, 0, 530, 440);
+  DrawVirtualKey;
   drawrectangle(110 + 12, 16, 499, 405, 0, colcolor(255), 40);
   title := '　　——————請選擇使用者——————';
   drawshadowtext(@title[1], 142, 21, colcolor(0, 5), colcolor(0, 7));
