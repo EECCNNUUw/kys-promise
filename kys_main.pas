@@ -200,7 +200,6 @@ type
 
 
 //程序重要子程
-function SDL_main(argc: integer; argv: ppansichar): integer;
 procedure Run;
 procedure Quit;
 
@@ -552,14 +551,6 @@ const
 implementation
 
 uses kys_event, kys_battle, kys_littlegame, kys_engine;
-
-function SDL_main(argc: integer; argv: ppansichar): integer;
-var
-  th: PSDL_Thread;
-begin
-  Run;
-  Result := 0;
-end;
 
 //初始化字体, 音效, 视频, 启动游戏
 procedure Run;
