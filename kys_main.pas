@@ -587,7 +587,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  CellPhone := 1;
+  //CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -1056,7 +1056,6 @@ begin
       //按下方向键上
       if ((event.type_ = SDL_KEYDOWN) and ((event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8))) then
       begin
-        ConsoleLog('%d', [menu]);
         menu := menu - 1;
         if menu < 0 then
           menu := 2;
@@ -1067,7 +1066,6 @@ begin
       //按下方向键下
       if ((event.type_ = SDL_KEYDOWN) and ((event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2))) then
       begin
-        ConsoleLog('%d', [menu]);
         menu := menu + 1;
         if menu > 2 then
           menu := 0;
