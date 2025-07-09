@@ -194,9 +194,14 @@ type
       Element: (green, red, yellow, blue, gray: integer;)
   end;
 
+  TStretchInfo = record
+    px, py, num, den: integer;
+  end;
+
 
 //程序重要子程
-procedure Run; stdcall; export;
+function SDL_main(argc: integer; argv: ppansichar): integer;
+procedure Run;
 procedure Quit;
 
 //游戏开始画面, 行走等
@@ -520,6 +525,7 @@ var
 
   CellPhone: integer = 0;
   ScreenRotate: integer = 0;
+  KEEP_SCREEN_RATIO: integer = 1;
 
   FingerCount: integer = 0; //双指操作计数
   FingerTick: uint32 = 0; //双指操作间隔
@@ -547,11 +553,19 @@ implementation
 
 uses kys_event, kys_battle, kys_littlegame, kys_engine;
 
+function SDL_main(argc: integer; argv: ppansichar): integer;
+var
+  th: PSDL_Thread;
+begin
+  Run;
+  Result := 0;
+end;
 
 //初始化字体, 音效, 视频, 启动游戏
 procedure Run;
 var
   p, p1: pansichar;
+  temp: integer;
   title, str: ansistring;
 begin
   {$IFDEF UNIX}
@@ -573,7 +587,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  //CellPhone := 1;
+  CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -612,11 +626,16 @@ begin
   window := SDL_CreateWindow(pansichar(title), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, RESOLUTIONX, RESOLUTIONY, ScreenFlag);
 
   SDL_GetWindowSize(window, @RESOLUTIONX, @RESOLUTIONY);
-
+  ConsoleLog('Resolution: %d %d', [RESOLUTIONX, RESOLUTIONY]);
   if (CellPhone = 1) then
   begin
     if (RESOLUTIONY > RESOLUTIONX) then
+    begin
       ScreenRotate := 0;
+      temp := RESOLUTIONY;
+      RESOLUTIONY := RESOLUTIONX;
+      RESOLUTIONX := temp;
+    end;
     //SDL_WarpMouseInWindow(window, RESOLUTIONX, RESOLUTIONY);
   end;
 
@@ -1035,8 +1054,9 @@ begin
         end;
       end;
       //按下方向键上
-      if ((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8))) then
+      if ((event.type_ = SDL_KEYDOWN) and ((event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8))) then
       begin
+        ConsoleLog('%d', [menu]);
         menu := menu - 1;
         if menu < 0 then
           menu := 2;
@@ -1045,8 +1065,9 @@ begin
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
       //按下方向键下
-      if ((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2))) then
+      if ((event.type_ = SDL_KEYDOWN) and ((event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2))) then
       begin
+        ConsoleLog('%d', [menu]);
         menu := menu + 1;
         if menu > 2 then
           menu := 0;
@@ -1068,7 +1089,7 @@ begin
             SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           end;
         end
-        else
+        else if CellPhone = 0 then
           menu := -1;
       end;
 
@@ -2607,9 +2628,10 @@ end;
 //使用前必须设置选单使用的字符串组才有效, 字符串组不可越界使用
 function CommonMenu(x, y, w, max: integer): integer;
 var
-  menu, menup: integer;
+  menu, menup, x1, y1, h: integer;
 begin
   menu := 0;
+  h:=22;
   //DrawMMap;
   showcommonMenu(x, y, w, max, menu);
   SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
@@ -2673,10 +2695,10 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if MouseInRegion(x, y, w, max * h + h + 2, x1, y1) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22;
+          menu := (y1 - y - 2) div 22;
           if menu > max then
             menu := max;
           if menu < 0 then
@@ -3664,6 +3686,7 @@ begin
   end
   else
     display_imgFromSurface(MENUITEM_PIC, 110, 0, 110, 0, 530, 440);
+  DrawVirtualKey;
   //ReDraw;
   drawrectangle(110 + 12, 16, 499, 25, 0, colcolor(0, 255), 40);
   drawrectangle(110 + 12, 46, 499, 25, 0, colcolor(0, 255), 40);
@@ -5523,6 +5546,7 @@ begin
   words[5, 4] := ' 光環： 功體特效可作用到附近三格内隊友。';
 
   display_imgFromSurface(SKILL_PIC, 120, 0, 120, 0, 520, 440);
+  DrawVirtualKey;
   // DrawRectangle(40, 60, 560, 315, 0, colcolor(255), 40);
   DrawHeadPic(r, 100 + 40, 150 - 60);
 

@@ -182,6 +182,12 @@ procedure DrawVirtualKey;
 function CheckBasicEvent: uint32;
 procedure QuitConfirm;
 
+function MouseInRegion(x, y, w, h: integer): boolean; overload;
+function MouseInRegion(x, y, w, h: integer; var x1, y1: integer): boolean; overload;
+function GetRealRect(var x, y, w, h: integer; force: integer = 0): TSDL_Rect; overload;
+function GetRealRect(rect: TSDL_Rect; force: integer = 0): TSDL_Rect; overload;
+function KeepRatioScale(w1, h1, w2, h2: integer): TStretchInfo;
+
 implementation
 
 uses kys_event;
@@ -2847,6 +2853,7 @@ begin
   x := 90;
   y := 0;
   display_imgFromSurface(STATE_PIC.pic, 0, 0);
+  DrawVirtualKey;
   if isbattle = False then
   begin
     DrawRectangle(15, 15, 90, 10 + max * 22, $0, colcolor(0, 255), 30);
@@ -3131,6 +3138,7 @@ begin
   x := 90;
   y := 0;
   display_imgFromSurface(MAGIC_PIC.pic, 0, 0);
+  DrawVirtualKey;
   if where <> 2 then
   begin
     DrawRectangle(15, 15, 90, 10 + max * 22, $0, colcolor(255), 30);
@@ -4554,7 +4562,7 @@ var
   i: integer;
 begin
   display_imgFromSurface(SYSTEM_PIC, 0, 0);
-
+  DrawVirtualKey;
   word[0] := ' ——————————讀取進度——————————';
   word[1] := ' ——————————保存進度——————————';
   word[2] := ' ——————————音樂音量——————————';
@@ -4579,7 +4587,7 @@ var
   i: integer;
 begin
   display_imgFromSurface(SYSTEM_PIC, 0, 0);
-
+  DrawVirtualKey;
   for i := 0 to length(word) - 1 do
     if i = menu then
     begin
@@ -5988,6 +5996,7 @@ begin
   y1 := 35;
   y2 := 35;
   display_imgFromSurface(TEAMMATE_PIC, 0, 0);
+  DrawVirtualKey;
   str := ' 隊中人員';
   drawrectangle(x1 + 15, y1 - 5, 220, 160, 0, $FFFFFFFF, 40);
   drawShadowtext(@str[1], x1, y1, colcolor(255), colcolor(111));
@@ -7014,7 +7023,7 @@ var
   realx, realy, realw, realh, ZoomType: integer;
   tempscr: Psdl_surface;
   now, Next: uint32;
-  dest: TSDL_Rect;
+  src, dest: TSDL_Rect;
   p: Pointer;
 begin
   dest.x := x;
@@ -7030,7 +7039,18 @@ begin
     // Here p is the address to the pixel we want to set
     p := Pointer(nativeint(screen.pixels) + y * screen.pitch + x * screen.format.BytesPerPixel);
     SDL_UpdateTexture(screenTex, @dest, p, screen.pitch);
-    SDL_RenderCopy(render, screenTex, nil, nil);
+
+    if KEEP_SCREEN_RATIO = 1 then
+    begin
+      src.x := 0;
+      src.y := 0;
+      src.w := CENTER_X * 2;
+      src.h := CENTER_Y * 2;
+      dest := GetRealRect(src, 1);
+      SDL_RenderCopy(render, screenTex, nil, @dest);
+    end
+    else
+      SDL_RenderCopy(render, screenTex, nil, nil);
     SDL_RenderPresent(render);
   end;
 end;
@@ -7038,11 +7058,28 @@ end;
 
 procedure SDL_GetMouseState2(var x, y: integer);
 var
-  tempx, tempy: integer;
+  tempx, tempy, temp: integer;
+  px, py, w, h: integer;
+  s: TStretchInfo;
 begin
   SDL_GetMouseState(@tempx, @tempy);
-  x := tempx * screen.w div resolutionx;
-  y := tempy * screen.h div resolutiony;
+  if ScreenRotate = 1 then
+  begin
+    x := round(tempy / RESOLUTIONY * CENTER_X * 2);
+    y := CENTER_Y * 2 - round(tempx / RESOLUTIONX * CENTER_Y * 2);
+    exit;
+  end;
+  if KEEP_SCREEN_RATIO = 1 then
+  begin
+    s := KeepRatioScale(CENTER_X * 2, CENTER_Y * 2, RESOLUTIONX, RESOLUTIONY);
+    x := ((tempx - s.px) * s.den div s.num);
+    y := ((tempy - s.py) * s.den div s.num);
+  end
+  else
+  begin
+    x := round(tempx / RESOLUTIONX * CENTER_X * 2);
+    y := round(tempy / RESOLUTIONY * CENTER_Y * 2);
+  end;
 end;
 
 procedure ResizeWindow(w, h: integer);
@@ -7324,7 +7361,77 @@ begin
     SDL_FreeSurface(tempscr);
     AskingQuit := False;
   end;
+end;
 
+function MouseInRegion(x, y, w, h: integer): boolean; overload;
+var
+  x1, y1: integer;
+begin
+  SDL_GetMouseState2(x1, y1);
+  Result := (x1 >= x) and (y1 >= y) and (x1 < x + w) and (y1 < y + h);
+end;
+
+function MouseInRegion(x, y, w, h: integer; var x1, y1: integer): boolean; overload;
+begin
+  SDL_GetMouseState2(x1, y1);
+  Result := (x1 >= x) and (y1 >= y) and (x1 < x + w) and (y1 < y + h);
+end;
+
+//获取换算后的位置, 会改变变量的值
+//force = 1 会在不使用文字分层时强制计算
+function GetRealRect(var x, y, w, h: integer; force: integer = 0): TSDL_Rect; overload;
+var
+  scale: real;
+  px, py: integer;
+  s: TStretchInfo;
+begin
+  if (force = 1) then
+  begin
+    s := KeepRatioScale(CENTER_X * 2, CENTER_Y * 2, RESOLUTIONX, RESOLUTIONY);
+    x := s.px + x * s.num div s.den;
+    y := s.py + y * s.num div s.den;
+    w := w * s.num div s.den;
+    h := h * s.num div s.den;
+  end;
+  Result.x := x;
+  Result.y := y;
+  Result.w := w;
+  Result.h := h;
+end;
+
+function GetRealRect(rect: TSDL_Rect; force: integer = 0): TSDL_Rect; overload;
+var
+  x, y, w, h: integer;
+begin
+  x := rect.x;
+  y := rect.y;
+  w := rect.w;
+  h := rect.h;
+  Result := GetRealRect(x, y, w, h, force);
+
+end;
+
+function KeepRatioScale(w1, h1, w2, h2: integer): TStretchInfo;
+begin
+  if w2 / w1 > h2 / h1 then
+  begin
+    Result.num := h2;
+    Result.den := h1;
+    Result.px := (w2 - w1 * h2 div h1) div 2;
+    Result.py := 0;
+  end
+  else
+  begin
+    Result.num := w2;
+    Result.den := w1;
+    Result.px := 0;
+    Result.py := (h2 - h1 * w2 div w1) div 2;
+  end;
+  //分子和分母均不能为零, 在后面的计算中均可能作为被除数
+  if Result.num = 0 then
+    Result.num := 1;
+  if Result.den = 0 then
+    Result.den := 1;
 end;
 
 end.
