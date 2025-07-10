@@ -540,6 +540,8 @@ var
   EXIT_GAME: integer = 1; //退出时的提问方式
   AskingQuit: boolean = False; //是否正在提问退出
 
+  virtualKeyScr: psdl_surface;
+
 const
   //色值蒙版, 注意透明蒙版在创建RGB表面时需设为0
   RMask: uint32 = $FF0000;
@@ -578,7 +580,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  //CellPhone := 1;
+  CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -951,7 +953,7 @@ end;
 //显示开头画面
 procedure Start;
 var
-  menu, menup, i, col, i1, ingame, i2, x, y, len, pic: integer;
+  menu, menup, i, col, i1, ingame, i2, x, y, len, pic, xm, ym: integer;
   picb: array of byte;
   beginscreen: Psdl_surface;
   dest: tsdl_rect;
@@ -982,7 +984,7 @@ begin
   begin
     CloudCreate(i);
   end;
-  DrawVirtualKey;
+  //DrawVirtualKey;
   x := 275;
   y := 290;
   //drawrectanglewithoutframe(270, 150, 100, 70, 0, 20);
@@ -1021,8 +1023,9 @@ begin
         drawtitlepic(menu + 1, x, y + menu * 20);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
+      SDL_GetMouseState2(xm, ym);
       //选择第1项, 读入进度
-      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left) and (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 80) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 60))) and (menu = 1) then
+      if (((event.type_ = SDL_KEYUP) and ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space))) or ((event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = sdl_button_left) and (xm > x) and (xm < x + 80) and (ym > y) and (ym < y + 60))) and (menu = 1) then
       begin
         showmr := True;
         //LoadR(1);
@@ -1067,10 +1070,11 @@ begin
       //鼠标移动
       if (event.type_ = SDL_MOUSEMOTION) then
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 80) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 60) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm > x) and (xm < x + 80) and (ym > y) and (ym < y + 60) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y) div 20;
+          menu := (ym - y) div 20;
           if menu <> menup then
           begin
             drawtitlepic(0, x, y);
@@ -1492,6 +1496,8 @@ begin
 end;
 
 procedure WaitAnyKey(keycode, x, y: psmallint); overload;
+var
+  xm, ym: integer;
 begin
   //event.type_ := SDL_NOEVENT;
   event.key.keysym.sym := 0;
@@ -1507,8 +1513,8 @@ begin
     if (event.type_ = SDL_mousebuttonUP) and (event.button.button <> 0) then
     begin
       keycode^ := -1;
-      x^ := round(event.button.x / (resolutionx / screen.w));
-      y^ := round(event.button.y / (resolutiony / screen.h));
+      x^ := xm;
+      y^ := ym;
       y^ := y^ + 30;
       break;
     end;
@@ -1521,7 +1527,7 @@ end;
 procedure Walk;
 var
   word: array[0..10] of uint16;
-  x, y, i1, i, Ayp, menu, Axp, walking, Mx1, My1, Mx2, My2, speed, stillcount, needrefresh: integer;
+  x, y, i1, i, Ayp, menu, Axp, walking, Mx1, My1, Mx2, My2, speed, stillcount, needrefresh, xm, ym: integer;
   now, next_time, next_time2, next_time3: uint32;
   keystate: pansichar;
 begin
@@ -1747,8 +1753,8 @@ begin
         if event.button.button = sdl_button_left then
         begin
           walking := 1;
-          Axp := MX + (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
-          Ayp := MY + (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36;
+          Axp := MX + (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36;
+          Ayp := MY + (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36;
           if (ayp >= 0) and (ayp <= 479) and (axp >= 0) and (axp <= 479) {and canWalk(axp, ayp)} then
           begin
             for i := 0 to 479 do
@@ -2050,7 +2056,7 @@ end;}
 //在内场景行走, 如参数为1表示新游戏
 function WalkInScene(Open: integer): integer;
 var
-  grp, idx, offset, axp, ayp, just, i3, i1, i2, x, y, old: integer;
+  grp, idx, offset, axp, ayp, just, i3, i1, i2, x, y, old, xm, ym: integer;
   Sx1, Sy1, updatearea, r, s, i, menu, walking, PreScene, speed: integer;
   filename: ansistring;
   Scenename: widestring;
@@ -2471,8 +2477,8 @@ begin
           if walking = 0 then
           begin
             walking := 1;
-            Ayp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sx;
-            Axp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * (round(event.button.y / (resolutiony / screen.h)) + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sy;
+            Ayp := (-xm + CENTER_x + 2 * (ym + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sx;
+            Axp := (xm - CENTER_x + 2 * (ym + Sdata[curscene, 4, sx, sy]) - 2 * CENTER_y + 18) div 36 + Sy;
             if (ayp in [0..63]) and (axp in [0..63]) then
             begin
               for i := 0 to 63 do
@@ -2709,7 +2715,7 @@ end;
 
 function CommonMenu(x, y, w, max, default: integer): integer; overload;
 var
-  menu, menup: integer;
+  menu, menup, xm, ym: integer;
 begin
   menu := default;
   //SDL_EnableKeyRepeat(10, 100);
@@ -2776,10 +2782,10 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22;
+          menu := (ym - y - 2) div 22;
           if menu > max then
             menu := max;
           if menu < 0 then
@@ -2832,9 +2838,8 @@ end;
 //卷动选单
 function CommonScrollMenu(x, y, w, max, maxshow: integer): integer;
 var
-  menu, menup, menutop: integer;
+  menu, menup, menutop, xm, ym: integer;
 begin
-
   menu := 0;
   menutop := 0;
   //SDL_EnableKeyRepeat(10, 100);
@@ -2982,10 +2987,10 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22 + menutop;
+          menu := (ym - y - 2) div 22 + menutop;
           if menu > max then
             menu := max;
           if menu < 0 then
@@ -3043,7 +3048,7 @@ end;
 
 function CommonMenu2(x, y, w: integer): integer;
 var
-  menu, menup: integer;
+  menu, menup, xm, ym: integer;
 begin
   menu := 0;
   //SDL_EnableKeyRepeat(10, 100);
@@ -3106,10 +3111,10 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.x / (resolutionx / screen.w)) - x - 2) div 50;
+          menu := (xm - x - 2) div 50;
           if menu > 1 then
             menu := 1;
           if menu < 0 then
@@ -3348,7 +3353,7 @@ end;
 //物品选单
 function MenuItem(menu: integer): boolean;
 var
-  point, atlu, x, y, col, row, xp, yp, iamount, max: integer;
+  point, atlu, x, y, col, row, xp, yp, iamount, max, xm, ym: integer;
   //point似乎未使用, atlu为处于左上角的物品在列表中的序号, x, y为光标位置
   //col, row为总列数和行数
 begin
@@ -3527,17 +3532,18 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) < 122) then
+        sdl_getmousestate2(xm, ym);
+        if (xm < 122) then
         begin
           //   result := false;
           if where <> 2 then break;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) > 90) and (round(event.button.y / (resolutiony / screen.h)) < 316) then
+        if (xm >= 110) and (ym < 612) and (ym > 90) and (ym < 316) then
         begin
           xp := x;
           yp := y;
-          x := (round(event.button.x / (resolutionx / screen.w)) - 115) div 82;
-          y := (round(event.button.y / (resolutiony / screen.h)) - 95) div 82;
+          x := (xm - 115) div 82;
+          y := (ym - 95) div 82;
           if x >= col then
             x := col - 1;
           if y >= row then
@@ -3553,7 +3559,7 @@ begin
             SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           end;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) > 312) then
+        if (xm >= 110) and (xm < 612) and (ym > 312) then
         begin
           //atlu := atlu+col;
           y := y + 1;
@@ -3568,7 +3574,7 @@ begin
           showMenuItem(row, col, x, y, atlu);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 110) and (round(event.button.x / (resolutionx / screen.w)) < 612) and (round(event.button.y / (resolutiony / screen.h)) < 90) then
+        if (xm >= 110) and (xm < 612) and (ym < 90) then
         begin
           if atlu > 0 then
             atlu := atlu - col;
@@ -3675,7 +3681,7 @@ begin
   end
   else
     display_imgFromSurface(MENUITEM_PIC, 110, 0, 110, 0, 530, 440);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   //ReDraw;
   drawrectangle(110 + 12, 16, 499, 25, 0, colcolor(0, 255), 40);
   drawrectangle(110 + 12, 46, 499, 25, 0, colcolor(0, 255), 40);
@@ -4400,7 +4406,7 @@ end;          }
 //系统选单
 procedure MenuSystem;
 var
-  i, menu, menup: integer;
+  i, menu, menup, xm, ym: integer;
 begin
   menu := 0;
   showmenusystem(menu);
@@ -4488,10 +4494,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 80) and (round(event.button.x / (resolutionx / screen.w)) < 127) and (round(event.button.y / (resolutiony / screen.h)) > 47) and (round(event.button.y / (resolutiony / screen.h)) < 120) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= 80) and (xm < 127) and (ym > 47) and (ym < 120) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 32) div 22;
+          menu := (ym - 32) div 22;
           if menu > 3 then
             menu := 3;
           if menu < 0 then
@@ -5277,7 +5284,7 @@ end;
 
 procedure FourPets;
 var
-  r, i, r1: integer;
+  r, i, r1, xm, ym: integer;
 begin
   //setlength(Menuengstring, 4);
   r := 0;
@@ -5321,16 +5328,17 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if (event.button.button = sdl_button_right) then
         begin
           break;
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and (round(event.button.x / (resolutionx / screen.w)) < 90) and (round(event.button.y / (resolutiony / screen.h)) > 20) and (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
+          if (xm >= 10) and (xm < 90) and (ym > 20) and (ym < (Rrole[0].PetAmount * 23) + 20) then
           begin
             r1 := r;
-            r := (round(event.button.y / (resolutiony / screen.h)) - 20) div 23;
+            r := (ym - 20) div 23;
             //鼠标移动时仅在x, y发生变化时才重画
             if (r <> r1) then
             begin
@@ -5343,12 +5351,13 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) < 120) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm < 120) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= 10) and (round(event.button.x / (resolutionx / screen.w)) < 90) and (round(event.button.y / (resolutiony / screen.h)) >= 20) and (round(event.button.y / (resolutiony / screen.h)) < (Rrole[0].PetAmount * 23) + 20) then
+          if (xm >= 10) and (xm < 90) and (ym >= 20) and (ym < (Rrole[0].PetAmount * 23) + 20) then
           begin
             r1 := r;
-            r := (round(event.button.y / (resolutiony / screen.h)) - 20) div 23;
+            r := (ym - 20) div 23;
             //鼠标移动时仅在x, y发生变化时才重画
             if (r <> r1) then
             begin
@@ -5402,7 +5411,7 @@ end;
 
 function PetStatus(r: integer): boolean;
 var
-  i, menu, menup, p: integer;
+  i, menu, menup, p, xm, ym: integer;
   x, y, w: integer;
 begin
   x := 100 + 40;
@@ -5446,6 +5455,7 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if (event.button.button = sdl_button_right) then
         begin
           Result := False;
@@ -5453,10 +5463,10 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
+          if (xm >= x) and (xm < x + w * 5) and (ym > y) and (ym < y * 5) then
           begin
             menup := menu;
-            menu := (round(event.button.x / (resolutionx / screen.w)) - x) div w;
+            menu := (xm - x) div w;
             //鼠标移动时仅在x, y发生变化时才重画
             if (menu <> menup) then
             begin
@@ -5470,15 +5480,16 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) < 120) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm < 120) then
         begin
           Result := True;
           break;
         end
-        else if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w * 5) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y * 5) then
+        else if (xm >= x) and (xm < x + w * 5) and (ym > y) and (ym < y * 5) then
         begin
           menup := menu;
-          menu := (round(event.button.x / (resolutionx / screen.w)) - x) div w;
+          menu := (xm - x) div w;
           Result := False;
           //鼠标移动时仅在x, y发生变化时才重画
           if (menu <> menup) then
@@ -5535,7 +5546,7 @@ begin
   words[5, 4] := ' 光環： 功體特效可作用到附近三格内隊友。';
 
   display_imgFromSurface(SKILL_PIC, 120, 0, 120, 0, 520, 440);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   // DrawRectangle(40, 60, 560, 315, 0, colcolor(255), 40);
   DrawHeadPic(r, 100 + 40, 150 - 60);
 
@@ -5696,7 +5707,7 @@ end;
 
 function StadySkillMenu(x, y, w: integer): integer;
 var
-  menu, menup: integer;
+  menu, menup, xm, ym: integer;
 begin
   menu := 0;
   //SDL_EnableKeyRepeat(10, 100);
@@ -5755,10 +5766,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.x / (resolutionx / screen.w)) - x - 2) div 50;
+          menu := (xm - x - 2) div 50;
           if menu > 1 then
             menu := 1;
           if menu < 0 then
@@ -5810,7 +5822,7 @@ end;
 //卷动选单 (带标题)
 function TitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow: integer): integer;
 var
-  menu, menup, menutop, x, h, y, w: integer;
+  menu, menup, menutop, x, h, y, w, xm, ym: integer;
 begin
   menu := 0;
   menutop := 0;
@@ -5964,10 +5976,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + max * 22 + 29) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y - 2) div 22 + menutop;
+          menu := (ym - y - 2) div 22 + menutop;
           if menu > max then
             menu := max;
           if menu < 0 then

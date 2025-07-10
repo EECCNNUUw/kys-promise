@@ -412,7 +412,7 @@ end;
 //选择人物, 返回值为整型, 按bit表示人物是否参战
 function SelectTeamMembers: integer;
 var
-  i, menu, max, menup: integer;
+  i, menu, max, menup, xm, ym: integer;
 begin
   Result := 0;
   max := 1;
@@ -501,10 +501,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_X - 75) and (round(event.button.x / (resolutionx / screen.w)) < CENTER_X + 75) and (round(event.button.y / (resolutiony / screen.h)) >= 100) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 128) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= CENTER_X - 75) and (xm < CENTER_X + 75) and (ym >= 100) and (ym < max * 22 + 128) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 102) div 22;
+          menu := (ym - 102) div 22;
           if menup <> menu then ShowMultiMenu(max, menu, Result);
         end;
       end;
@@ -1135,7 +1136,7 @@ end;
 //战斗主选单, menustatus按bit保存可用项
 function BattleMenu(bnum: integer): integer;
 var
-  i, p, menustatus, menu, max, rnum, menup, i1, lv, i2: integer;
+  i, p, menustatus, menu, max, rnum, menup, i1, lv, i2, xm, ym: integer;
   realmenu: array[0..10] of integer;
   word: widestring;
   str: ansistring;
@@ -1260,10 +1261,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 147) and (round(event.button.y / (resolutiony / screen.h)) >= 50 - 22) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78 - 22) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= 100) and (xm < 147) and (ym >= 50 - 22) and (ym < max * 22 + 78 - 22) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 52 + 22) div 22;
+          menu := (ym - 52 + 22) div 22;
           if menu > max then menu := max;
           if menu < 0 then menu := 0;
           if menup <> menu then
@@ -1461,7 +1463,7 @@ end;
 //选择查看状态的目标
 function Selectshowstatus(bnum: integer): boolean;
 var
-  Axp, Ayp, rnum, step, range, i, i1, i2, AttAreaType: integer;
+  Axp, Ayp, rnum, step, range, i, i1, i2, AttAreaType, xm, ym: integer;
 begin
   Ax := Bx;
   Ay := By;
@@ -1567,8 +1569,9 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        SDL_GetMouseState2(xm, ym);
+        Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -1607,7 +1610,7 @@ end;
 //选择点
 function SelectAim(bnum, step: integer): boolean;
 var
-  Axp, Ayp: integer;
+  Axp, Ayp, xm, ym: integer;
 begin
   Ax := Bx;
   Ay := By;
@@ -1676,8 +1679,9 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        SDL_GetMouseState2(xm, ym);
+        Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) and (Bfield[3, Ax, Ay] >= 0) then
         begin
           Ax := Axp;
@@ -1757,7 +1761,7 @@ end;
 //目标系点叉菱方型、原地系菱方型
 function SelectRange(bnum, AttAreaType, step, range: integer): boolean;
 var
-  Axp, Ayp: integer;
+  Axp, Ayp, xm, ym: integer;
 begin
   Ax := Bx;
   Ay := By;
@@ -1822,8 +1826,9 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        SDL_GetMouseState2(xm, ym);
+        Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -1857,7 +1862,7 @@ end;
 //选择远程
 function SelectFar(bnum, mnum, level: integer): boolean;
 var
-  Axp, Ayp: integer;
+  Axp, Ayp, xm, ym: integer;
   AttAreaType, step, range, minstep: integer;
 begin
 
@@ -1954,8 +1959,9 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        SDL_GetMouseState2(xm, ym);
+        Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) and (abs(Axp - Bx) + abs(Ayp - By) > minstep) then
         begin
           Ax := Axp;
@@ -1978,6 +1984,7 @@ end;
 function SelectDirector(bnum, AttAreaType, step, range: integer): boolean;
 var
   str: widestring;
+  xm, ym: integer;
 begin
   Ax := Bx - 1;
   Ay := By;
@@ -2032,6 +2039,7 @@ begin
       end;
       Sdl_mousebuttonup:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_right then
         begin
           Result := False;
@@ -2040,28 +2048,28 @@ begin
         //按照所点击位置设置方向
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+          if (xm < CENTER_x) and (ym < CENTER_y) then
           begin
             Ay := By - 1;
             Ax := Bx;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+          if (xm < CENTER_x) and (ym >= CENTER_y) then
           begin
             Ax := Bx + 1;
             Ay := By;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+          if (xm >= CENTER_x) and (ym < CENTER_y) then
           begin
             Ax := Bx - 1;
             Ay := By;
             Result := True;
             break;
           end;
-          if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+          if (xm >= CENTER_x) and (ym >= CENTER_y) then
           begin
             Ay := By + 1;
             Ax := Bx;
@@ -2072,22 +2080,23 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm < CENTER_x) and (ym < CENTER_y) then
         begin
           Ay := By - 1;
           Ax := Bx;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) < CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+        if (xm < CENTER_x) and (ym >= CENTER_y) then
         begin
           Ax := Bx + 1;
           Ay := By;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) < CENTER_y) then
+        if (xm >= CENTER_x) and (ym < CENTER_y) then
         begin
           Ax := Bx - 1;
           Ay := By;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) >= CENTER_x) and (round(event.button.y / (resolutiony / screen.h)) >= CENTER_y) then
+        if (xm >= CENTER_x) and (ym >= CENTER_y) then
         begin
           Ay := By + 1;
           Ax := Bx;
@@ -2276,7 +2285,7 @@ end;
 //无定向直线
 function SelectLine(bnum, AttAreaType, step, range: integer): boolean;
 var
-  Axp, Ayp: integer;
+  Axp, Ayp, xm, ym: integer;
 begin
   Ax := Bx;
   Ay := By;
@@ -2344,8 +2353,9 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        Axp := (-round(event.button.x / (resolutionx / screen.w)) + CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + Bx;
-        Ayp := (round(event.button.x / (resolutionx / screen.w)) - CENTER_x + 2 * round(event.button.y / (resolutiony / screen.h)) - 2 * CENTER_y + 18) div 36 + By;
+        SDL_GetMouseState2(xm, ym);
+        Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
+        Ayp := (xm - CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + By;
         if (abs(Axp - Bx) + abs(Ayp - By) <= step) then
         begin
           Ax := Axp;
@@ -2639,7 +2649,7 @@ end;
 //选择武功
 function SelectMagic(bnum: integer): integer;
 var
-  i, p, lv, menustatus, mnum, max, menu, menup: integer;
+  i, p, lv, menustatus, mnum, max, menu, menup, xm, ym: integer;
 begin
   menustatus := 0;
   max := 0;
@@ -2734,10 +2744,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 267) and (round(event.button.y / (resolutiony / screen.h)) >= 50) and (round(event.button.y / (resolutiony / screen.h)) < max * 22 + 78) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= 100) and (xm < 267) and (ym >= 50) and (ym < max * 22 + 78) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 52) div 22;
+          menu := (ym - 52) div 22;
           if menu > max then menu := max;
           if menu < 0 then menu := 0;
           if menup <> menu then showmagicmenu(bnum, menustatus, menu, max);
@@ -6282,7 +6293,7 @@ end;
 //显示模式选单
 function SelectAutoMode: integer;
 var
-  i, p, menustatus, max, menu, menup: integer;
+  i, p, menustatus, max, menu, menup, xm, ym: integer;
 begin
   menustatus := 0;
   max := 0;
@@ -6346,10 +6357,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 100) and (round(event.button.x / (resolutionx / screen.w)) < 267) and (round(event.button.y / (resolutiony / screen.h)) >= 100) and (round(event.button.y / (resolutiony / screen.h)) < 3 * 22 + 100) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= 100) and (xm < 267) and (ym >= 100) and (ym < 3 * 22 + 100) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 103) div 22;
+          menu := (ym - 103) div 22;
           if menu > 2 then menu := 2;
           if menu < 0 then menu := 0;
           if menup <> menu then showModemenu(menu);
@@ -6402,7 +6414,7 @@ end;
 
 function TeamModeMenu: boolean;
 var
-  menup, x, y, w, menu, i, amount: integer;
+  menup, x, y, w, menu, i, amount, xm, ym: integer;
   a, b: array of smallint;
   //b用来记录原来状态以复位。
 begin
@@ -6498,11 +6510,12 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) >= y) and (round(event.button.y / (resolutiony / screen.h)) < (amount + 1) * 22 + y) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym >= y) and (ym < (amount + 1) * 22 + y) then
         begin
           menup := menu;
           //showmessage(inttostr(amount));
-          menu := (round(event.button.y / (resolutiony / screen.h)) - y) div 22;
+          menu := (ym - y) div 22;
           if menu < 0 then menu := 0;
           if menu >= amount then menu := -2;
           if menup <> menu then showTeamModemenu(menu);

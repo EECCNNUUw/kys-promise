@@ -1898,11 +1898,11 @@ begin
     2: DrawWholeBField;
     3: begin
       display_imgfromSurface(BEGIN_PIC.pic, 0, 0);
-      DrawVirtualKey;
+      //DrawVirtualKey;
     end;
     4: begin
       display_imgfromSurface(DEATH_PIC.pic, 0, 0);
-      DrawVirtualKey;
+      //DrawVirtualKey;
     end;
   end;
 
@@ -2016,7 +2016,7 @@ begin
     end;
 
   DrawClouds;
-  DrawVirtualKey;
+  //DrawVirtualKey;
 end;
 
 //画场景到屏幕
@@ -2052,7 +2052,7 @@ begin
     word := formatfloat('0', time div 60) + ':' + formatfloat('00', time mod 60);
     drawshadowtext(@word[1], 5, 5, colcolor(0, 5), colcolor(0, 7));
   end;
-  DrawVirtualKey;
+  //DrawVirtualKey;
 end;
 //画不含主角的场景(与DrawSceneByCenter相同)
 procedure DrawSceneWithoutRole(x, y: integer);
@@ -2389,7 +2389,7 @@ begin
           DrawRoleOnBfield(i1, i2);
       end;
     end;
-  DrawVirtualKey;
+  //DrawVirtualKey;
 end;
 
 //画不含主角的战场
@@ -2715,7 +2715,7 @@ begin
       end;
     end;
   showprogress;
-  DrawVirtualKey;
+  //DrawVirtualKey;
 end;
 
 //画带效果的战场
@@ -2853,7 +2853,7 @@ begin
   x := 90;
   y := 0;
   display_imgFromSurface(STATE_PIC.pic, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   if isbattle = False then
   begin
     DrawRectangle(15, 15, 90, 10 + max * 22, $0, colcolor(0, 255), 30);
@@ -3026,7 +3026,7 @@ end;
 //新状态显示画面
 procedure SelectShowStatus;
 var
-  i, menu, menup, max: integer;
+  i, menu, menup, max, xm, ym: integer;
   itempicpos: array[0..4] of tpoint;
 begin
   //SDL_EnableKeyRepeat(10, 100);
@@ -3075,13 +3075,14 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_right then
           break;
         if event.button.button = sdl_button_left then
         begin
           for i := 0 to 4 do
           begin
-            if (round(event.button.x / (resolutionx / screen.w)) >= itempicpos[i].x) and (round(event.button.x / (resolutionx / screen.w)) <= itempicpos[i].x + 80) and (round(event.button.y / (resolutiony / screen.h)) >= itempicpos[i].y) and (round(event.button.y / (resolutiony / screen.h)) <= itempicpos[i].y + 80) then
+            if (xm >= itempicpos[i].x) and (xm <= itempicpos[i].x + 80) and (ym >= itempicpos[i].y) and (ym <= itempicpos[i].y + 80) then
             begin
               if Rrole[teamlist[menu]].Equip[i] >= 0 then
               begin
@@ -3108,10 +3109,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if ((round(event.button.x / (resolutionx / screen.w)) > 15) and (round(event.button.y / (resolutiony / screen.h)) > 15) and (round(event.button.x / (resolutionx / screen.w)) < 105) and (round(event.button.y / (resolutiony / screen.h)) < 25 + max * 22)) then
+        if (xm > 15) and (ym > 15) and (xm < 105) and (ym < 25 + max * 22) then
         begin
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 25) div 22;
+          menu := (ym - 25) div 22;
           if menup <> menu then
             NewShowStatus(teamlist[menu]);
         end;
@@ -3138,7 +3140,7 @@ begin
   x := 90;
   y := 0;
   display_imgFromSurface(MAGIC_PIC.pic, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   if where <> 2 then
   begin
     DrawRectangle(15, 15, 90, 10 + max * 22, $0, colcolor(255), 30);
@@ -3312,7 +3314,7 @@ end;
 //新武功显示画面
 procedure SelectShowMagic;
 var
-  i, menu, menup, max, num, nump: integer;
+  i, menu, menup, max, num, nump, xm, ym: integer;
 begin
   max := 0;
   menu := 0;
@@ -3352,9 +3354,10 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_right then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) >= 136) and (round(event.button.x / (resolutionx / screen.w)) <= 216) and (round(event.button.y / (resolutiony / screen.h)) >= 208) and (round(event.button.y / (resolutiony / screen.h)) <= 288) then
+          if (xm >= 136) and (xm <= 216) and (ym >= 208) and (ym <= 288) then
           begin
             if rrole[teamlist[menu]].PracticeBook >= 0 then
             begin
@@ -3369,14 +3372,14 @@ begin
         end;
         if event.button.button = sdl_button_left then
         begin
-          if ((round(event.button.x / (resolutionx / screen.w)) > 337) and (round(event.button.y / (resolutiony / screen.h)) > 57) and (round(event.button.x / (resolutionx / screen.w)) < (337 + 78)) and (round(event.button.y / (resolutiony / screen.h)) < 79)) then
+          if ((xm > 337) and (ym > 57) and (xm < (337 + 78)) and (ym < 79)) then
           begin
             if (GetRoleMedcine(teamlist[menu], True) >= 20) then
             begin
               MenuMedcine(teamlist[menu]);
             end;
           end;
-          if ((round(event.button.x / (resolutionx / screen.w)) > 437) and (round(event.button.y / (resolutiony / screen.h)) > 57) and (round(event.button.x / (resolutionx / screen.w)) < (437 + 78)) and (round(event.button.y / (resolutiony / screen.h)) < 79)) then
+          if ((xm > 437) and (ym > 57) and (xm < (437 + 78)) and (ym < 79)) then
           begin
             if (GetRoleMedPoi(teamlist[menu], True) >= 20) then
             begin
@@ -3387,14 +3390,15 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if round(event.button.x / (resolutionx / screen.w)) >= 350 then
+        if xm >= 350 then
         begin
           if InModeMagic(teamlist[menu]) then break;
         end
-        else if ((round(event.button.x / (resolutionx / screen.w)) > 15) and (round(event.button.y / (resolutiony / screen.h)) > 15) and (round(event.button.x / (resolutionx / screen.w)) < 105) and (round(event.button.y / (resolutiony / screen.h)) < 25 + max * 22)) then
+        else if ((xm > 15) and (ym > 15) and (xm < 105) and (ym < 25 + max * 22)) then
         begin
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 25) div 22;
+          menu := (ym - 25) div 22;
           if menu <> menup then
           begin
             NewShowMagic(teamlist[menu]);
@@ -3409,7 +3413,7 @@ end;
 
 function InModeMagic(rnum: integer): boolean;
 var
-  max, i, l, num, nump: integer;
+  max, i, l, num, nump, xm, ym: integer;
 begin
   max := 0;
   i := 0;
@@ -3497,6 +3501,7 @@ begin
 
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_right then
         begin
           ShowMagic(rnum, -1, 0, 0, screen.w, screen.h, True);
@@ -3507,7 +3512,7 @@ begin
         begin
           if not isbattle then
           begin
-            if (round(event.button.x / (resolutionx / screen.w)) >= 136) and (round(event.button.x / (resolutionx / screen.w)) <= 136 + 80) and (round(event.button.y / (resolutiony / screen.h)) >= 208) and (round(event.button.y / (resolutiony / screen.h)) <= 288) then
+            if (xm >= 136) and (xm <= 136 + 80) and (ym >= 208) and (ym <= 288) then
             begin
               if Rrole[rnum].PracticeBook > 0 then
               begin
@@ -3545,20 +3550,20 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if round(event.button.x / (resolutionx / screen.w)) <= 116 then
+        SDL_GetMouseState2(xm, ym);
+        if xm <= 116 then
         begin
           Result := False;
           break;
         end;
-
         nump := num;
-        if ((round(event.button.x / (resolutionx / screen.w)) > 337) and (round(event.button.y / (resolutiony / screen.h)) > 57) and (round(event.button.x / (resolutionx / screen.w)) < (337 + 236)) and (round(event.button.y / (resolutiony / screen.h)) < 101)) then
+        if ((xm > 337) and (ym > 57) and (xm < (337 + 236)) and (ym < 101)) then
         begin
-          num := ((round(event.button.y / (resolutiony / screen.h)) - 57) div 22) * 3 + (round(event.button.x / (resolutionx / screen.w)) - 337) div 78;
+          num := ((ym - 57) div 22) * 3 + (xm - 337) div 78;
         end
-        else if ((round(event.button.x / (resolutionx / screen.w)) > 337) and (round(event.button.y / (resolutiony / screen.h)) > 124) and (round(event.button.x / (resolutionx / screen.w)) < (337 + 236)) and (round(event.button.y / (resolutiony / screen.h)) < 234)) then
+        else if ((xm > 337) and (ym > 124) and (xm < (337 + 236)) and (ym < 234)) then
         begin
-          num := ((round(event.button.y / (resolutiony / screen.h)) - 124) div 22) * 2 + (round(event.button.x / (resolutionx / screen.w)) - 337) div 118 + 6;
+          num := ((ym - 124) div 22) * 2 + (xm - 337) div 118 + 6;
         end;
         if nump <> num then
           ShowMagic(rnum, num, 0, 0, screen.w, screen.h, True);
@@ -4007,7 +4012,7 @@ end;
 
 procedure MenuMedcine(rnum: integer); overload;
 var
-  role1, role2, menu, i, menup, x, y, max: integer;
+  role1, role2, menu, i, menup, x, y, max, xm, ym: integer;
   str: widestring;
 begin
   x := 115;
@@ -4089,10 +4094,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if ((round(event.button.x / (resolutionx / screen.w)) > 337 + 24) and (round(event.button.y / (resolutiony / screen.h)) > 57 + 4) and (round(event.button.x / (resolutionx / screen.w)) < 9 * 11 + 337 + 44) and (round(event.button.y / (resolutiony / screen.h)) < 57 + 34 + 22 * max)) then
+        if ((xm > 337 + 24) and (ym > 57 + 4) and (xm < 9 * 11 + 337 + 44) and (ym < 57 + 34 + 22 * max)) then
         begin
-          menu := (round(event.button.y / (resolutiony / screen.h)) - (57 + 4)) div 22;
+          menu := (ym - (57 + 4)) div 22;
         end
         else
           menu := -1;
@@ -4151,7 +4157,7 @@ end;
 
 procedure MenuMedPoision(rnum: integer); overload;
 var
-  role1, role2, menu, x, y, i, max, menup: integer;
+  role1, role2, menu, x, y, i, max, menup, xm, ym: integer;
   str: widestring;
 begin
   x := 115;
@@ -4230,10 +4236,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if ((round(event.button.x / (resolutionx / screen.w)) > 337 + 24) and (round(event.button.y / (resolutiony / screen.h)) > 57 + 4) and (round(event.button.x / (resolutionx / screen.w)) < 9 * 11 + 337 + 44) and (round(event.button.y / (resolutiony / screen.h)) < 57 + 34 + 22 * max)) then
+        if ((xm > 337 + 24) and (ym > 57 + 4) and (xm < 9 * 11 + 337 + 44) and (ym < 57 + 34 + 22 * max)) then
         begin
-          menu := (round(event.button.y / (resolutiony / screen.h)) - (57 + 4)) div 22;
+          menu := (ym - (57 + 4)) div 22;
         end
         else
           menu := -1;
@@ -4433,7 +4440,7 @@ end; {   Traditional2Simplified   }
 
 procedure NewMenuSystem;
 var
-  i, menu, menup: integer;
+  i, menu, menup, xm, ym: integer;
 begin
   menu := 0;
   NewshowMenusystem(menu);
@@ -4535,10 +4542,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 112) and (round(event.button.x / (resolutionx / screen.w)) < 780) and (round(event.button.y / (resolutiony / screen.h)) > 25) and (round(event.button.y / (resolutiony / screen.h)) < 415) then
+        if (xm >= 112) and (xm < 780) and (ym > 25) and (ym < 415) then
         begin
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 25) div 101;
+          menu := (ym - 25) div 101;
           if menu > 3 then
             menu := 3;
           if menu < 0 then
@@ -4562,7 +4570,7 @@ var
   i: integer;
 begin
   display_imgFromSurface(SYSTEM_PIC, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   word[0] := ' ——————————讀取進度——————————';
   word[1] := ' ——————————保存進度——————————';
   word[2] := ' ——————————音樂音量——————————';
@@ -4587,7 +4595,7 @@ var
   i: integer;
 begin
   display_imgFromSurface(SYSTEM_PIC, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   for i := 0 to length(word) - 1 do
     if i = menu then
     begin
@@ -4604,8 +4612,7 @@ end;
 
 function NewMenuSave: boolean;
 var
-  menu: integer;
-  menup: integer;
+  menu, menup, xm, ym: integer;
   word: array[0..4] of widestring;
 begin
   //SDL_EnableKeyRepeat(30, (30 * GameSpeed) div 10);
@@ -4674,10 +4681,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 112) and (round(event.button.x / (resolutionx / screen.w)) < 572) and (round(event.button.y / (resolutiony / screen.h)) > 150) and (round(event.button.y / (resolutiony / screen.h)) < 180) then
+        if (xm >= 112) and (xm < 572) and (ym > 150) and (ym < 180) then
         begin
-          menu := (round(event.button.x / (resolutionx / screen.w)) - 117) div 97;
+          menu := (xm - 117) div 97;
           if menu > 4 then
             menu := 4;
           if menu < 0 then
@@ -4696,8 +4704,7 @@ end;
 
 function NewMenuLoad: boolean;
 var
-  menu: integer;
-  menup: integer;
+  menu, menup, xm, ym: integer;
   word: array[0..5] of widestring;
 begin
   //SDL_EnableKeyRepeat(10, 100);
@@ -4780,10 +4787,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 112) and (round(event.button.x / (resolutionx / screen.w)) < 602) and (round(event.button.y / (resolutiony / screen.h)) > 49) and (round(event.button.y / (resolutiony / screen.h)) < 129) then
+        if (xm >= 112) and (xm < 602) and (ym > 49) and (ym < 129) then
         begin
-          menu := (round(event.button.x / (resolutionx / screen.w)) - 117) div 81;
+          menu := (xm - 117) div 81;
           if menu > 5 then
             menu := 5;
           if menu < 0 then
@@ -4805,7 +4813,7 @@ procedure NewMenuVolume;
 var
   menu: integer;
   menup: integer;
-  w: integer;
+  w, xm, ym: integer;
   word: array[0..8] of widestring;
 begin
 
@@ -4878,10 +4886,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 112) and (round(event.button.x / (resolutionx / screen.w)) < 640) and (round(event.button.y / (resolutiony / screen.h)) > 251) and (round(event.button.y / (resolutiony / screen.h)) < 331) then
+        if (xm >= 112) and (xm < 640) and (ym > 251) and (ym < 331) then
         begin
-          menu := (round(event.button.x / (resolutionx / screen.w)) - 117) div w;
+          menu := (xm - 117) div w;
           if menu > length(word) - 1 then
             menu := length(word) - 1;
           if menu < 0 then
@@ -4903,7 +4912,7 @@ procedure NewMenuQuit;
 var
   menu: integer;
   menup: integer;
-  w: integer;
+  w, xm, ym: integer;
   word: array[0..1] of widestring;
 begin
   w := 56;
@@ -4966,10 +4975,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menup := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) >= 112) and (round(event.button.x / (resolutionx / screen.w)) < 640) and (round(event.button.y / (resolutiony / screen.h)) > 352) and (round(event.button.y / (resolutiony / screen.h)) < 432) then
+        if (xm >= 112) and (xm < 640) and (ym > 352) and (ym < 432) then
         begin
-          menu := (round(event.button.x / (resolutionx / screen.w)) - 117) div w;
+          menu := (xm - 117) div w;
           if menu > length(word) - 1 then
             menu := length(word) - 1;
           if menu < 0 then
@@ -4996,7 +5006,7 @@ end;
 
 procedure ShowMap;
 var
-  i, i1, i2, u, maxspd, n, mousex, mousey, x, y, l, p: integer;
+  i, i1, i2, u, maxspd, n, mousex, mousey, x, y, l, p, xm, ym: integer;
   str1, str, strboat: widestring;
   str2, str3: array of widestring;
   Scenex: array of integer;
@@ -5033,6 +5043,7 @@ begin
   strboat := ' 船的位置';
   while SDL_PollEvent(@event) >= 0 do
   begin
+    SDL_GetMouseState2(xm, ym);
     if (n mod 10 = 0) then
     begin
       drawPngPic(MAP_PIC, 0, 30, 640, 380, 0, 30, 0);
@@ -5043,7 +5054,7 @@ begin
         x := 313 + ((Sceney[i] - Scenex[i]) * 5) div 8;
         y := 63 + ((Sceney[i] + Scenex[i]) * 5) div 16;
         drawPngPic(MAP_PIC, 15, 0, 15, 15, x, y, 0);
-        if (x < round(event.button.x / (resolutionx / screen.w))) and (x + 15 > round(event.button.x / (resolutionx / screen.w))) and (y < round(event.button.y / (resolutiony / screen.h))) and (y + 15 > round(event.button.y / (resolutiony / screen.h))) then
+        if (x < xm) and (x + 15 > xm) and (y < ym) and (y + 15 > ym) then
         begin
           p := i;
         end;
@@ -5132,7 +5143,7 @@ begin
         begin
           x := 313 + ((Sceney[i] - Scenex[i]) * 5) div 8;
           y := 63 + ((Sceney[i] + Scenex[i]) * 5) div 16;
-          if (x < round(event.button.x / (resolutionx / screen.w))) and (x + 15 > round(event.button.x / (resolutionx / screen.w))) and (y < round(event.button.y / (resolutiony / screen.h))) and (y + 15 > round(event.button.y / (resolutiony / screen.h))) then
+          if (x < xm) and (x + 15 > xm) and (y < ym) and (y + 15 > ym) then
           begin
             p := i;
           end;
@@ -5148,7 +5159,7 @@ var
   x, y, menu, N, i, i1, i2: integer;
   positionX: array[0..5] of integer;
   positionY: array[0..5] of integer;
-  menu1: integer;
+  menu1, xm, ym: integer;
 begin
   x := 270;
   y := 50 + 117;
@@ -5279,6 +5290,7 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if (event.button.button = sdl_button_right) then
         begin
           resetpallet;
@@ -5288,7 +5300,7 @@ begin
         begin
           menu1 := -1;
           for i := 0 to 5 do
-            if ((positionX[i] + 10 < round(event.button.x / (resolutionx / screen.w))) and (positionX[i] + 90 > round(event.button.x / (resolutionx / screen.w)))) and ((positionY[i] + 10 < round(event.button.y / (resolutiony / screen.h))) and (positionY[i] + 90 > round(event.button.y / (resolutiony / screen.h)))) then
+            if ((positionX[i] + 10 < xm) and (positionX[i] + 90 > xm)) and ((positionY[i] + 10 < ym) and (positionY[i] + 90 > ym)) then
             begin
               menu1 := i;
               resetpallet;
@@ -5335,9 +5347,10 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menu1 := menu;
         for i := 0 to 5 do
-          if ((positionX[i] + 10 < round(event.button.x / (resolutionx / screen.w))) and (positionX[i] + 90 > round(event.button.x / (resolutionx / screen.w)))) and ((positionY[i] + 10 < round(event.button.y / (resolutiony / screen.h))) and (positionY[i] + 90 > round(event.button.y / (resolutiony / screen.h)))) then
+          if ((positionX[i] + 10 < xm) and (positionX[i] + 90 > xm)) and ((positionY[i] + 10 < ym) and (positionY[i] + 90 > ym)) then
           begin
             menu := i;
             break;
@@ -5743,7 +5756,7 @@ end;
 
 procedure NewMenuTeammate;
 var
-  i, i1, rcount, tcount, menu1, menu2, tmenu, rmenu, temp, t, tt, rr, p, position: integer;
+  i, i1, rcount, tcount, menu1, menu2, tmenu, rmenu, temp, t, tt, rr, p, position, xm, ym: integer;
   TeamMate: array[0..25] of smallint;
   newList: array[0..5] of smallint;
 begin
@@ -5938,19 +5951,20 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         menu1 := Tmenu;
         menu2 := Rmenu;
         p := position;
         position := -1;
-        if (round(event.button.x / (resolutionx / screen.w)) > 120) and (round(event.button.y / (resolutiony / screen.h)) > 60) and (round(event.button.x / (resolutionx / screen.w)) < 120 + 220) and (round(event.button.y / (resolutiony / screen.h)) < 60 + 25 * 5) then
+        if (xm > 120) and (ym > 60) and (xm < 120 + 220) and (ym < 60 + 25 * 5) then
         begin
           position := 0;
-          TMenu := (round(event.button.y / (resolutiony / screen.h)) - 60) div 25 + 1;
+          TMenu := (ym - 60) div 25 + 1;
         end;
-        if (round(event.button.x / (resolutionx / screen.w)) > 350) and (round(event.button.y / (resolutiony / screen.h)) > 60) and (round(event.button.x / (resolutionx / screen.w)) < 350 + 200) and (round(event.button.y / (resolutiony / screen.h)) < 60 + 25 * 13) then
+        if (xm > 350) and (ym > 60) and (xm < 350 + 200) and (ym < 60 + 25 * 13) then
         begin
           position := 1;
-          RMenu := ((round(event.button.y / (resolutiony / screen.h)) - 60) div 25) * 2 + (round(event.button.x / (resolutionx / screen.w)) - 350) div 100;
+          RMenu := ((ym - 60) div 25) * 2 + (xm - 350) div 100;
         end;
         if Rmenu > 25 then Rmenu := 25;
         if Rmenu < 0 then Rmenu := 0;
@@ -5996,7 +6010,7 @@ begin
   y1 := 35;
   y2 := 35;
   display_imgFromSurface(TEAMMATE_PIC, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   str := ' 隊中人員';
   drawrectangle(x1 + 15, y1 - 5, 220, 160, 0, $FFFFFFFF, 40);
   drawShadowtext(@str[1], x1, y1, colcolor(255), colcolor(111));
@@ -6053,7 +6067,7 @@ end;
 
 procedure NewMenuItem;
 var
-  menu, max, menup: integer;
+  menu, max, menup, xm, ym: integer;
   //point似乎未使用, atlu为处于左上角的物品在列表中的序号, x, y为光标位置
   //col, row为总列数和行数
 begin
@@ -6092,7 +6106,6 @@ begin
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if ((event.key.keysym.sym = sdlk_escape)) then
@@ -6119,14 +6132,15 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= 122) then
+        sdl_getmousestate2(xm, ym);
+        if (xm >= 122) then
         begin
           if not MenuItem(menu) then break;
         end
-        else if (round(event.button.x / (resolutionx / screen.w)) >= 15) and (round(event.button.x / (resolutionx / screen.w)) < 15 + 87) and (round(event.button.y / (resolutiony / screen.h)) >= 15) and (round(event.button.y / (resolutiony / screen.h)) < 132 + 6) then
+        else if (xm >= 15) and (xm < 15 + 87) and (ym >= 15) and (ym < 132 + 6) then
         begin
           menup := menu;
-          menu := (round(event.button.y / (resolutiony / screen.h)) - 17) div 22;
+          menu := (ym - 17) div 22;
           if menu > max then menu := max;
           if menu < 0 then menu := 0;
           if menup <> menu then
@@ -6157,7 +6171,7 @@ begin
   max := 5;
 
   display_imgFromSurface(MENUITEM_PIC, 0, 0);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   DrawRectangle(x, y, w, max * 22 + 28, 0, colcolor(255), 30);
   for i := 0 to 5 do
     if i = menu then
@@ -6178,7 +6192,7 @@ end;
 
 function SelectItemUser(inum: integer): smallint;
 var
-  menu, menup, x, y, w, h, i, len: integer;
+  menu, menup, x, y, w, h, i, len, xm, ym: integer;
   teammatelist: array of smallint;
 begin
   menu := 0;
@@ -6304,10 +6318,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + 300) and (round(event.button.y / (resolutiony / screen.h)) >= y) and (round(event.button.y / (resolutiony / screen.h)) < 8 * 23 + y) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + 300) and (ym >= y) and (ym < 8 * 23 + y) then
         begin
           menup := menu;
-          menu := 3 * ((round(event.button.y / (resolutiony / screen.h)) - y) div 23) + ((round(event.button.x / (resolutionx / screen.w)) - x) div 100);
+          menu := 3 * ((ym - y) div 23) + ((xm - x) div 100);
           if menu > len - 1 then menu := -1;
           if menu < 0 then menu := -1;
 
@@ -6334,7 +6349,7 @@ var
   equip: array[0..3] of integer;
 begin
   display_imgFromSurface(MENUITEM_PIC, 110, 0, 110, 0, 530, 440);
-  DrawVirtualKey;
+  //DrawVirtualKey;
   drawrectangle(110 + 12, 16, 499, 405, 0, colcolor(255), 40);
   title := '　　——————請選擇使用者——————';
   drawshadowtext(@title[1], 142, 21, colcolor(0, 5), colcolor(0, 7));
@@ -7023,7 +7038,8 @@ procedure SDL_UpdateRect2(scr1: PSDL_Surface; x, y, w, h: integer);
 var
   realx, realy, realw, realh, ZoomType: integer;
   tempscr: Psdl_surface;
-  now, Next: uint32;
+  temptex: PSDL_Texture;
+  now, Next, temp: uint32;
   src, dest: TSDL_Rect;
   p: Pointer;
 begin
@@ -7037,6 +7053,15 @@ begin
     dest.h := CENTER_Y * 2;
   if scr1 = screen then
   begin
+    SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+    SDL_RenderFillRect(render, nil);
+    temp := RESOLUTIONX * center_y * 2 div RESOLUTIONY;
+    if (virtualKeyScr = nil) or (virtualKeyScr.w <> temp) then
+    begin
+      sdl_freesurface(virtualKeyScr);
+      virtualKeyScr := SDL_CreateRGBSurface(ScreenFlag, temp, CENTER_Y * 2, 32, RMask, GMask, BMask, AMASK);
+    end;
+    DrawVirtualKey;
     // Here p is the address to the pixel we want to set
     p := Pointer(nativeint(screen.pixels) + y * screen.pitch + x * screen.format.BytesPerPixel);
     SDL_UpdateTexture(screenTex, @dest, p, screen.pitch);
@@ -7052,6 +7077,17 @@ begin
     end
     else
       SDL_RenderCopy(render, screenTex, nil, nil);
+
+    temptex := SDL_CreateTextureFromSurface(render, virtualKeyScr);
+    if temptex <> nil then
+    begin
+      SDL_SetTextureBlendMode(temptex, SDL_BLENDMODE_BLEND);
+      SDL_SetTextureAlphaMod(temptex, 128);
+      SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
+      SDL_RenderCopy(render, temptex, nil, nil);
+      SDL_DestroyTexture(temptex);
+    end;
+
     SDL_RenderPresent(render);
   end;
 end;
@@ -7081,6 +7117,18 @@ begin
     x := round(tempx / RESOLUTIONX * CENTER_X * 2);
     y := round(tempy / RESOLUTIONY * CENTER_Y * 2);
   end;
+end;
+
+procedure SDL_GetMouseState3(var x, y: integer);
+var
+  tempx, tempy, temp: integer;
+  px, py, w, h: integer;
+  s: TStretchInfo;
+begin
+  SDL_GetMouseState(@tempx, @tempy);
+  temp := RESOLUTIONX * center_y * 2 div RESOLUTIONY;
+  x := round(tempx / temp * CENTER_X * 2);
+  y := round(tempy / RESOLUTIONY * CENTER_Y * 2);
 end;
 
 procedure ResizeWindow(w, h: integer);
@@ -7122,9 +7170,12 @@ end;
 
 procedure DrawVirtualKey;
 var
-  u, d, l, r: integer;
+  u, d, l, r, w, h: integer;
   rect: TSDL_Rect;
 begin
+  w := virtualKeyScr.w;
+  h := virtualKeyScr.h;
+  SDL_FillRect(virtualKeyScr, nil, SDL_MapRGBA(virtualKeyScr.format, 0, 0, 0, 0));
   if ShowVirtualKey <> 0 then
   begin
     u := 128;
@@ -7137,36 +7188,36 @@ begin
       SDLK_DOWN: d := 0;
       SDLK_RIGHT: r := 0;
     end;
-    SDL_SetSurfaceAlphaMod(VirtualKeyU, 255 - u);
+    {SDL_SetSurfaceAlphaMod(VirtualKeyU, 255 - u);
     SDL_SetSurfaceAlphaMod(VirtualKeyD, 255 - d);
     SDL_SetSurfaceAlphaMod(VirtualKeyL, 255 - l);
     SDL_SetSurfaceAlphaMod(VirtualKeyR, 255 - r);
     SDL_SetSurfaceAlphaMod(VirtualKeyA, 128);
-    SDL_SetSurfaceAlphaMod(VirtualKeyB, 128);
+    SDL_SetSurfaceAlphaMod(VirtualKeyB, 128);}
 
     rect.x := VirtualKeyX;
     rect.y := VirtualKeyY;
-    SDL_BlitSurface(VirtualKeyU, nil, screen, @rect);
+    SDL_BlitSurface(VirtualKeyU, nil, virtualKeyScr, @rect);
 
     rect.x := VirtualKeyX - VirtualKeySize;
     rect.y := VirtualKeyY + VirtualKeySize;
-    SDL_BlitSurface(VirtualKeyL, nil, screen, @rect);
+    SDL_BlitSurface(VirtualKeyL, nil, virtualKeyScr, @rect);
 
     rect.x := VirtualKeyX;
-    rect.y := VirtualKeyY+VirtualKeySize*2;
-    SDL_BlitSurface(VirtualKeyD, nil, screen, @rect);
+    rect.y := VirtualKeyY + VirtualKeySize * 2;
+    SDL_BlitSurface(VirtualKeyD, nil, virtualKeyScr, @rect);
 
     rect.x := VirtualKeyX + VirtualKeySize;
-     rect.y := VirtualKeyY+VirtualKeySize;
-    SDL_BlitSurface(VirtualKeyR, nil, screen, @rect);
+    rect.y := VirtualKeyY + VirtualKeySize;
+    SDL_BlitSurface(VirtualKeyR, nil, virtualKeyScr, @rect);
 
     rect.x := 0;
     rect.y := 0;
-    SDL_BlitSurface(VirtualKeyB, nil, screen, @rect);
+    SDL_BlitSurface(VirtualKeyB, nil, virtualKeyScr, @rect);
 
-    rect.x := CENTER_X * 2 - 100;
-    rect.y := CENTER_Y * 2 - 100;
-    SDL_BlitSurface(VirtualKeyA, nil, screen, @rect);
+    rect.x := w - 100;
+    rect.y := h - 100;
+    SDL_BlitSurface(VirtualKeyA, nil, virtualKeyScr, @rect);
   end;
 end;
 
@@ -7205,7 +7256,7 @@ var
       Result := SDLK_UP;
     if InRegion(x, y, VirtualKeyX - VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_LEFT;
-    if InRegion(x, y, VirtualKeyX, VirtualKeyY + VirtualKeySize*2, VirtualKeySize, VirtualKeySize) then
+    if InRegion(x, y, VirtualKeyX, VirtualKeyY + VirtualKeySize * 2, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_DOWN;
     if InRegion(x, y, VirtualKeyX + VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_RIGHT;
@@ -7257,7 +7308,7 @@ begin
       if CellPhone = 1 then
       begin
         FingerCount := 0;
-        SDL_GetMouseState2(x, y);
+        SDL_GetMouseState3(x, y);
         if inEscape(x, y) or inReturn(x, y) then
           event.type_ := 0;
         inVirtualKey(x, y, VirtualKeyValue);
@@ -7267,7 +7318,7 @@ begin
     begin
       if (CellPhone = 1) and (showVirtualKey <> 0) then
       begin
-        SDL_GetMouseState2(x, y);
+        SDL_GetMouseState3(x, y);
         inVirtualKey(x, y, VirtualKeyValue);
         if VirtualKeyValue <> 0 then
         begin
@@ -7280,7 +7331,7 @@ begin
     begin
       if (CellPhone = 1) and (event.type_ = SDL_MOUSEBUTTONUP) and (event.button.button = SDL_BUTTON_LEFT) then
       begin
-        SDL_GetMouseState2(x, y);
+        SDL_GetMouseState3(x, y);
         if inEscape(x, y) then
         begin
           //event.button.x := RESOLUTIONX div 2;
@@ -7337,7 +7388,8 @@ procedure QuitConfirm;
 var
   tempscr: PSDL_Surface;
 begin
-  if (EXIT_GAME = 0) or (AskingQuit = True) then
+  //if (EXIT_GAME = 0) or (AskingQuit = True) then
+  if True then
   begin
     if messagedlg('Are you sure to quit?', mtConfirmation, [mbOK, mbCancel], 0) = idOk then
       Quit;

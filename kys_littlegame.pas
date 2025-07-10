@@ -410,6 +410,7 @@ var
   degree, arrowdegree: double;
   arrowspeed, arrowstep, i, i1, bombnum, j, len, grp, idx, readystate: integer; //accu is a value to accurate
   time: uint32;
+  xm, ym: integer;
 begin
   if GetPetSkill(4, 2) then chance := chance * 2;
   arrowspeed := 6;
@@ -511,7 +512,8 @@ begin
 
       if (readystate = 0) or (arrowstep > 0) then
       begin
-        arrowdegree := showarrow(arrowpic, round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), arrowstep, arrowdegree);
+        SDL_GetMouseState2(xm, ym);
+        arrowdegree := showarrow(arrowpic, xm, ym, arrowstep, arrowdegree);
         drawrectangle(5, 415, (6 - arrowspeed) * 15, 20, $330000 * (6 - arrowspeed), $330000 * (6 - arrowspeed), 100);
         if checkgoaL(birdx, arrowstep, arrowdegree) then
         begin
@@ -566,8 +568,8 @@ begin
       end;
     end;
 
-    showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-      round(event.button.y / (resolutiony / screen.h)), degree);
+    showbow(bowpic[readystate], xm,
+      ym, degree);
     word := '得分：';
     drawshadowtext(@word[1], 500, 415, colcolor(0, 255), colcolor(0, 111));
     word := '機會：';
@@ -587,15 +589,15 @@ begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
         begin
           degree := degree + 1;
-          showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-            round(event.button.y / (resolutiony / screen.h)), degree);
+          showbow(bowpic[readystate], xm,
+            ym, degree);
           if arrowstep <= 0 then arrowdegree := degree;
         end;
         if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
         begin
           degree := degree - 1;
-          showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)),
-            round(event.button.y / (resolutiony / screen.h)), degree);
+          showbow(bowpic[readystate], xm,
+            ym, degree);
           if arrowstep <= 0 then arrowdegree := degree;
         end;
         if event.key.keysym.sym = sdlk_space then
@@ -604,8 +606,8 @@ begin
           begin
             readystate := 0;
 
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), degree);
-            //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
+            degree := showbow(bowpic[readystate], xm, ym, degree);
+            //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
 
           end;
         end;
@@ -620,8 +622,8 @@ begin
             readystate := 1;
             Dec(chance);
             arrowstep := arrowstep + arrowspeed;
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), degree);
-            //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
+            degree := showbow(bowpic[readystate], xm, ym, degree);
+            //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
         end;
         if event.key.keysym.sym = sdlk_escape then
@@ -638,8 +640,8 @@ begin
             readystate := 1;
             Dec(chance);
             arrowstep := arrowstep + arrowspeed;
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
-            //      showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
+            degree := showbow(bowpic[readystate], xm, ym, 180);
+            //      showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
       end;
       SDL_MOUSEBUTTONDOWN:
@@ -649,13 +651,13 @@ begin
           begin
             readystate := 0;
 
-            degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
-            //  showbow(Gamepic,bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)),readystate);
+            degree := showbow(bowpic[readystate], xm, ym, 180);
+            //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
       end;
       SDL_MOUSEMOTION:
       begin
-        degree := showbow(bowpic[readystate], round(event.button.x / (resolutionx / screen.w)), round(event.button.y / (resolutiony / screen.h)), 180);
+        degree := showbow(bowpic[readystate], xm, ym, 180);
 
       end;
     end;
@@ -691,7 +693,7 @@ var
   flag: boolean;
   GamePic: Tpic;
   word: widestring;
-  r, i, i1, b, j, s, len, grp, idx, menu, col, acunum, trytime, accu, actime, chance: integer;
+  r, i, i1, b, j, s, len, grp, idx, menu, col, acunum, trytime, accu, actime, chance, xm, ym: integer;
   //accu is a value to accurate
 begin
 
@@ -827,9 +829,10 @@ begin
         CheckBasicEvent;
         if (event.type_ = SDL_mousebuttonUP) then
         begin
+          SDL_GetMouseState2(xm, ym);
           for i := 0 to acunum - 1 do
           begin
-            if (round(event.button.x / (resolutionx / screen.w)) <= (AcupunctureList[2 * (i + 3)] + accu)) and (round(event.button.x / (resolutionx / screen.w)) >= (AcupunctureList[2 * (i + 3)] - accu)) and (round(event.button.y / (resolutiony / screen.h)) >= (AcupunctureList[2 * (i + 3) + 1] - accu)) and (round(event.button.y / (resolutiony / screen.h)) <= (AcupunctureList[2 * (i + 3) + 1] + accu)) then
+            if (xm <= (AcupunctureList[2 * (i + 3)] + accu)) and (xm >= (AcupunctureList[2 * (i + 3)] - accu)) and (ym >= (AcupunctureList[2 * (i + 3) + 1] - accu)) and (ym <= (AcupunctureList[2 * (i + 3) + 1] + accu)) then
             begin
               select[s] := i;
               s := s + 1;
@@ -905,7 +908,7 @@ end;
 
 function Lamp(c, beginpic, whitecount, chance: integer): boolean;
 var
-  x, y, r, temp, i, pic2, pic3, menu: integer;
+  x, y, r, temp, i, pic2, pic3, menu, xm, ym: integer;
 begin
   if GetPetSkill(4, 2) then Dec(c);
   r := c;
@@ -939,17 +942,17 @@ begin
     case event.type_ of
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
-
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) + (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
+        SDL_GetMouseState2(xm, ym);
+        if (xm > x) and (xm < x + 50 * c) and (ym > y) and (ym < y + 50 * r) then
+          menu := ((xm - x) div 50) + (((ym - y) div 50) * c);
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x + 50 * c) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 50 * r) then
-
-            menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 50) + (((round(event.button.y / (resolutiony / screen.h)) - y) div 50) * c);
+          if (xm > x) and (xm < x + 50 * c) and (ym > y) and (ym < y + 50 * r) then
+            menu := ((xm - x) div 50) + (((ym - y) div 50) * c);
           if gamearray[0][menu] = beginpic then temp := pic2
           else
             temp := beginpic;
@@ -1060,7 +1063,7 @@ end;
 function SelectPoetry(wx1, wy1, c, Count, len, menu, chance: integer): integer;
 var
   w: uint16;
-  menu1, i, r1, row: integer;
+  menu1, i, r1, row, xm, ym: integer;
 begin
   r1 := Count div c;
   row := len div c;
@@ -1080,17 +1083,18 @@ begin
     case event.type_ of
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm > (wx1 - 11)) and (xm < (wx1 - 11) + 40 * c) and (ym > (wy1 - 9)) and (ym < (wy1 - 9) + 40 * r1) then
 
-          menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
+          menu1 := ((xm - wx1 - 11) div 40) + (((ym - wy1 + 9)) div 40) * c;
       end;
       SDL_MOUSEBUTTONUP:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > (wx1 - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx1 - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy1 - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy1 - 9) + 40 * r1) then
-
-            menu1 := ((round(event.button.x / (resolutionx / screen.w)) - wx1 - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy1 + 9)) div 40) * c;
+          if (xm > (wx1 - 11)) and (xm < (wx1 - 11) + 40 * c) and (ym > (wy1 - 9)) and (ym < (wy1 - 9) + 40 * r1) then
+            menu1 := ((xm - wx1 - 11) div 40) + (((ym - wy1 + 9)) div 40) * c;
           if (menu1 < Count) and (menu < length(gamearray[1])) then
           begin
             w := gamearray[1][menu];
@@ -1139,7 +1143,7 @@ end;
 
 function Poetry(talknum, chance, c, Count: integer): boolean;
 var
-  wx, wy, wx1, wy1, x, y, w, h, row, r1, i, n, len, idx, grp, menu, menu1, offset: integer;
+  wx, wy, wx1, wy1, x, y, w, h, row, r1, i, n, len, idx, grp, menu, menu1, offset, xm, ym: integer;
   wd: array[0..1] of smallint;
   poet, t: puint16;
   talkarray: array of byte;
@@ -1261,14 +1265,16 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * row) then
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
+        SDL_GetMouseState2(xm, ym);
+        if (xm > (wx - 11)) and (xm < (wx - 11) + 40 * c) and (ym > (wy - 9)) and (ym < (wy - 9) + 40 * row) then
+          menu := ((xm - wx - 11) div 40) + (((ym - wy + 9)) div 40) * c;
       end;
       SDL_MOUSEBUTTONUP:
         if event.button.button = sdl_button_left then
         begin
-          if (round(event.button.x / (resolutionx / screen.w)) > (wx - 11)) and (round(event.button.x / (resolutionx / screen.w)) < (wx - 11) + 40 * c) and (round(event.button.y / (resolutiony / screen.h)) > (wy - 9)) and (round(event.button.y / (resolutiony / screen.h)) < (wy - 9) + 40 * r1) then
-            menu := ((round(event.button.x / (resolutionx / screen.w)) - wx - 11) div 40) + (((round(event.button.y / (resolutiony / screen.h)) - wy + 9)) div 40) * c;
+          SDL_GetMouseState2(xm, ym);
+          if (xm > (wx - 11)) and (xm < (wx - 11) + 40 * c) and (ym > (wy - 9)) and (ym < (wy - 9) + 40 * r1) then
+            menu := ((xm - wx - 11) div 40) + (((ym - wy + 9)) div 40) * c;
           chance := SelectPoetry(wx1, wy1, (Count div r1), Count, len, menu, chance);
           SDL_UpdateRect2(screen, 0, 0, 640, 440);
         end;
@@ -1344,7 +1350,7 @@ end;
 
 function rotoSpellPicture(num, chance: integer): boolean;
 var
-  x, y, w, h, i1, i2, i, j, x1, y1, r, right, menu, grp, idx, len, menu1, menu2: integer;
+  x, y, w, h, i1, i2, i, j, x1, y1, r, right, menu, grp, idx, len, menu1, menu2, xm, ym: integer;
   temp, littlegamepic: psdl_surface;
   gamepic: tpic;
   filename: ansistring;
@@ -1430,8 +1436,6 @@ begin
   end;
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   sdl_delay(2000);
-
-
   drawrectangle(x - 5, y - 5, w, h, 0, colcolor(255), 100);
   for i := 0 to 24 do
   begin
@@ -1512,10 +1516,11 @@ begin
 
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         if menu > -1 then menu1 := menu;
-        if (round(event.button.x / (resolutionx / screen.w)) > x) and (round(event.button.x / (resolutionx / screen.w)) < x - 5 + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y - 5 + h) then
+        if (xm > x) and (xm < x - 5 + w) and (ym > y) and (ym < y - 5 + h) then
         begin
-          menu := ((round(event.button.x / (resolutionx / screen.w)) - x) div 80) + ((round(event.button.y / (resolutiony / screen.h)) - y - 30) div 80) * 5;
+          menu := ((xm - x) div 80) + ((ym - y - 30) div 80) * 5;
           if menu > 24 then menu := -1;
           if menu <> menu1 then
           begin
@@ -1542,7 +1547,6 @@ begin
           begin
             Inc(gamearray[1][menu]);
             if gamearray[1][menu] > 3 then gamearray[1][menu] := 0;
-
             srcrect.x := (menu mod 5) * 80 + x;
             srcrect.y := (menu div 5) * 80 + y + 30;
             srcrect.w := 80;

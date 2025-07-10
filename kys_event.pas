@@ -4239,7 +4239,7 @@ end;
 
 procedure StudyGongti;
 var
-  rnum, mnum, i, position, moveable, lv, max1, max2, x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2: integer;
+  rnum, mnum, i, position, moveable, lv, max1, max2, x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2, xm, ym: integer;
   teammenu, magicmenu, menu1, menu2: integer;
   personname: array of widestring;
   magic: array of integer;
@@ -4433,7 +4433,8 @@ begin
     begin
       menu1 := teammenu;
       menu2 := magicmenu;
-      if (round(event.button.x / (resolutionx / screen.w)) >= x2) and (round(event.button.x / (resolutionx / screen.w)) <= x2 + w2) and (round(event.button.y / (resolutiony / screen.h)) >= y2) and (round(event.button.y / (resolutiony / screen.h)) <= y2 + h2) then
+      SDL_GetMouseState2(xm, ym);
+      if (xm >= x2) and (xm <= x2 + w2) and (ym >= y2) and (ym <= y2 + h2) then
       begin
 
         max2 := 0;
@@ -4450,20 +4451,20 @@ begin
         begin
           position := 1;
           position := 1;
-          magicmenu := (round(event.button.y / (resolutiony / screen.h)) - y2) div 22;
+          magicmenu := (ym - y2) div 22;
           magicmenu := min(max2 - 1, magicmenu);
           magicmenu := max(0, magicmenu);
         end
         else
           magicmenu := -1;
       end
-      else if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) <= x + w) and (round(event.button.y / (resolutiony / screen.h)) >= y) and (round(event.button.y / (resolutiony / screen.h)) <= y + h) then
+      else if (xm >= x) and (xm <= x + w) and (ym >= y) and (ym <= y + h) then
       begin
         if (position <> 0) then position := 0
         else
         begin
           magicmenu := -1;
-          teammenu := (round(event.button.y / (resolutiony / screen.h)) - y) div 22;
+          teammenu := (ym - y) div 22;
           teammenu := min(max1 - 1, teammenu);
           teammenu := max(0, teammenu);
         end;
@@ -4809,7 +4810,7 @@ end;
 
 function StadyGongtiMenu(x, y, w: integer): integer;
 var
-  menu, menup: integer;
+  menu, menup, xm, ym: integer;
 begin
   menu := 0;
   //SDL_EnableKeyRepeat(10, 100);
@@ -4868,10 +4869,11 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
-        if (round(event.button.x / (resolutionx / screen.w)) >= x) and (round(event.button.x / (resolutionx / screen.w)) < x + w) and (round(event.button.y / (resolutiony / screen.h)) > y) and (round(event.button.y / (resolutiony / screen.h)) < y + 29) then
+        SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
           menup := menu;
-          menu := (round(event.button.x / (resolutionx / screen.w)) - x - 2) div 50;
+          menu := (xm - x - 2) div 50;
           if menu > 1 then
             menu := 1;
           if menu < 0 then
