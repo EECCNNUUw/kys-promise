@@ -1750,6 +1750,7 @@ begin
       end;
       Sdl_mousebuttondown:
       begin
+        SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_left then
         begin
           walking := 1;
@@ -2474,6 +2475,7 @@ begin
         end
         else if event.button.button = sdl_button_left then
         begin
+          SDL_GetMouseState2(xm, ym);
           if walking = 0 then
           begin
             walking := 1;
@@ -2653,7 +2655,6 @@ begin
           SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if ((event.key.keysym.sym = sdlk_escape)) then
@@ -2683,13 +2684,16 @@ begin
         if (event.button.button = sdl_button_left) then
         begin
           Result := menu;
-          Redraw;
+          //Redraw;
+          //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+          if Result >= 0 then  break;
+          showcommonMenu(x, y, w, max, menu);
           SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
-          break;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
+        menu := -1;
         if MouseInRegion(x, y, w, max * h + h + 2, x1, y1) then
         begin
           menup := menu;
@@ -2745,7 +2749,6 @@ begin
           SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if ((event.key.keysym.sym = sdlk_escape)) then
@@ -2776,12 +2779,16 @@ begin
         begin
           Result := menu;
           //Redraw;
+          //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+          if Result >= 0 then break;
+          showcommonMenu(x, y, w, max, menu);
           SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
-          break;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
+        menu := -1;
+        SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
           menup := menu;
@@ -2914,9 +2921,7 @@ begin
           showcommonscrollMenu(x, y, w, max, maxshow, menu, menutop);
           SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
         end;
-
       end;
-
       SDL_KEYup:
       begin
         if ((event.key.keysym.sym = sdlk_escape)) and (where <= 2) then
@@ -2948,7 +2953,7 @@ begin
           Result := menu;
           Redraw;
           SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
-          break;
+          if Result >= 0 then  break;
         end;
         {if (event.button.button = sdl_button_wheeldown) then
         begin
@@ -2987,6 +2992,8 @@ begin
       end;
       SDL_MOUSEMOTION:
       begin
+        menu := -1;
+        SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
           menup := menu;
@@ -3073,10 +3080,8 @@ begin
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
         end;
       end;
-
       SDL_KEYUP:
       begin
-
         if ((event.key.keysym.sym = sdlk_escape)) and (where <= 2) then
         begin
           Result := -1;
@@ -3106,11 +3111,12 @@ begin
           Result := menu;
           redraw;
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
-          break;
+          if Result >= 0 then break;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
+        SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
           menup := menu;

@@ -7127,7 +7127,7 @@ var
 begin
   SDL_GetMouseState(@tempx, @tempy);
   temp := RESOLUTIONX * center_y * 2 div RESOLUTIONY;
-  x := round(tempx / temp * CENTER_X * 2);
+  x := round(tempx / RESOLUTIONX * temp);
   y := round(tempy / RESOLUTIONY * CENTER_Y * 2);
 end;
 
@@ -7252,6 +7252,8 @@ var
   function inVirtualKey(x, y: integer; var key: uint32): uint32;
   begin
     Result := 0;
+    if (x < VirtualKeyX + VirtualKeySize * 2)and (y> VirtualKeyY) then
+      Result := SDLK_TAB;
     if InRegion(x, y, VirtualKeyX, VirtualKeyY, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_UP;
     if InRegion(x, y, VirtualKeyX - VirtualKeySize, VirtualKeyY + VirtualKeySize, VirtualKeySize, VirtualKeySize) then
@@ -7326,6 +7328,12 @@ begin
           event.key.keysym.sym := VirtualKeyValue;
         end;
       end;
+      if event.type_ <> SDL_KEYDOWN then
+      begin
+        SDL_GetMouseState2(x, y);
+        if (x < 0) or (x >= center_x * 2) or (y < 0) or (y >= center_y * 2) then
+          event.type_ := 0;
+      end;
     end;
     SDL_KEYUP, SDL_MOUSEBUTTONUP:
     begin
@@ -7336,7 +7344,7 @@ begin
         begin
           //event.button.x := RESOLUTIONX div 2;
           //event.button.y := RESOLUTIONY div 2;
-          event.button.button := SDL_BUTTON_RIGHT;
+          event.type_ := SDL_KEYUP;
           event.key.keysym.sym := SDLK_ESCAPE;
           ConsoleLog('Change to escape');
         end
@@ -7376,6 +7384,12 @@ begin
           if Brole[i].Team = 0 then
             Brole[i].Auto := 0;
         end;
+      end;
+      if event.type_ <> SDL_KEYUP then
+      begin
+        SDL_GetMouseState2(x, y);
+        if (x < 0) or (x >= center_x * 2) or (y < 0) or (y >= center_y * 2) then
+          event.type_ := 0;
       end;
       if event.key.keysym.sym = SDLK_KP_ENTER then
         event.key.keysym.sym := SDLK_RETURN;
