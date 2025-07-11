@@ -580,7 +580,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  CellPhone := 1;
+  //CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -2683,17 +2683,17 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
+          if MouseInRegion(x, y, w, max * h + h + 2, x1, y1) then
+          begin
           Result := menu;
           //Redraw;
           //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
           if Result >= 0 then  break;
-          showcommonMenu(x, y, w, max, menu);
-          SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+          end;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
-        menu := -1;
         if MouseInRegion(x, y, w, max * h + h + 2, x1, y1) then
         begin
           menup := menu;
@@ -2777,17 +2777,17 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
+          SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
+        begin
           Result := menu;
           //Redraw;
           //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
-          if Result >= 0 then break;
-          showcommonMenu(x, y, w, max, menu);
-          SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+          if Result >= 0 then break; end;
         end;
       end;
       SDL_MOUSEMOTION:
       begin
-        menu := -1;
         SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
@@ -2950,49 +2950,18 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
+          SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
+        begin
           Result := menu;
-          Redraw;
-          SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
+          //Redraw;
+          //SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
           if Result >= 0 then  break;
+          end;
         end;
-        {if (event.button.button = sdl_button_wheeldown) then
-        begin
-          menu := menu + 1;
-          if menu - menutop >= maxshow then
-          begin
-            menutop := menutop + 1;
-          end;
-          if menu > max then
-          begin
-            menu := 0;
-            menutop := 0;
-          end;
-          showcommonscrollMenu(x, y, w, max, maxshow, menu, menutop);
-          SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
-        end;
-        if (event.button.button = sdl_button_wheelup) then
-        begin
-          menu := menu - 1;
-          if menu <= menutop then
-          begin
-            menutop := menu;
-          end;
-          if menu < 0 then
-          begin
-            menu := max;
-            menutop := menu - maxshow + 1;
-            if menutop < 0 then
-            begin
-              menutop := 0;
-            end;
-          end;
-          showcommonscrollMenu(x, y, w, max, maxshow, menu, menutop);
-          SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
-        end; }
       end;
       SDL_MOUSEMOTION:
       begin
-        menu := -1;
         SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
         begin
@@ -3022,7 +2991,6 @@ procedure ShowCommonScrollMenu(x, y, w, max, maxshow, menu, menutop: integer);
 var
   i, p, m: integer;
 begin
-
   redraw;
   //showmessage(inttostr(y));
   m := min(maxshow, max + 1);
@@ -3107,11 +3075,14 @@ begin
           break;
         end;
         if (event.button.button = sdl_button_left) then
+        begin SDL_GetMouseState2(xm, ym);
+        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
           Result := menu;
           redraw;
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
           if Result >= 0 then break;
+          end;
         end;
       end;
       SDL_MOUSEMOTION:

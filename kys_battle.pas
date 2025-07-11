@@ -460,7 +460,6 @@ begin
           if Result <> 0 then break;
         end;
       end;
-
       SDL_KEYDOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
@@ -478,25 +477,32 @@ begin
       end;
       SDL_MOUSEBUTTONUP:
       begin
-        if (event.button.button = sdl_button_left) and (menu <> max) and (menu <> 0) then
+        if (event.button.button = sdl_button_left) then
         begin
-          Result := Result xor (1 shl menu);
-          ShowMultiMenu(max, menu, Result);
-        end;
-        if (event.button.button = sdl_button_left) and (menu = max) then
-        begin
-          if Result <> 0 then break;
-        end;
-        if (event.button.button = sdl_button_left) and (menu = 0) then
-        begin
-          for i := 0 to 5 do
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= CENTER_X - 75) and (xm < CENTER_X + 75) and (ym >= 100) and (ym < max * 22 + 128) then
           begin
-            if Teamlist[i] >= 0 then
+            if (menu <> max) and (menu <> 0) then
             begin
-              Result := Result xor (1 shl (i + 1));
+              Result := Result xor (1 shl menu);
+              ShowMultiMenu(max, menu, Result);
+            end;
+            if (menu = max) then
+            begin
+              if Result <> 0 then break;
+            end;
+            if (menu = 0) then
+            begin
+              for i := 0 to 5 do
+              begin
+                if Teamlist[i] >= 0 then
+                begin
+                  Result := Result xor (1 shl (i + 1));
+                end;
+              end;
+              ShowMultiMenu(max, menu, Result);
             end;
           end;
-          ShowMultiMenu(max, menu, Result);
         end;
       end;
       SDL_MOUSEMOTION:
@@ -650,7 +656,6 @@ begin
       end;
       //战场序号保存至变量28005
       x50[28005] := i;
-
 
       //为我方且未阵亡, 非自动战斗, 则显示选单
       if (Brole[i].Dead = 0) and (Brole[i].rnum >= 0) and (Brole[i].Acted = 0) then
@@ -1257,7 +1262,11 @@ begin
       SDL_MOUSEBUTTONUP:
       begin
         if (event.button.button = sdl_button_left) then
-          break;
+        begin
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 100) and (xm < 147) and (ym >= 50 - 22) and (ym < max * 22 + 78 - 22) then
+            break;
+        end;
       end;
       SDL_MOUSEMOTION:
       begin
@@ -1432,6 +1441,7 @@ begin
     a := 1;
     while not ((Brole[bnum].Step = 0) or ((Bx = Ax) and (By = Ay))) do
     begin
+      sdl_pollevent(nil);
       if sign(linex[a] - Bx) > 0 then
         Brole[bnum].Face := 3
       else if sign(linex[a] - Bx) < 0 then
@@ -2611,6 +2621,7 @@ begin
     t1 := sdl_getticks;
     while sdl_getticks < t1 + 1000 do
     begin
+      sdl_pollevent(nil);
     end;
   end;
   playsound(rmagic[mnum].SoundNum, 0);
@@ -2734,7 +2745,9 @@ begin
       begin
         if (event.button.button = sdl_button_left) then
         begin
-          break;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 100) and (xm < 267) and (ym >= 50) and (ym < max * 22 + 78) then
+            break;
         end;
         if (event.button.button = sdl_button_right) then
         begin
@@ -6306,8 +6319,6 @@ begin
   menustring[2] := ' 呆子型';
 
   redraw;
-
-
   SDL_UpdateRect2(screen, 169, 100, screen.w, screen.h);
   menu := 0;
   showModemenu(menu);
@@ -6347,7 +6358,9 @@ begin
       begin
         if (event.button.button = sdl_button_left) and (menu <> -1) then
         begin
-          break;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 100) and (xm < 267) and (ym >= 100) and (ym < 3 * 22 + 100) then
+            break;
         end;
         if (event.button.button = sdl_button_right) then
         begin
@@ -6365,9 +6378,7 @@ begin
           if menu > 2 then menu := 2;
           if menu < 0 then menu := 0;
           if menup <> menu then showModemenu(menu);
-        end
-        else
-          menu := -1;
+        end;
       end;
     end;
     event.key.keysym.sym := 0;
@@ -6489,16 +6500,18 @@ begin
       begin
         if (event.button.button = sdl_button_left) then
         begin
-          if (menu > -1) then
-          begin
-            Brole[a[menu]].Auto := Brole[a[menu]].Auto + 1;
-            if Brole[a[menu]].Auto > 2 then Brole[a[menu]].Auto := -1;
-            showTeamModemenu(menu);
-          end
-          else if (menu = -2) then
-          begin
-            break;
-          end;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= x) and (xm < x + w) and (ym >= y) and (ym < (amount + 1) * 22 + y) then
+            if (menu > -1) then
+            begin
+              Brole[a[menu]].Auto := Brole[a[menu]].Auto + 1;
+              if Brole[a[menu]].Auto > 2 then Brole[a[menu]].Auto := -1;
+              showTeamModemenu(menu);
+            end
+            else if (menu = -2) then
+            begin
+              break;
+            end;
         end;
         if (event.button.button = sdl_button_right) then
         begin
@@ -6519,9 +6532,7 @@ begin
           if menu < 0 then menu := 0;
           if menu >= amount then menu := -2;
           if menup <> menu then showTeamModemenu(menu);
-        end
-        else
-          menu := -1;
+        end;
       end;
     end;
 

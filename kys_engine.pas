@@ -4513,32 +4513,36 @@ begin
           break;
         end;
         if (event.button.button = sdl_button_left) then
-          case menu of
-            0:
-            begin
-              if (NewMenuload) then
-                break
-              else
+        begin
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 112) and (xm < 780) and (ym > 25) and (ym < 415) then
+            case menu of
+              0:
+              begin
+                if (NewMenuload) then
+                  break
+                else
+                  NewshowMenusystem(menu);
+              end;
+              1:
+              begin
+                if (NewMenuSave) then
+                  break
+                else
+                  NewshowMenusystem(menu);
+              end;
+              2:
+              begin
+                NewMenuVolume;
                 NewshowMenusystem(menu);
-            end;
-            1:
-            begin
-              if (NewMenuSave) then
-                break
-              else
+              end;
+              3:
+              begin
+                NewMenuQuit;
                 NewshowMenusystem(menu);
+              end;
             end;
-            2:
-            begin
-              NewMenuVolume;
-              NewshowMenusystem(menu);
-            end;
-            3:
-            begin
-              NewMenuQuit;
-              NewshowMenusystem(menu);
-            end;
-          end;
+        end;
       end;
       SDL_MOUSEMOTION:
       begin
@@ -4551,10 +4555,6 @@ begin
             menu := 3;
           if menu < 0 then
             menu := 0;
-        end
-        else
-        begin
-          menu := -1;
         end;
         if menup <> menu then
           NewshowMenusystem(menu);
@@ -4671,12 +4671,14 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if menu >= 0 then
-          begin
-            SaveR(menu + 1);
-            Result := True;
-            break;
-          end;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 112) and (xm < 572) and (ym > 150) and (ym < 180) then
+            if menu >= 0 then
+            begin
+              SaveR(menu + 1);
+              Result := True;
+              break;
+            end;
         end;
       end;
       SDL_MOUSEMOTION:
@@ -4690,10 +4692,6 @@ begin
             menu := 4;
           if menu < 0 then
             menu := 0;
-        end
-        else
-        begin
-          menu := -1;
         end;
         if menup <> menu then
           NewshowSelect(1, menu, word, 97);
@@ -4738,7 +4736,6 @@ begin
           NewShowSelect(0, menu, word, 81);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_escape) then
@@ -4771,18 +4768,20 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if menu >= 0 then
-          begin
-            LoadR(menu + 1);
-            if where = 1 then
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 112) and (xm < 602) and (ym > 49) and (ym < 129) then
+            if menu >= 0 then
             begin
-              WalkInScene(0);
-              //JmpScene(curScene, sy, sx);
+              LoadR(menu + 1);
+              if where = 1 then
+              begin
+                WalkInScene(0);
+                //JmpScene(curScene, sy, sx);
+              end;
+              redraw;
+              Result := True;
+              break;
             end;
-            redraw;
-            Result := True;
-            break;
-          end;
         end;
       end;
       SDL_MOUSEMOTION:
@@ -4796,10 +4795,6 @@ begin
             menu := 5;
           if menu < 0 then
             menu := 0;
-        end
-        else
-        begin
-          menu := -1;
         end;
         if menup <> menu then
           NewShowSelect(0, menu, word, 81);
@@ -4851,12 +4846,10 @@ begin
           NewshowSelect(2, menu, word, w);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_escape) then
         begin
-
           break;
         end;
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
@@ -4878,10 +4871,14 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          MusicVolume := menu * 16;
-          //Mix_VolumeMusic(MusicVolume);
-          BASS_ChannelSetAttribute(Music[nowmusic], BASS_ATTRIB_VOL, MusicVOLUME / 128.0);
-          Kys_ini.WriteInteger('constant', 'MUSIC_VOLUME', MusicVolume);
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 112) and (xm < 640) and (ym > 251) and (ym < 331) then
+          begin
+            MusicVolume := menu * 16;
+            //Mix_VolumeMusic(MusicVolume);
+            BASS_ChannelSetAttribute(Music[nowmusic], BASS_ATTRIB_VOL, MusicVOLUME / 128.0);
+            Kys_ini.WriteInteger('constant', 'MUSIC_VOLUME', MusicVolume);
+          end;
         end;
       end;
       SDL_MOUSEMOTION:
@@ -4895,10 +4892,6 @@ begin
             menu := length(word) - 1;
           if menu < 0 then
             menu := 0;
-        end
-        else
-        begin
-          menu := musicvolume div 16;
         end;
         if menup <> menu then
           NewshowSelect(2, menu, word, w);
@@ -4966,10 +4959,12 @@ begin
         end;
         if (event.button.button = sdl_button_left) then
         begin
-          if menu = 1 then
-          begin
-            Quit;
-          end;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= 112) and (xm < 640) and (ym > 352) and (ym < 432) then
+            if menu = 1 then
+            begin
+              Quit;
+            end;
         end;
         break;
       end;
@@ -4984,10 +4979,6 @@ begin
             menu := length(word) - 1;
           if menu < 0 then
             menu := 0;
-        end
-        else
-        begin
-          menu := -1;
         end;
         if menup <> menu then
           NewshowSelect(3, menu, word, w);
@@ -7252,7 +7243,7 @@ var
   function inVirtualKey(x, y: integer; var key: uint32): uint32;
   begin
     Result := 0;
-    if (x < VirtualKeyX + VirtualKeySize * 2)and (y> VirtualKeyY) then
+    if (x < VirtualKeyX + VirtualKeySize * 2) and (y > VirtualKeyY) then
       Result := SDLK_TAB;
     if InRegion(x, y, VirtualKeyX, VirtualKeyY, VirtualKeySize, VirtualKeySize) then
       Result := SDLK_UP;
@@ -7371,7 +7362,7 @@ begin
         //手机在战场仅有确认键有用
         else if (where = 2) {and (BattleSelecting)} then
         begin
-          event.button.button := 0;
+          //event.button.button := 0;
         end;
         //第二指不触发事件
         if FingerCount >= 1 then
@@ -7382,7 +7373,7 @@ begin
         for i := 0 to BRoleAmount - 1 do
         begin
           if Brole[i].Team = 0 then
-            Brole[i].Auto := 0;
+            Brole[i].Auto := -1;
         end;
       end;
       if event.type_ <> SDL_KEYUP then
