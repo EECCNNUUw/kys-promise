@@ -255,7 +255,7 @@ function MenuLoadAtBeginning: boolean;
 procedure MenuSave;
 procedure MenuQuit;
 procedure XorCount(Data: pbyte; xornum: byte; length: integer);
-procedure MenuDifficult;
+function MenuDifficult: boolean;
 function TitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow: integer): integer;
 procedure ShowTitleCommonScrollMenu(word: puint16; color1, color2: uint32; tx, ty, tw, max, maxshow, menu, menutop: integer);
 
@@ -270,7 +270,7 @@ procedure CallEvent(num: integer);
 procedure ShowSaveSuccess;
 procedure CheckHotkey(key: cardinal);
 procedure FourPets;
-function PetStatus(r: integer): boolean;
+function PetStatus(r: integer; var menu:integer): boolean;
 procedure ShowPetStatus(r, p: integer);
 procedure DrawFrame(x, y, w: integer; color: uint32);
 procedure PetLearnSkill(r, s: integer);
@@ -580,7 +580,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  //CellPhone := 1;
+  CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -1229,14 +1229,15 @@ begin
     if Result then
     begin //redraw;
       if gametime > 0 then
-        MenuDifficult;
-
-      PlayBeginningMovie(26, 0);
-      StartAmi;
+        Result := MenuDifficult;
+      if Result then
+      begin
+        PlayBeginningMovie(26, 0);
+        StartAmi;
+      end;
       //EndAmi;
     end;
   end;
-
 end;
 
 procedure ShowRandomAttribute(ran: boolean);
@@ -2685,10 +2686,10 @@ begin
         begin
           if MouseInRegion(x, y, w, max * h + h + 2, x1, y1) then
           begin
-          Result := menu;
-          //Redraw;
-          //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
-          if Result >= 0 then  break;
+            Result := menu;
+            //Redraw;
+            //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+            if Result >= 0 then  break;
           end;
         end;
       end;
@@ -2778,12 +2779,13 @@ begin
         if (event.button.button = sdl_button_left) then
         begin
           SDL_GetMouseState2(xm, ym);
-        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
-        begin
-          Result := menu;
-          //Redraw;
-          //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
-          if Result >= 0 then break; end;
+          if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
+          begin
+            Result := menu;
+            //Redraw;
+            //SDL_UpdateRect2(screen, x, y, w + 1, max * 22 + 29);
+            if Result >= 0 then break;
+          end;
         end;
       end;
       SDL_MOUSEMOTION:
@@ -2951,12 +2953,12 @@ begin
         if (event.button.button = sdl_button_left) then
         begin
           SDL_GetMouseState2(xm, ym);
-        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
-        begin
-          Result := menu;
-          //Redraw;
-          //SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
-          if Result >= 0 then  break;
+          if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + max * 22 + 29) then
+          begin
+            Result := menu;
+            //Redraw;
+            //SDL_UpdateRect2(screen, x, y, w + 1, maxshow * 22 + 29);
+            if Result >= 0 then  break;
           end;
         end;
       end;
@@ -3075,13 +3077,14 @@ begin
           break;
         end;
         if (event.button.button = sdl_button_left) then
-        begin SDL_GetMouseState2(xm, ym);
-        if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
         begin
-          Result := menu;
-          redraw;
-          SDL_UpdateRect2(screen, x, y, w + 1, 29);
-          if Result >= 0 then break;
+          SDL_GetMouseState2(xm, ym);
+          if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
+          begin
+            Result := menu;
+            redraw;
+            SDL_UpdateRect2(screen, x, y, w + 1, 29);
+            if Result >= 0 then break;
           end;
         end;
       end;
@@ -5261,7 +5264,7 @@ end;
 
 procedure FourPets;
 var
-  r, i, r1, xm, ym: integer;
+  r, i, r1, xm, ym, menu: integer;
 begin
   //setlength(Menuengstring, 4);
   r := 0;
@@ -5269,6 +5272,7 @@ begin
   ShowPetStatus(r + 1, 0);
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   //SDL_EnableKeyRepeat(10, 100);
+  menu:=0;
   while (SDL_WaitEvent(@event) >= 0) do
   begin
     CheckBasicEvent;
@@ -5280,17 +5284,16 @@ begin
           r := r + 1;
           if r >= Rrole[0].PetAmount then
             r := 0;
-          ShowPetStatus(r + 1, 0);
+          ShowPetStatus(r + 1, menu);
         end;
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
           r := r - 1;
           if r < 0 then
             r := Rrole[0].PetAmount - 1;
-          ShowPetStatus(r + 1, 0);
+          ShowPetStatus(r + 1, menu);
         end;
       end;
-
       SDL_KEYUP:
       begin
         if (event.key.keysym.sym = sdlk_escape) then
@@ -5299,7 +5302,7 @@ begin
         end;
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
-          if PetStatus(r + 1) = False then
+          if PetStatus(r + 1, menu) = False then
             break;
         end;
       end;
@@ -5319,7 +5322,7 @@ begin
             //鼠标移动时仅在x, y发生变化时才重画
             if (r <> r1) then
             begin
-              if PetStatus(r + 1) = False then
+              if PetStatus(r + 1, menu) = False then
                 break;
               //SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
             end;
@@ -5338,14 +5341,13 @@ begin
             //鼠标移动时仅在x, y发生变化时才重画
             if (r <> r1) then
             begin
-              ShowPetStatus(r + 1, 0);
+              ShowPetStatus(r + 1, menu);
               //SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
             end;
           end;
         end
         else //鼠标移动时仅在x, y发生变化时才重画
-
-        if PetStatus(r + 1) = False then
+        if PetStatus(r + 1, menu) = False then
           break;
       end;
     end;
@@ -5386,9 +5388,9 @@ begin
   //  SDL_UpdateRect2(screen, 0, 0, 120, 440);
 end;
 
-function PetStatus(r: integer): boolean;
+function PetStatus(r: integer; var menu:integer): boolean;
 var
-  i, menu, menup, p, xm, ym: integer;
+  i, menup, p, xm, ym: integer;
   x, y, w: integer;
 begin
   x := 100 + 40;
@@ -5397,7 +5399,7 @@ begin
   p := 0;
   Result := False;
 
-  menu := 0;
+  //menu := 0;
   ShowPetStatus(r, menu);
   while (SDL_WaitEvent(@event) >= 0) do
   begin
@@ -5463,7 +5465,7 @@ begin
           Result := True;
           break;
         end
-        else if (xm >= x) and (xm < x + w * 5) and (ym > y) and (ym < y * 5) then
+        else if (xm >= x) and (xm < x + w * 5) and (ym > y) and (ym < y +w) then
         begin
           menup := menu;
           menu := (xm - x) div w;
@@ -5584,7 +5586,6 @@ begin
     putpixel(screen, x, y + i, color);
     putpixel(screen, x + w, y + i, color);
   end;
-
 end;
 
 procedure PetLearnSkill(r, s: integer);
@@ -5769,7 +5770,7 @@ begin
 end;
 
 
-procedure MenuDifficult;
+function MenuDifficult: boolean;
 var
   str: widestring;
   menu: integer;
@@ -5788,11 +5789,12 @@ begin
   menustring[4] := '   困難';
   menustring[5] := '   極難';
   menu := commonmenu(275, 300, 90, min(gametime, 5));
+  Result := False;
   if menu >= 0 then
   begin
+    Result := True;
     rrole[0].difficulty := menu * 20;
   end;
-
 end;
 
 

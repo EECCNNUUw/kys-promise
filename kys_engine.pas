@@ -29,7 +29,7 @@ function EventFilter(p: pointer; e: PSDL_Event): longint; cdecl;
 
 //音频子程
 procedure InitialMusic;
-procedure PlayMP3(MusicNum, times: integer); overload;
+procedure PlayMP3(MusicNum, times: integer; frombeginning: integer = 1); overload;
 procedure StopMP3;
 procedure PlaySoundE(SoundNum, times: integer); overload;
 procedure PlaySoundE(SoundNum: integer); overload;
@@ -277,7 +277,7 @@ begin
 end;
 
 //播放mp3音乐
-procedure PlayMP3(MusicNum, times: integer); overload;
+procedure PlayMP3(MusicNum, times: integer; frombeginning: integer = 1); overload;
 var
   repeatable: boolean;
   //nowmusic: HSTREAM;
@@ -294,9 +294,10 @@ begin
         if (nowmusic >= Low(Music)) and (nowmusic <= High(Music)) then
         begin
           BASS_ChannelStop(Music[nowmusic]);
-          BASS_ChannelSetPosition(Music[nowmusic], 0, BASS_POS_BYTE);
+          if frombeginning = 1 then
+            BASS_ChannelSetPosition(Music[nowmusic], 0, BASS_POS_BYTE);
         end;
-        BASS_ChannelSetAttribute(Music[MusicNum], BASS_ATTRIB_VOL, MusicVOLUME / 128.0);
+        BASS_ChannelSetAttribute(Music[MusicNum], BASS_ATTRIB_VOL, MusicVOLUME / 100.0);
         {if SOUND3D = 1 then
         begin
           //BASS_SetEAXParameters(EAX_ENVIRONMENT_UNDERWATER, -1, 0, 0);
@@ -307,7 +308,7 @@ begin
           BASS_ChannelFlags(Music[MusicNum], BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP)
         else
           BASS_ChannelFlags(Music[MusicNum], 0, BASS_SAMPLE_LOOP);
-        BASS_ChannelPlay(Music[MusicNum], repeatable);
+        BASS_ChannelPlay(Music[MusicNum], false);
         nowmusic := musicnum;
       end;
   finally
@@ -319,7 +320,7 @@ end;
 //停止当前播放的音乐
 procedure StopMP3;
 begin
-  //BASS_ChannelStop(Music);
+  BASS_ChannelStop(Music[nowmusic]);
   //BASS_ChannelSetPosition(Music, 0, BASS_POS_BYTE);
 end;
 
@@ -7289,7 +7290,7 @@ begin
         ResizeWindow(event.window.data1, event.window.data2);
       end;
     end;
-    SDL_APP_DIDENTERFOREGROUND: PlayMP3(nowmusic, -1);
+    SDL_APP_DIDENTERFOREGROUND: PlayMP3(nowmusic, -1, 0);
     SDL_APP_DIDENTERBACKGROUND: StopMP3();
     {SDL_MOUSEBUTTONDOWN:
       if (CellPhone = 1) and (event.button.button = SDL_BUTTON_LEFT) then

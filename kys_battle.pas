@@ -2618,11 +2618,7 @@ begin
     CalCanSelect(bnum, 1, step);
     DrawBFieldWithCursor(AttAreaType, step, range);
     SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-    t1 := sdl_getticks;
-    while sdl_getticks < t1 + 1000 do
-    begin
-      sdl_pollevent(nil);
-    end;
+    sdl_delay((40 * GameSpeed) div 10);
   end;
   playsound(rmagic[mnum].SoundNum, 0);
   PlayActionAmination(bnum, Rmagic[mnum].MagicType); //动画效果
