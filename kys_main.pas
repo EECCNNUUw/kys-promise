@@ -580,7 +580,7 @@ begin
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
   {$ENDIF}
 
-  CellPhone := 1;
+  //CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();

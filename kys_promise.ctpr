@@ -85,9 +85,6 @@
           <Parsing>
             <SyntaxOptions>
               <SyntaxMode Value="Delphi"/>
-              <CStyleOperator Value="False"/>
-              <AllowLabel Value="False"/>
-              <UseAnsiStrings Value="False"/>
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
@@ -104,6 +101,7 @@
               <GenerateDebugInfo Value="False"/>
               <RunWithoutDebug Value="True"/>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <TrashVariables Value="True"/>
               <UseValgrind Value="True"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
