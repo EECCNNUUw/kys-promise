@@ -194,18 +194,18 @@ uses kys_event;
 
 function EventFilter(p: pointer; e: PSDL_Event): boolean; cdecl;
 begin
-  Result := true;
+  Result := True;
   {or (e.type_ = SDL_EVENT_FINGER_MOTION)}
   case e.type_ of
     SDL_EVENT_FINGER_UP, SDL_EVENT_FINGER_DOWN, SDL_EVENT_GAMEPAD_AXIS_MOTION, SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDL_EVENT_GAMEPAD_BUTTON_UP:
-      Result := false;
+      Result := False;
     SDL_EVENT_FINGER_MOTION:
       if CellPhone = 0 then
-        Result := false;
+        Result := False;
     SDL_EVENT_WINDOW_RESIZED:
     begin
       sdl_getwindowsize(window, @resolutionx, @resolutiony);
-      Result := false;
+      Result := False;
     end;
     SDL_EVENT_DID_ENTER_FOREGROUND: PlayMP3(nowmusic, -1, 0);
     SDL_EVENT_DID_ENTER_BACKGROUND: StopMP3();
@@ -5601,7 +5601,7 @@ begin
               pix2 := (pix04 * pix02 + (255 - pix04) * pix2) div 255;
               pix3 := (pix04 * pix03 + (255 - pix04) * pix3) div 255;
 
-              pix := pix1 + pix2 shl 8 + pix3 shl 16;
+              pix := pix1 + pix2 shl 8 + pix3 shl 16 + pix4 shl 24;
               {$ENDIF}
               putpixel(screen, xx + xs, yy + ys, pix);
 
