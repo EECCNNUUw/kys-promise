@@ -1411,7 +1411,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
         if (event.key.keysym.sym = sdlk_escape) then break;
     end;
     if sdl_getticks > t + 30 then
@@ -3920,7 +3920,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym >= sdlk_0) and (event.key.keysym.sym <= sdlk_9) then
         begin
@@ -4291,7 +4291,7 @@ begin
   while (SDL_WaitEvent(@event) >= 0) do
   begin
     CheckBasicEvent;
-    if (event.type_ = SDL_KEYUP) then
+    if (event.type_ = SDL_EVENT_KEY_UP) then
     begin
       if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
       begin
@@ -4433,7 +4433,7 @@ begin
       ShowStudyGongti(teammenu, magicmenu, max1);
       SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
     end;
-    if (event.type_ = SDL_MOUSEMOTION) then
+    if (event.type_ = SDL_EVENT_MOUSE_MOTION) then
     begin
       menu1 := teammenu;
       menu2 := magicmenu;
@@ -4840,7 +4840,7 @@ begin
         end;
       end;
 
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
 
         if ((event.key.keysym.sym = sdlk_escape)) and (where <= 2) then
@@ -4856,7 +4856,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_right) and (where <= 2) then
         begin
@@ -4871,7 +4871,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym > y) and (ym < y + 29) then
@@ -5067,11 +5067,11 @@ begin
     SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
     SDL_PollEvent(@event);
     case event.type_ of
-      SDL_TEXTINPUT:
+      SDL_EVENT_TEXT_INPUT:
       begin
         str := str + event.Text.Text;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = SDL_BUTTON_RIGHT) then
         begin
@@ -5079,7 +5079,7 @@ begin
           break;
         end;
       end;
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if event.key.keysym.sym = SDLK_RETURN then
         begin

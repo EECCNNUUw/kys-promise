@@ -435,7 +435,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space)) and (menu <> max) and (menu <> 0) then
         begin
@@ -460,7 +460,7 @@ begin
           if Result <> 0 then break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
@@ -475,7 +475,7 @@ begin
           ShowMultiMenu(max, menu, Result);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -505,7 +505,7 @@ begin
           end;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= CENTER_X - 75) and (xm < CENTER_X + 75) and (ym >= 100) and (ym < max * 22 + 128) then
@@ -1228,14 +1228,14 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
           break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
@@ -1259,7 +1259,7 @@ begin
           Kys_ini.WriteInteger('set', 'fullscreen', fullscreen);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1268,7 +1268,7 @@ begin
             break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= 100) and (xm < 147) and (ym >= 50 - 22) and (ym < max * 22 + 78 - 22) then
@@ -1490,7 +1490,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -1550,7 +1550,7 @@ begin
         end;
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1577,7 +1577,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
@@ -1632,7 +1632,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -1647,7 +1647,7 @@ begin
           break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
         begin
@@ -1674,7 +1674,7 @@ begin
           showsimpleStatus(Brole[Bfield[2, AX, AY]].rnum, 330, 330);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1687,7 +1687,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
@@ -1732,7 +1732,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -1745,7 +1745,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1782,7 +1782,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -1821,7 +1821,7 @@ begin
           showsimpleStatus(Brole[Bfield[2, AX, AY]].rnum, 330, 330);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1834,7 +1834,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
@@ -1895,7 +1895,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -1954,7 +1954,7 @@ begin
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -1967,7 +1967,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
@@ -2007,7 +2007,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_escape) then
         begin
@@ -2088,7 +2088,7 @@ begin
           end;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm < CENTER_x) and (ym < CENTER_y) then
@@ -2306,7 +2306,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -2348,7 +2348,7 @@ begin
           showsimpleStatus(Brole[Bfield[2, AX, AY]].rnum, 330, 330);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -2361,7 +2361,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         Axp := (-xm + CENTER_x + 2 * ym - 2 * CENTER_y + 18) div 36 + Bx;
@@ -2710,7 +2710,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -2722,7 +2722,7 @@ begin
           break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
@@ -2737,7 +2737,7 @@ begin
           showmagicmenu(bnum, menustatus, menu, max);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -2751,7 +2751,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= 100) and (xm < 267) and (ym >= 50) and (ym < max * 22 + 78) then
@@ -3872,7 +3872,7 @@ begin
         begin
           CheckBasicEvent;
           case event.type_ of
-            SDL_KEYUP:
+            SDL_EVENT_KEY_UP:
               if event.key.keysym.sym > 0 then break;
             SDL_MouseButtonUP:
               if event.button.button > 0 then break;
@@ -6323,7 +6323,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -6335,7 +6335,7 @@ begin
           break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
@@ -6350,7 +6350,7 @@ begin
           showModemenu(menu);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) and (menu <> -1) then
         begin
@@ -6364,7 +6364,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= 100) and (xm < 267) and (ym >= 100) and (ym < 3 * 22 + 100) then
@@ -6448,7 +6448,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
         begin
@@ -6462,7 +6462,7 @@ begin
           break;
         end;
       end;
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
         begin
@@ -6492,7 +6492,7 @@ begin
           showTeamModemenu(menu);
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if (event.button.button = sdl_button_left) then
         begin
@@ -6517,7 +6517,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm >= x) and (xm < x + w) and (ym >= y) and (ym < (amount + 1) * 22 + y) then

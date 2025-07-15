@@ -105,7 +105,7 @@ begin
     end;
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDOWN:
+      SDL_EVENT_KEY_DOWN:
       begin
         //now := sdl_getticks;
         //if (now - ori_time)>=100 then
@@ -181,7 +181,7 @@ begin
           end;
         end;
       end;
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         iskey := True;
       end;
@@ -317,7 +317,7 @@ begin
   dstrect.y := round(screen.h - abs(x1) - step * cos(degtorad(degree)));
   dstrect.w := newarrowpic.w;
   dstrect.h := newarrowpic.h;
-  SDL_SetColorKey(newarrowpic, 1, 0);
+  SDL_SetSurfaceColorKey(newarrowpic, 1, 0);
   // SDL_BlitSurface(bg, @dstrect, screen, @dstrect);
   SDL_BlitSurface(newarrowpic, nil, screen, @dstrect);
   sdl_freesurface(newarrowpic);
@@ -346,7 +346,7 @@ begin
   dstrect.y := round(screen.h - abs(x1));
   dstrect.w := newbowpic.w;
   dstrect.h := newbowpic.h;
-  SDL_SetColorKey(newbowpic, 1, 0);
+  SDL_SetSurfaceColorKey(newbowpic, 1, 0);
   //if bowstate=1 then SDL_BlitSurface(bg, @dstrect, screen, @dstrect);
   SDL_BlitSurface(newbowpic, nil, screen, @dstrect);
   sdl_freesurface(newbowpic);
@@ -366,7 +366,7 @@ begin
   dstrect.y := 20;
   dstrect.w := screen.w;
   dstrect.h := eaglepic.h;
-  //SDL_SetColorKey(newbowpic, SDL_SRCCOLORKEY, 0);
+  //SDL_SetSurfaceColorKey(newbowpic, SDL_SRCCOLORKEY, 0);
   //SDL_BlitSurface(bg, @dstrect, screen, @dstrect);
   dstrect.x := birdx - eaglepic.w div 2;
   dstrect.y := 20;
@@ -435,7 +435,7 @@ begin
       srcrect.w := 86;
       srcrect.h := 65;
       SDL_BlitSurface(Gamepic.pic, @srcrect, EaglePic[i div 4][i mod 4], nil);
-      SDL_SetColorKey(EaglePic[i div 4][i mod 4], SDL_RLEACCEL or 1,
+      SDL_SetSurfaceColorKey(EaglePic[i div 4][i mod 4], SDL_RLEACCEL or 1,
         getpixel(EaglePic[i div 4][i mod 4], 0, 0));
     end;
     for i := 0 to 1 do
@@ -445,7 +445,7 @@ begin
       srcrect.y := 130;
       srcrect.w := 220;
       srcrect.h := 110;
-      SDL_SetColorKey(BowPic[i], SDL_RLEACCEL or 1, 0);
+      SDL_SetSurfaceColorKey(BowPic[i], SDL_RLEACCEL or 1, 0);
       SDL_BlitSurface(Gamepic.pic, @srcrect, BowPic[i], nil);
     end;
     for i := 0 to 11 do
@@ -455,7 +455,7 @@ begin
       srcrect.y := (i div 6) * 88 + 240;
       srcrect.w := 95;
       srcrect.h := 88;
-      SDL_SetColorKey(BombPic[i], SDL_RLEACCEL or 1, 0);
+      SDL_SetSurfaceColorKey(BombPic[i], SDL_RLEACCEL or 1, 0);
       SDL_BlitSurface(Gamepic.pic, @srcrect, BombPic[i], nil);
     end;
     srcrect.x := 440;
@@ -463,10 +463,10 @@ begin
     srcrect.w := 200;
     srcrect.h := 100;
     arrowpic := SDL_CreateRGBSurface(screen.flags, 200, 200, 32, $FF0000, $FF00, $0FF, 0);
-    SDL_SetColorKey(arrowpic, SDL_RLEACCEL or 1, 0);
+    SDL_SetSurfaceColorKey(arrowpic, SDL_RLEACCEL or 1, 0);
     SDL_BlitSurface(Gamepic.pic, @srcrect, arrowpic, nil);
 
-    SDL_FreeSurface(gamepic.pic);
+    SDL_DestroySurface(gamepic.pic);
     Gamepic := GetPngPic(grp, 2);
     fileclose(grp);
   end;
@@ -613,7 +613,7 @@ begin
         end;
       end;
 
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if event.key.keysym.sym = sdlk_space then
         begin
@@ -632,7 +632,7 @@ begin
           break;
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if event.button.button = sdl_button_left then
           if (arrowstep <= 0) and (readystate = 0) then
@@ -644,7 +644,7 @@ begin
             //      showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
       end;
-      SDL_MOUSEBUTTONDOWN:
+      SDL_EVENT_MOUSE_BUTTON_DOWN:
       begin
         if event.button.button = sdl_button_left then
           if (arrowstep <= 0) and (readystate = 1) then
@@ -655,7 +655,7 @@ begin
             //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         degree := showbow(bowpic[readystate], xm, ym, 180);
 
@@ -669,20 +669,20 @@ begin
   for i := 0 to 7 do
   begin
     if EaglePic[i div 4][i mod 4] <> nil then
-      SDL_FreeSurface(EaglePic[i div 4][i mod 4]);
+      SDL_DestroySurface(EaglePic[i div 4][i mod 4]);
   end;
   for i := 0 to 1 do
   begin
     if BowPic[i] <> nil then
-      SDL_FreeSurface(BowPic[i]);
+      SDL_DestroySurface(BowPic[i]);
   end;
   for i := 0 to 11 do
   begin
     if Bombpic[i] <> nil then
-      SDL_FreeSurface(Bombpic[i]);
+      SDL_DestroySurface(Bombpic[i]);
   end;
-  SDL_FreeSurface(arrowpic);
-  SDL_FreeSurface(gamepic.pic);
+  SDL_DestroySurface(arrowpic);
+  SDL_DestroySurface(gamepic.pic);
 end;
 
 function Acupuncture(n: integer): boolean;
@@ -884,7 +884,7 @@ begin
         waitanykey;
 
         Result := True;
-        SDL_FreeSurface(Gamepic.pic);
+        SDL_DestroySurface(Gamepic.pic);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         exit;
       end;
@@ -940,13 +940,13 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm > x) and (xm < x + 50 * c) and (ym > y) and (ym < y + 50 * r) then
           menu := ((xm - x) div 50) + (((ym - y) div 50) * c);
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_left then
@@ -987,7 +987,7 @@ begin
           end;
         end;
       end;
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if event.key.keysym.sym = sdlk_escape then
         begin
@@ -1081,14 +1081,14 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm > (wx1 - 11)) and (xm < (wx1 - 11) + 40 * c) and (ym > (wy1 - 9)) and (ym < (wy1 - 9) + 40 * r1) then
 
           menu1 := ((xm - wx1 - 11) div 40) + (((ym - wy1 + 9)) div 40) * c;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         SDL_GetMouseState2(xm, ym);
         if event.button.button = sdl_button_left then
@@ -1105,7 +1105,7 @@ begin
         end;
         break;
       end;
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if event.key.keysym.sym = sdlk_escape then
           break;
@@ -1242,7 +1242,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         if event.key.keysym.sym = sdlk_escape then
         begin
@@ -1263,13 +1263,13 @@ begin
 
         end;
       end;
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if (xm > (wx - 11)) and (xm < (wx - 11) + 40 * c) and (ym > (wy - 9)) and (ym < (wy - 9) + 40 * row) then
           menu := ((xm - wx - 11) div 40) + (((ym - wy + 9)) div 40) * c;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
         if event.button.button = sdl_button_left then
         begin
           SDL_GetMouseState2(xm, ym);
@@ -1463,7 +1463,7 @@ begin
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYUP:
+      SDL_EVENT_KEY_UP:
       begin
         menu1 := menu;
         if event.key.keysym.sym = sdlk_escape then
@@ -1514,7 +1514,7 @@ begin
         end;
       end;
 
-      SDL_MOUSEMOTION:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         SDL_GetMouseState2(xm, ym);
         if menu > -1 then menu1 := menu;
@@ -1535,7 +1535,7 @@ begin
           end;
         end;
       end;
-      SDL_MOUSEBUTTONUP:
+      SDL_EVENT_MOUSE_BUTTON_UP:
       begin
         if event.button.button = sdl_button_right then
         begin
