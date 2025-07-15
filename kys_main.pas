@@ -290,8 +290,7 @@ function FileExistsUTF8(filename: ansistring): boolean; overload;
 //function str: WideString: WideString;
 {$ENDIF}
 
-function SDL_GetAndroidExternalStoragePath(): PAnsiChar; cdecl; external 'libSDL3.so';
-
+function SDL_GetAndroidExternalStoragePath(): pansichar; cdecl; external 'libSDL3.so';
 
 var
   HW: integer = 0;
@@ -441,7 +440,6 @@ var
   RANX, RANY: integer;
   dest: integer;
 
-
   ITEM_PIC: array of Tpic;
   screen, prescreen, realscreen, freshscreen: PSDL_Surface;
   //主画面
@@ -561,7 +559,7 @@ var
   p, p1: pansichar;
   temp: integer;
   title, str: ansistring;
-  renderstr: putf8char = 'direct3d';
+  render_str: putf8char = 'direct3d';
 begin
   {$IFDEF UNIX}
   AppPath := ExtractFilePath(ParamStr(0));
@@ -570,6 +568,8 @@ begin
   {$ENDIF}
   {$IFDEF android}
   AppPath := '/sdcard/kys-promise/';
+  if not fileexists(AppPath + 'kysmod.ini') then
+    AppPath := '/sdcard/kys-pascal/kys-promise/';
   if not fileexists(AppPath + 'kysmod.ini') then
     AppPath := SDL_GetAndroidExternalStoragePath() + '/';
   //for i := 1 to 4 do
@@ -580,10 +580,10 @@ begin
   FileClose(filecreate(str));
   CellPhone := 1;
   SDL_SetHint(SDL_HINT_ORIENTATIONS, 'LandscapeLeft LandscapeRight');
-  renderstr := '';
+  render_str := '';
   {$ENDIF}
 
-  CellPhone := 1;
+  //CellPhone := 1;
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -612,11 +612,6 @@ begin
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, pansichar(IntToStr(SMOOTH)));
   //SDL_SetHint(SDL_HINT_IME_SHOW_UI, '1');
 
-  //freemem(users[0],sizeof(uint16)*length(users));
-
-  //freemem(user,sizeof(uint16));
-  //showmessage(inttostr(RESOLUTIONX));
-
   title := 'The Story Before That Legend v1.22';
   ScreenFlag := SDL_WINDOW_RESIZABLE;
   window := SDL_CreateWindow(pansichar(title), RESOLUTIONX, RESOLUTIONY, ScreenFlag);
@@ -635,7 +630,7 @@ begin
     //SDL_WarpMouseInWindow(window, RESOLUTIONX, RESOLUTIONY);
   end;
 
-  render := SDL_CreateRenderer(window, renderstr);
+  render := SDL_CreateRenderer(window, render_str);
   screen := SDL_CreateSurface(CENTER_X * 2, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
   screenTex := SDL_CreateTexture(render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, CENTER_X * 2, CENTER_Y * 2);
   freshscreen := SDL_CreateSurface(CENTER_X * 2, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));

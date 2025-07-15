@@ -1898,7 +1898,7 @@ begin
     begin
       waitanykey(@x50[e1], @x50[e2], @x50[e3]);
       x50[e3] := x50[e3] - 30;
-      {case x50[e1] of
+      case x50[e1] of
         sdlk_left: x50[e1] := 154;
         sdlk_right: x50[e1] := 156;
         sdlk_up: x50[e1] := 158;
@@ -1907,7 +1907,7 @@ begin
         sdlk_KP_6: x50[e1] := 156;
         sdlk_KP_8: x50[e1] := 158;
         sdlk_KP_2: x50[e1] := 152;
-      end;}
+      end;
     end;
     36: //Draw a string with background then pause, if the key pressed is 'Y' then jump=0.
     begin
@@ -3922,12 +3922,29 @@ begin
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
+        if (event.key.key = sdlk_up) then
+        begin
+          amount := amount + 10;
+        end;
+        if (event.key.key = sdlk_down) then
+        begin
+          amount := amount - 10;
+        end;
+        if (event.key.key = sdlk_left) then
+        begin
+          amount := amount - 1;
+        end;
+        if (event.key.key = sdlk_right) then
+        begin
+          amount := amount + 1;
+        end;
+        if amount > 32767 then amount := 32767;
+        if amount < 0 then amount := 0;
         if (event.key.key >= sdlk_0) and (event.key.key <= sdlk_9) then
         begin
           if amount < 3276 then
           begin
             amount := amount * 10 + (event.key.key - 48);
-            countstr := format('%5d', [amount]);
           end;
         end;
         if (event.key.key >= 256) and (event.key.key <= 267) then
@@ -3935,7 +3952,6 @@ begin
           if amount < 3276 then
           begin
             amount := amount * 10 + (event.key.key - 256);
-            countstr := format('%5d', [amount]);
           end;
         end;
         if (event.key.key = sdlk_return) or (event.key.key = 271) then
@@ -3945,10 +3961,10 @@ begin
         if (event.key.key = sdlk_backspace) then
         begin
           amount := amount div 10;
-          countstr := format('%5d', [amount]);
         end;
       end;
     end;
+    countstr := format('%5d', [amount]);
     drawRectangle(Center_X - 100, Center_Y - 15, 200, 30, 0, colcolor(255), 100);
     drawShadowText(@str[1], Center_X - 100, Center_Y - 10, colcolor(5), colcolor(7));
     drawShadowText(@str[1], Center_X - 100, Center_Y - 10, colcolor(5), colcolor(7));
