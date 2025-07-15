@@ -1,4 +1,4 @@
-unit sdl2_gfx;
+unit sdl3_gfx;
 
 (*
 
@@ -40,31 +40,31 @@ uses
   {$IFDEF FPC}
   ctypes,
   {$ENDIF}
-  SDL2;
+  SDL3;
 
 {$I ctypes.inc}
 
 const
   {$IFDEF WINDOWS}
-    GFX_LibName = 'SDL2_gfx.dll';
+    GFX_LibName = 'SDL3_gfx.dll';
   {$ENDIF}
 
   {$IFDEF UNIX}
     {$IFDEF DARWIN}
-      GFX_LibName = 'libSDL2_gfx.dylib';
+      GFX_LibName = 'libSDL3_gfx.dylib';
     {$ELSE}
       {$IFDEF FPC}
-        GFX_LibName = 'libSDL2_gfx.so';
+        GFX_LibName = 'libSDL3_gfx.so';
       {$ELSE}
-        GFX_LibName = 'libSDL2_gfx.so.0';
+        GFX_LibName = 'libSDL3_gfx.so.0';
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
 
   {$IFDEF MACOS}
-    GFX_LibName = 'SDL2_gfx';
+    GFX_LibName = 'SDL3_gfx';
     {$IFDEF FPC}
-      {$linklib libSDL2_gfx}
+      {$linklib libSDL3_gfx}
     {$ENDIF}
   {$ENDIF}
 
@@ -72,7 +72,7 @@ const
      {$DEFINE DELMAC}
   {$ENDIF}
 
-Procedure SDL_GFX_VERSION(Out X: TSDL_Version);
+//Procedure SDL_GFX_VERSION(Out X: TSDL_Version);
 
 {---< SDL2_framerate.h >---}
 
@@ -556,11 +556,11 @@ Function rotateSurface90Degrees(src: PSDL_Surface; numClockwiseTurns: cint32):PS
 
 implementation
 
-Procedure SDL_GFX_VERSION(Out X: TSDL_Version);
-begin
-   X.Major := SDL2_GFXPRIMITIVES_MAJOR;
-   X.Minor := SDL2_GFXPRIMITIVES_MINOR;
-   X.Patch := SDL2_GFXPRIMITIVES_MICRO
-end;
+//Procedure SDL_GFX_VERSION(Out X: TSDL_Version);
+//begin
+//   X.Major := SDL2_GFXPRIMITIVES_MAJOR;
+//   X.Minor := SDL2_GFXPRIMITIVES_MINOR;
+//   X.Patch := SDL2_GFXPRIMITIVES_MICRO
+//end;
 
 end.

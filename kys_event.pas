@@ -16,10 +16,10 @@ uses
   Math,
   Dialogs,
   StrUtils,
-  SDL2,
-  SDL2_ttf,
+  SDL3,
+  SDL3_ttf,
   //SDL_mixer,
-  SDL2_image,
+  SDL3_image,
   kys_littlegame,
   kys_main,
   bass;
@@ -1407,12 +1407,12 @@ begin
   instruct_14;
   i := 400;
   t := sdl_getticks;
-  while (SDL_pollEvent(@event) >= 0) do
+  while (SDL_PollEvent(@event) or True) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_UP:
-        if (event.key.keysym.sym = sdlk_escape) then break;
+        if (event.key.key = sdlk_escape) then break;
     end;
     if sdl_getticks > t + 30 then
     begin
@@ -3916,33 +3916,33 @@ begin
   drawEngText(screen, @countstr[1], Center_X + 40, Center_Y - 10, colcolor(5));
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
 
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym >= sdlk_0) and (event.key.keysym.sym <= sdlk_9) then
+        if (event.key.key >= sdlk_0) and (event.key.key <= sdlk_9) then
         begin
           if amount < 3276 then
           begin
-            amount := amount * 10 + (event.key.keysym.sym - 48);
+            amount := amount * 10 + (event.key.key - 48);
             countstr := format('%5d', [amount]);
           end;
         end;
-        if (event.key.keysym.sym >= 256) and (event.key.keysym.sym <= 267) then
+        if (event.key.key >= 256) and (event.key.key <= 267) then
         begin
           if amount < 3276 then
           begin
-            amount := amount * 10 + (event.key.keysym.sym - 256);
+            amount := amount * 10 + (event.key.key - 256);
             countstr := format('%5d', [amount]);
           end;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = 271) then
+        if (event.key.key = sdlk_return) or (event.key.key = 271) then
         begin
           break;
         end;
-        if (event.key.keysym.sym = sdlk_backspace) then
+        if (event.key.key = sdlk_backspace) then
         begin
           amount := amount div 10;
           countstr := format('%5d', [amount]);
@@ -4286,14 +4286,14 @@ begin
   ShowStudyGongti(teammenu, magicmenu, max1);
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
 
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     if (event.type_ = SDL_EVENT_KEY_UP) then
     begin
-      if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+      if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
       begin
         if position = 0 then
         begin
@@ -4306,7 +4306,7 @@ begin
           if magicmenu < 0 then magicmenu := max2 - 1;
         end;
       end;
-      if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+      if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
       begin
         if position = 0 then
         begin
@@ -4319,7 +4319,7 @@ begin
           if magicmenu >= max2 then magicmenu := 0;
         end;
       end;
-      if event.key.keysym.sym = sdlk_escape then
+      if event.key.key = sdlk_escape then
         if position = 0 then
           break
         else
@@ -4327,7 +4327,7 @@ begin
           magicmenu := -1;
           position := 0;
         end;
-      if (event.key.keysym.sym = sdlk_space) or (event.key.keysym.sym = sdlk_return) then
+      if (event.key.key = sdlk_space) or (event.key.key = sdlk_return) then
       begin
         if position = 0 then
         begin
@@ -4375,7 +4375,7 @@ begin
       ShowStudyGongti(teammenu, magicmenu, max1);
       SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
     end;
-    if (event.type_ = SDL_mousebuttonUP) then
+    if (event.type_ = SDL_EVENT_MOUSE_BUTTON_UP) then
     begin
       if event.button.button = SDL_BUTTON_Right then
         if position = 0 then
@@ -4492,7 +4492,7 @@ begin
 
     end;
   end;
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
 end;
 
@@ -4823,13 +4823,13 @@ begin
   RegionRect.h := 0;
   showcommonMenu2(x, y, w, menu);
   SDL_UpdateRect2(screen, x, y, w + 1, 29);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDown:
+      SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_KP_4) or (event.key.keysym.sym = sdlk_KP_6) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_right) or (event.key.key = sdlk_KP_4) or (event.key.key = sdlk_KP_6) then
         begin
           if menu = 1 then
             menu := 0
@@ -4839,17 +4839,15 @@ begin
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
         end;
       end;
-
       SDL_EVENT_KEY_UP:
       begin
-
-        if ((event.key.keysym.sym = sdlk_escape)) and (where <= 2) then
+        if ((event.key.key = sdlk_escape)) and (where <= 2) then
         begin
           Result := -1;
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           Result := menu;
           SDL_UpdateRect2(screen, x, y, w + 1, 29);
@@ -4894,7 +4892,7 @@ begin
 
   RegionRect.w := 0;
   //清空键盘键和鼠标键值, 避免影响其余部分
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
   //SDL_EnableKeyRepeat(30, 30);
 end;
@@ -5058,8 +5056,8 @@ begin
   r.y := y;
   r.w := w;
   r.h := h;
-  SDL_StartTextInput();
-  SDL_SetTextInputRect(@r);
+  SDL_StartTextInput(window);
+  SDL_SetTextInputArea(window, @r, 0);
   while True do
   begin
     str2 := ' 請輸入名字：' + str;
@@ -5081,17 +5079,17 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if event.key.keysym.sym = SDLK_RETURN then
+        if event.key.key = SDLK_RETURN then
         begin
           Result := True;
           break;
         end;
-        if event.key.keysym.sym = SDLK_ESCAPE then
+        if event.key.key = SDLK_ESCAPE then
         begin
           Result := False;
           break;
         end;
-        if event.key.keysym.sym = SDLK_BACKSPACE then
+        if event.key.key = SDLK_BACKSPACE then
         begin
           l := length(str);
           if (l >= 3) and (byte(str[l]) >= 128) then
@@ -5107,7 +5105,7 @@ begin
     end;
     SDL_Delay(16);
   end;
-  SDL_StopTextInput();
+  SDL_StopTextInput(window);
 end;
 
 procedure DivideName(fullname: widestring; var surname, givenname: widestring);
@@ -5511,18 +5509,18 @@ begin
     ix := 0;
     iy := 0;
     skipSync := False;
-    while SDL_PollEvent(@event) >= 0 do
+    while SDL_PollEvent(@event) or True do
     begin
       CheckBasicEvent;
       //部分功能
-      if (event.key.keysym.sym = SDLK_ESCAPE) or (event.button.button = SDL_BUTTON_RIGHT) then
+      if (event.key.key = SDLK_ESCAPE) or (event.button.button = SDL_BUTTON_RIGHT) then
       begin
         skipSync := True;
         //SkipTalk := 1;
         //CleanKeyValue;
         break;
       end;
-      if (event.key.keysym.sym = SDLK_RETURN) or (event.key.keysym.sym = SDLK_SPACE) or (event.button.button = SDL_BUTTON_LEFT) then
+      if (event.key.key = SDLK_RETURN) or (event.key.key = SDLK_SPACE) or (event.button.button = SDL_BUTTON_LEFT) then
       begin
         skipSync := True;
         //SkipTalk := 0;

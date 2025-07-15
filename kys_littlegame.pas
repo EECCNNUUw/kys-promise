@@ -16,10 +16,10 @@ uses
   Math,
   Dialogs,
   StrUtils,
-  SDL2,
-  SDL2_TTF,
-  SDL2_image,
-  SDL2_gfx,
+  SDL3,
+  SDL3_TTF,
+  SDL3_image,
+  SDL3_gfx,
   kys_engine,
   kys_main;
 
@@ -86,10 +86,10 @@ begin
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
   ori_time := sdl_getticks;
   iskey := True;
-  event.key.keysym.sym := SDLK_DOWN;
+  event.key.key := SDLK_DOWN;
   delay := 120;
   if getpetskill(4, 2) then delay := 150;
-  while SDL_PollEvent(@event) >= 0 do
+  while SDL_PollEvent(@event) or True do
   begin
 
     now := sdl_getticks;
@@ -113,7 +113,7 @@ begin
         begin
           //ori_time := sdl_getticks;
           iskey := False;
-          case event.key.keysym.sym of
+          case event.key.key of
             SDLK_DOWN:
             begin
               if movesnake(2) = 1 then
@@ -188,11 +188,11 @@ begin
     end;
   end;
   //waitanykey;
-  sdl_freesurface(background.pic);
-  sdl_freesurface(snakepic.pic);
-  sdl_freesurface(Weipic.pic);
+  SDL_DestroySurface(background.pic);
+  SDL_DestroySurface(snakepic.pic);
+  SDL_DestroySurface(Weipic.pic);
   for i := 0 to 7 do
-    sdl_freesurface(femalepic[i].pic);
+    SDL_DestroySurface(femalepic[i].pic);
   Result := eatfemale;
 end;
 
@@ -317,10 +317,10 @@ begin
   dstrect.y := round(screen.h - abs(x1) - step * cos(degtorad(degree)));
   dstrect.w := newarrowpic.w;
   dstrect.h := newarrowpic.h;
-  SDL_SetSurfaceColorKey(newarrowpic, 1, 0);
+  SDL_SetSurfaceColorKey(newarrowpic, True, 0);
   // SDL_BlitSurface(bg, @dstrect, screen, @dstrect);
   SDL_BlitSurface(newarrowpic, nil, screen, @dstrect);
-  sdl_freesurface(newarrowpic);
+  SDL_DestroySurface(newarrowpic);
   Result := degree;
   // SDL_UpdateRect2(screen, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
 end;
@@ -346,10 +346,10 @@ begin
   dstrect.y := round(screen.h - abs(x1));
   dstrect.w := newbowpic.w;
   dstrect.h := newbowpic.h;
-  SDL_SetSurfaceColorKey(newbowpic, 1, 0);
+  SDL_SetSurfaceColorKey(newbowpic, True, 0);
   //if bowstate=1 then SDL_BlitSurface(bg, @dstrect, screen, @dstrect);
   SDL_BlitSurface(newbowpic, nil, screen, @dstrect);
-  sdl_freesurface(newbowpic);
+  SDL_DestroySurface(newbowpic);
   Result := degree;
   // SDL_UpdateRect2(screen, dstrect.x, dstrect.y, dstrect.w, dstrect.h);
 end;
@@ -429,41 +429,40 @@ begin
 
     for i := 0 to 7 do
     begin
-      EaglePic[i div 4][i mod 4] := SDL_CreateRGBSurface(screen.flags, 86, 65, 32, $FF0000, $FF00, $0FF, 0);
+      EaglePic[i div 4][i mod 4] := SDL_CreateSurface(86, 65, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
       srcrect.x := (i mod 4) * 86;
       srcrect.y := (i div 4) * 65;
       srcrect.w := 86;
       srcrect.h := 65;
       SDL_BlitSurface(Gamepic.pic, @srcrect, EaglePic[i div 4][i mod 4], nil);
-      SDL_SetSurfaceColorKey(EaglePic[i div 4][i mod 4], SDL_RLEACCEL or 1,
-        getpixel(EaglePic[i div 4][i mod 4], 0, 0));
+      SDL_SetSurfaceColorKey(EaglePic[i div 4][i mod 4], True, getpixel(EaglePic[i div 4][i mod 4], 0, 0));
     end;
     for i := 0 to 1 do
     begin
-      BowPic[i] := SDL_CreateRGBSurface(screen.flags, 220, 220, 32, $FF0000, $FF00, $0FF, 0);
+      BowPic[i] := SDL_CreateSurface(220, 220, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
       srcrect.x := i * 220;
       srcrect.y := 130;
       srcrect.w := 220;
       srcrect.h := 110;
-      SDL_SetSurfaceColorKey(BowPic[i], SDL_RLEACCEL or 1, 0);
+      SDL_SetSurfaceColorKey(BowPic[i], True, 0);
       SDL_BlitSurface(Gamepic.pic, @srcrect, BowPic[i], nil);
     end;
     for i := 0 to 11 do
     begin
-      BombPic[i] := SDL_CreateRGBSurface(screen.flags, 95, 88, 32, $FF0000, $FF00, $0FF, 0);
+      BombPic[i] := SDL_CreateSurface(95, 88, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
       srcrect.x := (i mod 6) * 95;
       srcrect.y := (i div 6) * 88 + 240;
       srcrect.w := 95;
       srcrect.h := 88;
-      SDL_SetSurfaceColorKey(BombPic[i], SDL_RLEACCEL or 1, 0);
+      SDL_SetSurfaceColorKey(BombPic[i], True, 0);
       SDL_BlitSurface(Gamepic.pic, @srcrect, BombPic[i], nil);
     end;
     srcrect.x := 440;
     srcrect.y := 130;
     srcrect.w := 200;
     srcrect.h := 100;
-    arrowpic := SDL_CreateRGBSurface(screen.flags, 200, 200, 32, $FF0000, $FF00, $0FF, 0);
-    SDL_SetSurfaceColorKey(arrowpic, SDL_RLEACCEL or 1, 0);
+    arrowpic := SDL_CreateSurface(200, 200, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
+    SDL_SetSurfaceColorKey(arrowpic, True, 0);
     SDL_BlitSurface(Gamepic.pic, @srcrect, arrowpic, nil);
 
     SDL_DestroySurface(gamepic.pic);
@@ -476,7 +475,7 @@ begin
   birdx := (420 - (EaglePic[0][0].w div 2)) + sign(birdspeed) * (-320);
   birdstep := 0;
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-  while SDL_PollEvent(@event) >= 0 do
+  while SDL_PollEvent(@event) or True do
   begin
     drawpngpic(Gamepic, 0, 0, 0);
     if goal >= aim then
@@ -584,38 +583,35 @@ begin
     drawshadowtext(@word[1], 570, 371, colcolor(0, 255), colcolor(0, 111));
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDown:
+      SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           degree := degree + 1;
           showbow(bowpic[readystate], xm,
             ym, degree);
           if arrowstep <= 0 then arrowdegree := degree;
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           degree := degree - 1;
           showbow(bowpic[readystate], xm,
             ym, degree);
           if arrowstep <= 0 then arrowdegree := degree;
         end;
-        if event.key.keysym.sym = sdlk_space then
+        if event.key.key = sdlk_space then
         begin
           if (arrowstep <= 0) and (readystate = 1) then
           begin
             readystate := 0;
-
             degree := showbow(bowpic[readystate], xm, ym, degree);
             //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
-
           end;
         end;
       end;
-
       SDL_EVENT_KEY_UP:
       begin
-        if event.key.keysym.sym = sdlk_space then
+        if event.key.key = sdlk_space then
         begin
           if (arrowstep <= 0) and (readystate = 0) then
           begin
@@ -626,7 +622,7 @@ begin
             //  showbow(Gamepic,bowpic[readystate], xm, ym,readystate);
           end;
         end;
-        if event.key.keysym.sym = sdlk_escape then
+        if event.key.key = sdlk_escape then
         begin
           Result := False;
           break;
@@ -824,10 +820,10 @@ begin
     s := 0;
     while True do
     begin
-      while (SDL_WaitEvent(@event) >= 0) do
+      while (SDL_WaitEvent(@event)) do
       begin
         CheckBasicEvent;
-        if (event.type_ = SDL_mousebuttonUP) then
+        if (event.type_ = SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask)) then
         begin
           SDL_GetMouseState2(xm, ym);
           for i := 0 to acunum - 1 do
@@ -936,7 +932,7 @@ begin
       drawSpic(pic3, x + (menu mod c) * 50, y + (menu div c) * 50, x + (i mod c) * 50, y + (i div c) * 50, 51, 51);
   end;
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
@@ -989,18 +985,18 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if event.key.keysym.sym = sdlk_escape then
+        if event.key.key = sdlk_escape then
         begin
           Result := False;
           break;
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - c;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu := menu + c;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then menu := menu + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu := menu - c;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu := menu + c;
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then menu := menu - 1;
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then menu := menu + 1;
         if menu < 0 then menu := menu + c * r;
         if menu > c * r - 1 then menu := menu - c * r;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if gamearray[0][menu] = beginpic then temp := pic2
           else
@@ -1077,7 +1073,7 @@ begin
   end;
   SDL_UpdateRect2(screen, 0, 0, 640, 440);
 
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
@@ -1107,15 +1103,15 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if event.key.keysym.sym = sdlk_escape then
+        if event.key.key = sdlk_escape then
           break;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu1 := menu1 - c;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu1 := menu1 + c;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then menu1 := menu1 - 1;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then menu1 := menu1 + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu1 := menu1 - c;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu1 := menu1 + c;
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then menu1 := menu1 - 1;
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then menu1 := menu1 + 1;
         if menu1 < 0 then menu1 := menu1 + Count;
         if menu1 > Count - 1 then menu1 := menu1 - Count;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if (menu1 < Count) and (menu < length(gamearray[1])) then
           begin
@@ -1238,24 +1234,24 @@ begin
   drawShadowText(puint16(str), wx + 80, y + 25, colcolor(0, 5), colcolor(0, 7));
 
   SDL_UpdateRect2(screen, 0, 0, 640, 440);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
-        if event.key.keysym.sym = sdlk_escape then
+        if event.key.key = sdlk_escape then
         begin
           Result := False;
           exit;
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - c;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu := menu + c;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then menu := menu + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu := menu - c;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu := menu + c;
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then menu := menu - 1;
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then menu := menu + 1;
         if menu < 0 then menu := menu + c * row;
         if menu > c * row - 1 then menu := menu - c * row;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
 
           chance := SelectPoetry(wx1, wy1, (Count div r1), Count, len, menu, chance);
@@ -1400,8 +1396,8 @@ begin
   begin
     for j := 0 to 3 do
     begin
-      temp := SDL_CreateRGBSurface(screen.flags, 80, 80, 32, $FF0000, $FF00, $0FF, 0);
-      pic[j][i] := SDL_CreateRGBSurface(screen.flags, 80, 80, 32, $FF0000, $FF00, $0FF, 0);
+      temp := SDL_CreateSurface(80, 80, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
+      pic[j][i] := SDL_CreateSurface(80, 80, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
       srcrect.x := (i mod 5) * 80;
       srcrect.y := (i div 5) * 80;
       srcrect.w := 80;
@@ -1418,11 +1414,11 @@ begin
             3: putpixel(pic[j][i], i1, i2, getpixel(temp, 79 - i2, i1));
           end;
         end;
-      sdl_freesurface(temp);
+      SDL_DestroySurface(temp);
     end;
   end;
   littlegamepic := rotozoomsurfacexy(gamepic.pic, 0, 0.3, 0.3, 0);
-  sdl_freesurface(gamepic.pic);
+  SDL_DestroySurface(gamepic.pic);
 
   redraw;
   drawrectangle(x - 5, y - 5, w, h, 0, colcolor(255), 100);
@@ -1459,14 +1455,14 @@ begin
   drawshadowtext(@word1[1], x + 250, y + 5, colcolor(5), colcolor(7));
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
 
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
         menu1 := menu;
-        if event.key.keysym.sym = sdlk_escape then
+        if event.key.key = sdlk_escape then
         begin
           if menu2 > -1 then
           begin
@@ -1478,10 +1474,10 @@ begin
             break;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - 5;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu := menu + 5;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then menu := menu + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu := menu - 5;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu := menu + 5;
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then menu := menu - 1;
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then menu := menu + 1;
         if menu > 24 then menu := menu - 25;
         if menu < 0 then menu := menu + 25;
         if menu1 > -1 then
@@ -1492,7 +1488,7 @@ begin
           srcrect.h := 80;
           SDL_BlitSurface(pic[gamearray[1][menu1]][gamearray[0][menu1]], nil, screen, @srcrect);
         end;
-        if (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_space) then
         begin
           if menu2 > -1 then
           begin
@@ -1502,7 +1498,7 @@ begin
           end
           else if menu > -1 then menu2 := menu;
         end;
-        if (event.key.keysym.sym = sdlk_return) then
+        if (event.key.key = sdlk_return) then
         begin
           Inc(gamearray[1][menu]);
           if gamearray[1][menu] > 3 then gamearray[1][menu] := 0;
@@ -1626,10 +1622,10 @@ begin
   begin
     for j := 0 to 3 do
     begin
-      sdl_freesurface(pic[j][i]);
+      SDL_DestroySurface(pic[j][i]);
     end;
   end;
-  sdl_freesurface(littlegamepic);
+  SDL_DestroySurface(littlegamepic);
 end;
 
 end.

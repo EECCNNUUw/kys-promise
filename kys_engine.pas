@@ -14,12 +14,12 @@ uses
   {$ENDIF}
   Math,
   Dialogs,
-  SDL2,
-  SDL2_TTF,
+  SDL3,
+  SDL3_TTF,
   //SDL_mixer,
   iniFiles,
-  SDL2_image,
-  SDL2_gfx,
+  SDL3_image,
+  SDL3_gfx,
   kys_battle,
   kys_main,
   bass,
@@ -202,13 +202,10 @@ begin
     SDL_EVENT_FINGER_MOTION:
       if CellPhone = 0 then
         Result := 0;
-    sdl_windowevent:
+    SDL_EVENT_WINDOW_RESIZED:
     begin
-      if e.window.event = SDL_EVENT_WINDOW_RESIZED then
-      begin
-        sdl_getwindowsize(window, @resolutionx, @resolutiony);
-        Result := 0;
-      end;
+      sdl_getwindowsize(window, @resolutionx, @resolutiony);
+      Result := 0;
     end;
   end;
 end;
@@ -308,7 +305,7 @@ begin
           BASS_ChannelFlags(Music[MusicNum], BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP)
         else
           BASS_ChannelFlags(Music[MusicNum], 0, BASS_SAMPLE_LOOP);
-        BASS_ChannelPlay(Music[MusicNum], false);
+        BASS_ChannelPlay(Music[MusicNum], False);
         nowmusic := musicnum;
       end;
   finally
@@ -391,16 +388,13 @@ end;
 
 //获取某像素信息
 function getpixel(surface: PSDL_Surface; x: integer; y: integer): uint32;
-type
-  TByteArray = array[0..2] of byte;
-  PByteArray = ^TByteArray;
 var
   bpp: integer;
   p: PInteger;
 begin
   if (x >= 0) and (x < screen.w) and (y >= 0) and (y < screen.h) then
   begin
-    bpp := surface.format.BytesPerPixel;
+    bpp := 4;
     // Here p is the address to the pixel we want to retrieve
     p := Pointer(nativeint(surface.pixels) + y * surface.pitch + x * bpp);
     case bpp of
@@ -424,9 +418,6 @@ end;
 
 //画像素
 procedure putpixel(surface_: PSDL_Surface; x: integer; y: integer; pixel: uint32);
-type
-  TByteArray = array[0..2] of byte;
-  PByteArray = ^TByteArray;
 var
   bpp: integer;
   p: PInteger;
@@ -450,7 +441,7 @@ begin
 
   if (x >= regionx1) and (x < regionx2) and (y >= regiony1) and (y < regiony2) then
   begin
-    bpp := surface_.format.BytesPerPixel;
+    bpp := 4;
     // Here p is the address to the pixel we want to set
     p := Pointer(nativeint(surface_.pixels) + y * surface_.pitch + x * bpp);
 
@@ -525,7 +516,7 @@ begin
     dest1.y := y1;
     dest1.w := w;
     dest1.h := h;
-    if (SDL_BlitSurface(image, @dest1, screen, @dest) < 0) then
+    if (not SDL_BlitSurface(image, @dest1, screen, @dest)) then
       exit;
     //SDL_UpdateRect2(screen, 0, 0, image.w, image.h);
     SDL_DestroySurface(image);
@@ -618,13 +609,12 @@ end;
 //取调色板的颜色, 视频系统是32位色, 但很多时候仍需要原调色板的颜色
 function ColColor(num: integer): uint32;
 begin
-  colcolor := SDL_mapRGB(screen.format, Acol[num * 3 + 0] * 4, Acol[num * 3 + 1] * 4, Acol[num * 3 + 2] * 4);
-
+  colcolor := SDL_MapSurfaceRGB(screen, Acol[num * 3 + 0] * 4, Acol[num * 3 + 1] * 4, Acol[num * 3 + 2] * 4);
 end;
 
 function ColColor(colnum, num: integer): uint32;
 begin
-  colcolor := SDL_mapRGB(screen.format, col[colnum][num * 3] * 4, col[colnum][num * 3 + 1] * 4, col[colnum][num * 3 + 2] * 4);
+  colcolor := SDL_MapSurfaceRGB(screen, col[colnum][num * 3] * 4, col[colnum][num * 3 + 1] * 4, col[colnum][num * 3 + 2] * 4);
 end;
 
 //判断像素是否在屏幕内
@@ -633,7 +623,6 @@ begin
   Result := False;
   if (px - xs + w >= 0) and (px - xs < screen.w) and (py - ys + h >= 0) and (py - ys < screen.h) then
     Result := True;
-
 end;
 
 //判断像素是否在指定范围内(重载)
@@ -725,7 +714,7 @@ begin
 
               if image = nil then
               begin
-                pix := sdl_maprgb(screen.format, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
+                pix := SDL_MapSurfaceRGB(screen, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
                 //    if mask = 1 then  pix :=$ffffff;
                 if HighLight then
                 begin
@@ -862,7 +851,7 @@ begin
               end
               else
                 Pinteger(image + ((w - xs + px) * 1152 + (iy - ys + py)) * 4)^ :=
-                  sdl_maprgb(screen.format, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
+                  SDL_MapSurfaceRGB(screen, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
 
             end;
           end;
@@ -995,16 +984,16 @@ begin
         begin
           MaskArray[i1, i2] := 0;
         end;
-    bpp := Scenepic[num].pic.format.BytesPerPixel;
+    bpp := 4;
     for i1 := 0 to Scenepic[num].pic.w - 1 do
       for i2 := 0 to Scenepic[num].pic.h - 1 do
       begin
         if ((x1 + i1) >= x) and ((x1 + i1) <= x + w) and (y1 + i2 >= y) and (y1 + i2 <= y + h) then
           if (MaskArray[x1 + i1, y1 + i2] = 1) or (Mask <= 0) then
           begin
-            p := Pointer(uint32(Scenepic[num].pic.pixels) + i2 * Scenepic[num].pic.pitch + i1 * bpp);
+            p := Pointer(nativeuint(Scenepic[num].pic.pixels) + i2 * Scenepic[num].pic.pitch + i1 * bpp);
             c := PUint32(p)^;
-            p := Pointer(uint32(screen.pixels) + (y1 + i2) * screen.pitch + (x1 + i1) * bpp);
+            p := Pointer(nativeuint(screen.pixels) + (y1 + i2) * screen.pitch + (x1 + i1) * bpp);
             pix := PUint32(p)^;
 
             {$IFDEF darwin}
@@ -1202,7 +1191,7 @@ begin
     if (x1 + Scenepic[num].pic.w > x + w) and (x1 > x + w) then exit;
     if (y1 + Scenepic[num].pic.h < y) and (y1 < y) then exit;
     if (y1 + Scenepic[num].pic.h > y + h) and (y1 > y + h) then exit;
-    bpp := Scenepic[num].pic.format.BytesPerPixel;
+    bpp := 4;
     for i1 := 0 to Scenepic[num].pic.w - 1 do
       for i2 := 0 to Scenepic[num].pic.h - 1 do
       begin
@@ -1210,7 +1199,7 @@ begin
         if ((x1 + i1) >= x) and ((x1 + i1) <= x + w) and (y1 + i2 >= y) and (y1 + i2 <= y + h) then
           if (MaskArray[x1 + i1, y1 + i2] = 1) or (Mask < 2) then
           begin
-            p := Pointer(uint32(Scenepic[num].pic.pixels) + i2 * Scenepic[num].pic.pitch + i1 * bpp);
+            p := Pointer(nativeuint(Scenepic[num].pic.pixels) + i2 * Scenepic[num].pic.pitch + i1 * bpp);
             c := PUint32(p)^;
             pix := SceneImg[i1 + x1, i2 + y1];
             if c and $FF000000 <> 0 then
@@ -1298,7 +1287,7 @@ begin
   b := 0;
   x1 := px - Head_Pic[num].x + 1;
   y1 := py - Head_Pic[num].y + 1;
-  bpp := Head_Pic[num].pic.format.BytesPerPixel;
+  bpp := 4;
   for i1 := 0 to Head_Pic[num].pic.w - 1 do
     for i2 := 0 to Head_Pic[num].pic.h - 1 do
     begin
@@ -1373,7 +1362,7 @@ begin
         if fullscreen = 1 then}
         c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
         {$ELSE}
-        c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0;
+        c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + 255 shl 24;
         {$ENDIF}
         PUint32(p)^ := c;
 
@@ -1598,8 +1587,6 @@ begin
   color := c1 + c2 shl 8 + c3 shl 16 + c4 shl 24;
   tempcolor := TSDL_Color(color);
   //{$ENDIF}
-
-
   pword[0] := 32;
   pword[2] := 0;
   if SIMPLE = 1 then
@@ -1616,9 +1603,9 @@ begin
     Inc(word);
     if pword[1] > 128 then
     begin
-      Text := TTF_RenderUNICODE_blended(font, @pword[0], tempcolor);
+      Text := TTF_RenderGlyph_Blended(font, pword[1], tempcolor);
       //dest.x := x_pos;
-      dest.x := x_pos - 0;
+      dest.x := x_pos + 10;
       dest.y := y_pos;
       SDL_BlitSurface(Text, nil, sur, @dest);
       x_pos := x_pos + 20;
@@ -1631,8 +1618,8 @@ begin
         x_pos := x;
         y_pos := y_pos + 19;
       end;
-      Text := TTF_RenderUNICODE_blended(engfont, @pword[1], tempcolor);
-      dest.x := x_pos + 10;
+      Text := TTF_RenderGlyph_blended(engfont, pword[1], tempcolor);
+      dest.x := x_pos + 20;
       dest.y := y_pos + 4;
       SDL_BlitSurface(Text, nil, sur, @dest);
       x_pos := x_pos + 10;
@@ -1648,6 +1635,7 @@ var
   dest: TSDL_Rect;
   c1, c2, c3, c4: integer;
   tempcolor: TSDL_Color;
+  ustr: utf8string;
 begin
   //{$IFDEF darwin}
   {tempcolor := TSDL_Color(color shr 8);
@@ -1666,8 +1654,8 @@ begin
   color := c1 + c2 shl 8 + c3 shl 16 + c4 shl 24;
   tempcolor := TSDL_Color(color);
   //{$ENDIF}
-
-  Text := TTF_RenderUNICODE_blended(engfont, system.PWord(word), tempcolor);
+  ustr := utf8encode(WideString(word));
+  Text := TTF_RenderText_blended(engfont, @ustr[1], 0, tempcolor);
   dest.x := x_pos;
   dest.y := y_pos + 4;
   SDL_BlitSurface(Text, nil, sur, @dest);
@@ -1819,10 +1807,10 @@ begin
   begin  sur := textscreen;
     GetRealRect(x,y,w,h);
   end;}
-  tempscr := SDL_CreateRGBSurface(screen.flags or 0, w + 1, h + 1, 32, $FF0000, $FF00, $FF, $FF000000);
-  SDL_GetRGB(colorin, tempscr.format, @r, @g, @b);
-  SDL_GetRGB(colorframe, tempscr.format, @r1, @g1, @b1);
-  SDL_FillSurfaceRect(tempscr, nil, SDL_MapRGBA(tempscr.format, r, g, b, alpha * 255 div 100));
+  tempscr := SDL_CreateSurface(w + 1, h + 1, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
+  SDL_GetRGB(colorin, SDL_GetPixelFormatDetails(tempscr.format), SDL_GetSurfacePalette(tempscr), @r, @g, @b);
+  SDL_GetRGB(colorframe, SDL_GetPixelFormatDetails(tempscr.format), SDL_GetSurfacePalette(tempscr), @r1, @g1, @b1);
+  SDL_FillSurfaceRect(tempscr, nil, SDL_MapSurfaceRGBA(tempscr, r, g, b, alpha * 255 div 100));
   //if Text_Layer = 1 then
   //SDL_SetAlpha(tempscr, 0, 255);
 
@@ -1852,7 +1840,7 @@ begin
         //a := round(200 - min(abs(i1/w-0.5),abs(i2/h-0.5))*2 * 100);
         a := round(250 - abs(i1 / w + i2 / h - 1) * 150);
         //writeln(a);
-        PutPixel(tempsur1, i1 + x1, i2 + y1, SDL_MapRGBA(tempscr.format, r1, g1, b1, a));
+        PutPixel(tempsur1, i1 + x1, i2 + y1, SDL_MapSurfaceRGBA(tempscr, r1, g1, b1, a));
       end;
     end;
 
@@ -2773,7 +2761,7 @@ begin
     n := (30 + (image.black - 1) * 10);
     sdl_delay(((n + 5) * GameSpeed) div 10);
   end;
-  sdl_freesurface(image.pic);
+  SDL_DestroySurface(image.pic);
 
 end;
 
@@ -3058,21 +3046,21 @@ begin
   //setlength(Menustring, 0);
   setlength(menustring, max);
   NewShowStatus(Teamlist[menu]);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu := menu + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu := menu - 1;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu := menu + 1;
         if (menu >= max) then menu := 0;
         if (menu < 0) then menu := max - 1;
         NewShowStatus(teamlist[menu]);
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then break;
+        if (event.key.key = sdlk_escape) then break;
       end;
       SDL_EVENT_MOUSE_BUTTON_UP:
       begin
@@ -3334,23 +3322,23 @@ begin
   //setlength(Menustring, 0);
   setlength(menustring, max);
   NewShowMagic(teamlist[menu]);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then menu := menu + 1;
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then menu := menu - 1;
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then menu := menu + 1;
         if (menu >= max) then menu := 0;
         if (menu < 0) then menu := max - 1;
         NewShowMagic(teamlist[menu]);
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then break;
+        if (event.key.key = sdlk_escape) then break;
         NewShowMagic(teamlist[menu]);
-        if ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space)) then
+        if ((event.key.key = sdlk_return) or (event.key.key = sdlk_space)) then
           if InModeMagic(teamlist[menu]) then break;
       end;
       SDL_EVENT_MOUSE_BUTTON_UP:
@@ -3424,18 +3412,18 @@ begin
   begin
     if (RRole[rnum].Magic[i] > 0) then max := max + 1;
   end;
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
           if ((num <= 5) and (num >= 0)) then
             num := num - 3
           else if (num >= 6) then
             num := num - 2;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           if ((num <= 5) and (num >= 3)) then
             if (max = 0) then num := num - 3
@@ -3450,9 +3438,9 @@ begin
             else
               num := (max div 2) * 2 + 5;
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
           num := num + 1;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
           num := num - 1;
         if (num < 0) then
           if (max = 0) then num := num + 3
@@ -3464,13 +3452,13 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           ShowMagic(rnum, -1, 0, 0, screen.w, screen.h, True);
           Result := False;
           break;
         end;
-        if ((event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space)) then
+        if ((event.key.key = sdlk_return) or (event.key.key = sdlk_space)) then
         begin
           if not isbattle then
           begin
@@ -4028,15 +4016,15 @@ begin
     else
       break;
   end;
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
           menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
           menu := menu + 1;
         if (menu < 0) then menu := max - 1;
         if (menu >= max) then menu := 0;
@@ -4044,12 +4032,12 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           ShowMagic(rnum, -1, 0, 0, screen.w, screen.h, True);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if (menu <> -1) then
           begin
@@ -4173,15 +4161,15 @@ begin
     else
       break;
   end;
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDown:
+      SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
           menu := menu - 1;
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
           menu := menu + 1;
         if (menu < 0) then menu := max - 1;
         if (menu >= max) then menu := 0;
@@ -4189,12 +4177,12 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           ShowMagic(rnum, -1, 0, 0, screen.w, screen.h, True);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if menu >= 0 then
           begin
@@ -4334,7 +4322,7 @@ begin
       begin
         MaskArray[i1, i2] := 0;
       end;
-  bpp := image.pic.format.BytesPerPixel;
+  bpp := 4;
   for i1 := 0 to w - 1 do
     for i2 := 0 to h - 1 do
     begin
@@ -4384,12 +4372,12 @@ begin
           //if fullscreen = 1 then
           c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
           {$ELSE}
-          c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0;
+          c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + 255 shl 24;
           {$ENDIF}
           //{$ifdef unix}
-          //c := SDL_MapRGB(screen.format, pix3, pix2, pix1);
+          //c := SDL_MapSurfaceRGB(screen, pix3, pix2, pix1);
           //{$else}
-          //c := SDL_MapRGB(screen.format, pix1, pix2, pix3);
+          //c := SDL_MapSurfaceRGB(screen, pix1, pix2, pix3);
           //{$endif}
           PUint32(p)^ := c;
         end;
@@ -4400,7 +4388,7 @@ end;
 function ReadPicFromByte(p_byte: pbyte; size: integer): Psdl_Surface;
 begin
   //writeln(uint8(p_byte[0]));
-  Result := IMG_Load_RW(SDL_IOFromMem(p_byte, size), 1);
+  Result := IMG_Load_IO(SDL_IOFromMem(p_byte, size), True);
   {if (p_byte[0]=$89) then
     Result := IMG_LoadTyped_RW(SDL_IOFromMem(p_byte, size), 1, 'PNG')
   else
@@ -4446,20 +4434,20 @@ begin
   menu := 0;
   NewshowMenusystem(menu);
   //SDL_EnableKeyRepeat(10, 100);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           menu := menu + 1;
           if menu > 3 then
             menu := 0;
           NewshowMenusystem(menu);
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -4469,13 +4457,13 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           redraw;
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           case menu of
             0:
@@ -4625,20 +4613,20 @@ begin
   word[4] := ' 進度五';
   menu := 0;
   NewShowSelect(1, menu, word, 97);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           menu := menu + 1;
           if menu > 4 then
             menu := 0;
           NewshowSelect(1, menu, word, 97);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -4648,15 +4636,15 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if menu >= 0 then
           begin
-            event.key.keysym.sym := 0;
+            event.key.key := 0;
             SaveR(menu + 1);
             //SDL_EnableKeyRepeat(30, (30 * GameSpeed) div 10);
             Result := True;
@@ -4716,20 +4704,20 @@ begin
   word[5] := ' 自動檔';
   menu := 0;
   NewShowSelect(0, menu, word, 81);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           menu := menu + 1;
           if menu > 5 then
             menu := 0;
           NewShowSelect(0, menu, word, 81);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -4739,11 +4727,11 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if menu >= 0 then
           begin
@@ -4751,7 +4739,7 @@ begin
             //SDL_EnableKeyRepeat(30, (30 * GameSpeed) div 10);
             if where = 1 then
             begin
-              event.key.keysym.sym := 0;
+              event.key.key := 0;
               WalkInScene(0);
               //JmpScene(curScene, sy, sx);
             end;
@@ -4826,20 +4814,20 @@ begin
   //SDL_EnableKeyRepeat(10, 100);
   menu := MusicVolume div 16;
   NewShowSelect(2, menu, word, w);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           menu := menu + 1;
           if menu > length(word) - 1 then
             menu := 0;
           NewshowSelect(2, menu, word, w);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -4849,11 +4837,11 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if menu >= 0 then
           begin
@@ -4915,20 +4903,20 @@ begin
   menu := -1;
   //SDL_EnableKeyRepeat(10, 100);
   NewShowSelect(3, menu, word, w);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           menu := menu + 1;
           if menu > length(word) - 1 then
             menu := 0;
           NewshowSelect(3, menu, word, w);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -4939,11 +4927,11 @@ begin
 
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if menu = 1 then
           begin
@@ -5005,7 +4993,7 @@ var
   Sceney: array of integer;
   Scenenum: array of integer;
 begin
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
   n := 0;
   p := 0;
@@ -5033,7 +5021,7 @@ begin
   end;
   str := ' 你的位置';
   strboat := ' 船的位置';
-  while SDL_PollEvent(@event) >= 0 do
+  while SDL_PollEvent(@event) or True do
   begin
     SDL_GetMouseState2(xm, ym);
     if (n mod 10 = 0) then
@@ -5092,8 +5080,8 @@ begin
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_escape) or (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then break;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) or (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_escape) or (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then break;
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) or (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           if u <> 0 then
           begin
@@ -5101,7 +5089,7 @@ begin
             if p <= -1 then p := u - 1;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) or (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) or (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           if u <> 0 then
           begin
@@ -5109,7 +5097,7 @@ begin
             if p >= u then p := 0;
           end;
         end;
-        event.key.keysym.sym := 0;
+        event.key.key := 0;
         event.button.button := 0;
 
       end;
@@ -5129,7 +5117,7 @@ begin
             end;
         end;
       end;
-      SDL_MOUSEMotion:
+      SDL_EVENT_MOUSE_MOTION:
       begin
         for i := 0 to length(Sceney) - 1 do
         begin
@@ -5195,33 +5183,33 @@ begin
   end;     }
   showNewMenuEsc(menu, positionX, positionY);
 
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           if (menu = 0) or (menu = 1) or (menu = 2) then menu := menu + 1
           else if (menu = 5) or (menu = 4) then menu := menu - 1;
           showNewMenuEsc(menu, positionX, positionY);
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           if (menu = 1) or (menu = 2) or (menu = 3) then menu := menu - 1
           else if (menu = 4) then menu := menu + 1
           else if (menu = 5) then menu := 0;
           showNewMenuEsc(menu, positionX, positionY);
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           if (menu = 0) then menu := menu + 1
           else if (menu = 3) or (menu = 4) then menu := menu - 1
           else if (menu = 5) then menu := 0;
           showNewMenuEsc(menu, positionX, positionY);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           if (menu = 0) then menu := 5
           else if (menu = 3) or (menu = 2) then menu := menu + 1
@@ -5232,18 +5220,18 @@ begin
 
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_f5) then
+        if (event.key.key = sdlk_f5) then
         begin
           SwitchFullscreen;
           Kys_ini.WriteInteger('set', 'fullscreen', fullscreen);
         end;
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           resetpallet;
           break;
 
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           resetpallet(0);
           case menu of
@@ -5259,7 +5247,7 @@ begin
             begin
               NewMenuSystem;
               resetpallet;
-              event.key.keysym.sym := 0;
+              event.key.key := 0;
               event.button.button := 0;
               exit;
             end;
@@ -5314,7 +5302,7 @@ begin
               begin
                 NewMenuSystem;
                 resetpallet;
-                event.key.keysym.sym := 0;
+                event.key.key := 0;
                 event.button.button := 0;
                 exit;
               end;
@@ -5357,7 +5345,7 @@ begin
   redraw;
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
 
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
 {
   for i2 := 0 to 10 do
@@ -5390,9 +5378,7 @@ var
   i: integer;
 begin
   redraw;
-
   drawPngPic(Menuescback_PIC, 0, 0, 300, 300, 170, 70, 0);
-
   for I := 0 to 5 do
   begin
     if i = menu then
@@ -5622,7 +5608,7 @@ begin
         end;
     end;
   end;
-  //sdl_freesurface(pic1.pic);
+  //SDL_DestroySurface(pic1.pic);
 end;
 
 procedure ZoomPic(scr: Psdl_surface; angle: double; x, y, w, h: integer);
@@ -5640,7 +5626,7 @@ begin
   dest.h := h;
   temp := rotozoomSurfaceXY(scr, angle, a, b, 0);
   SDL_BlitSurface(temp, nil, screen, @dest);
-  sdl_freesurface(temp);
+  SDL_DestroySurface(temp);
 end;
 
 function GetZoomPic(scr: Psdl_surface; angle: double; x, y, w, h: integer): Psdl_surface;
@@ -5666,7 +5652,7 @@ begin
 
   if (FileExists(AppPath + MOVIE_file) { *Converted from FileExists*  }) then
   begin
-    SDL_ShowCursor(SDL_DISABLE);
+    SDL_HideCursor();
     grp := fileopen(AppPath + MOVIE_file, fmopenread);
     fileseek(grp, 0, 0);
     fileread(grp, Count, 4);
@@ -5681,19 +5667,19 @@ begin
       //MOV := GetPngPic(@MOVPic[0], @MOVidx[0], 1);
       for i := beginnum to endnum do
       begin
-        while SDL_PollEVENT(@event) > 0 do
+        while SDL_PollEVENT(@event) do
         begin
           CheckBasicEvent;
           case event.type_ of
             //方向键使用压下按键事件
             SDL_EVENT_KEY_UP:
             begin
-              if (event.key.keysym.sym = sdlk_escape) or (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+              if (event.key.key = sdlk_escape) or (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
               begin
                 fileclose(grp);
-                event.key.keysym.sym := 0;
+                event.key.key := 0;
                 event.button.button := 0;
-                SDL_ShowCursor(SDL_ENABLE);
+                SDL_ShowCursor();
                 Exit;
               end;
             end;
@@ -5703,26 +5689,25 @@ begin
         ZoomPic(MOV.pic, 0, 0, 0, screen.w, screen.h);
         sdl_delay(20);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-        //SDL_freeSurface(MOV.pic);
+        //SDL_DestroySurface(MOV.pic);
       end;
     end
     else
     begin
       for i := beginnum downto endnum do
       begin
-        while SDL_PollEVENT(@event) > 0 do
+        while SDL_PollEVENT(@event) do
         begin
           CheckBasicEvent;
           case event.type_ of
             //方向键使用压下按键事件
             SDL_EVENT_KEY_UP:
             begin
-              if (event.key.keysym.sym = sdlk_escape) or (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+              if (event.key.key = sdlk_escape) or (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
               begin
                 fileclose(grp);
-
-                SDL_ShowCursor(SDL_ENABLE);
-                event.key.keysym.sym := 0;
+                SDL_ShowCursor();
+                event.key.key := 0;
                 event.button.button := 0;
                 Exit;
               end;
@@ -5735,7 +5720,7 @@ begin
 
         sdl_delay(1);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-        //SDL_freeSurface(MOV.pic);这里是移除gfx后导致的zoom指针free顺序的复杂问题，不管了
+        //SDL_DestroySurface(MOV.pic);这里是移除gfx后导致的zoom指针free顺序的复杂问题，不管了
       end;
     end;
     fileclose(grp);
@@ -5743,7 +5728,7 @@ begin
     //Setlength( 0);
   end;
 
-  SDL_ShowCursor(SDL_ENABLE);
+  SDL_ShowCursor();
 end;
 
 procedure NewMenuTeammate;
@@ -5781,13 +5766,13 @@ begin
   end;
   ShowTeammateMenu(tmenu, rmenu, @Teammate[0], rcount, 0);
 
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
       SDL_EVENT_KEY_UP:
       begin
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           if position = 0 then
           begin
@@ -5800,7 +5785,7 @@ begin
             if Rmenu > 25 then Rmenu := 0;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           if position = 0 then
           begin
@@ -5813,7 +5798,7 @@ begin
             if Rmenu < 0 then Rmenu := 25;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           if position = 0 then
           begin
@@ -5827,7 +5812,7 @@ begin
           end;
 
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           if position = 1 then
           begin
@@ -5842,12 +5827,12 @@ begin
             if Rmenu < 0 then Rmenu := 25;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_f5) then
+        if (event.key.key = sdlk_f5) then
         begin
           SwitchFullscreen;
           Kys_ini.WriteInteger('set', 'fullscreen', fullscreen);
         end;
-        if (event.key.keysym.sym = sdlk_escape) then
+        if (event.key.key = sdlk_escape) then
         begin
           //resetpallet;
           if t < 0 then
@@ -5859,7 +5844,7 @@ begin
             rr := -1;
           end;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if t < 0 then
           begin
@@ -6075,13 +6060,13 @@ begin
   menustring[5] := ' 傷人暗器';
   showNewItemMenu(menu);
   SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-  while SDL_WaitEvent(@event) >= 0 do
+  while SDL_WaitEvent(@event) do
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDown:
+      SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           menu := menu + 1;
           if menu > max then
@@ -6089,7 +6074,7 @@ begin
           showNewItemMenu(menu);
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -6100,13 +6085,13 @@ begin
       end;
       SDL_EVENT_KEY_UP:
       begin
-        if ((event.key.keysym.sym = sdlk_escape)) then
+        if ((event.key.key = sdlk_escape)) then
         begin
           ReDraw;
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           if not MenuItem(menu) then break;
           //Redraw;
@@ -6146,7 +6131,7 @@ begin
     end;
   end;
   //清空键盘键和鼠标键值, 避免影响其余部分
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
   //SDL_EnableKeyRepeat(30, (30 * GameSpeed) div 10);
 end;
@@ -6203,34 +6188,34 @@ begin
     end;
   end;
   showSelectItemUser(x, y, inum, menu, len, @teammatelist[0]);
-  while (SDL_WaitEvent(@event) >= 0) do
+  while (SDL_WaitEvent(@event)) do
   begin
     CheckBasicEvent;
     case event.type_ of
-      SDL_KEYDown:
+      SDL_EVENT_KEY_DOWN:
       begin
-        if (event.key.keysym.sym = sdlk_down) or (event.key.keysym.sym = sdlk_kp_2) then
+        if (event.key.key = sdlk_down) or (event.key.key = sdlk_kp_2) then
         begin
           menu := menu + 3;
           if menu > len - 1 then
             menu := 0;
           showSelectItemUser(x, y, inum, menu, len, @teammatelist[0]);
         end;
-        if (event.key.keysym.sym = sdlk_up) or (event.key.keysym.sym = sdlk_kp_8) then
+        if (event.key.key = sdlk_up) or (event.key.key = sdlk_kp_8) then
         begin
           menu := menu - 3;
           if menu < 0 then
             menu := len - 1;
           showSelectItemUser(x, y, inum, menu, len, @teammatelist[0]);
         end;
-        if (event.key.keysym.sym = sdlk_right) or (event.key.keysym.sym = sdlk_kp_6) then
+        if (event.key.key = sdlk_right) or (event.key.key = sdlk_kp_6) then
         begin
           menu := menu + 1;
           if menu > len - 1 then
             menu := 0;
           showSelectItemUser(x, y, inum, menu, len, @teammatelist[0]);
         end;
-        if (event.key.keysym.sym = sdlk_left) or (event.key.keysym.sym = sdlk_kp_4) then
+        if (event.key.key = sdlk_left) or (event.key.key = sdlk_kp_4) then
         begin
           menu := menu - 1;
           if menu < 0 then
@@ -6241,13 +6226,13 @@ begin
 
       SDL_EVENT_KEY_UP:
       begin
-        if ((event.key.keysym.sym = sdlk_escape)) then
+        if ((event.key.key = sdlk_escape)) then
         begin
           Result := -1;
           SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
           break;
         end;
-        if (event.key.keysym.sym = sdlk_return) or (event.key.keysym.sym = sdlk_space) then
+        if (event.key.key = sdlk_return) or (event.key.key = sdlk_space) then
         begin
           //Redraw;
           Result := teammatelist[menu];
@@ -6328,7 +6313,7 @@ begin
     end;
   end;
   //清空键盘键和鼠标键值, 避免影响其余部分
-  event.key.keysym.sym := 0;
+  event.key.key := 0;
   event.button.button := 0;
 end;
 
@@ -6940,7 +6925,7 @@ begin
           begin
             if image = nil then
             begin
-              pix := sdl_maprgb(screen.format, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
+              pix := SDL_MapSurfaceRGB(screen, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
               if (alpha <> 0) then
               begin
                 if (BlockScreenR = nil) then
@@ -7009,7 +6994,7 @@ begin
                   Pinteger(BlockImageW + ((w - xs + px) * heightI + (iy - ys + py)) * sizeI)^ := depth;
                 end;
                 Pinteger(image + ((w - xs + px) * heightI + (iy - ys + py)) * sizeI)^ :=
-                  sdl_maprgb(screen.format, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
+                  SDL_MapSurfaceRGB(screen, puint8(colorPanel + l1 * 3)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 1)^ * (4 + shadow), puint8(colorPanel + l1 * 3 + 2)^ * (4 + shadow));
               end;
             end;
           end;
@@ -7022,9 +7007,7 @@ begin
       end;
     end;
   end;
-
 end;
-
 
 procedure SDL_UpdateRect2(scr1: PSDL_Surface; x, y, w, h: integer);
 var
@@ -7033,6 +7016,7 @@ var
   temptex: PSDL_Texture;
   now, Next, temp: uint32;
   src, dest: TSDL_Rect;
+  destf: TSDL_FRect;
   p: Pointer;
 begin
   dest.x := x;
@@ -7050,12 +7034,12 @@ begin
     temp := RESOLUTIONX * center_y * 2 div RESOLUTIONY;
     if (virtualKeyScr = nil) or (virtualKeyScr.w <> temp) then
     begin
-      sdl_freesurface(virtualKeyScr);
-      virtualKeyScr := SDL_CreateRGBSurface(ScreenFlag, temp, CENTER_Y * 2, 32, RMask, GMask, BMask, AMASK);
+      SDL_DestroySurface(virtualKeyScr);
+      virtualKeyScr := SDL_CreateSurface(temp, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
     end;
     DrawVirtualKey;
     // Here p is the address to the pixel we want to set
-    p := Pointer(nativeint(screen.pixels) + y * screen.pitch + x * screen.format.BytesPerPixel);
+    p := Pointer(nativeint(screen.pixels) + y * screen.pitch + x * 4);
     SDL_UpdateTexture(screenTex, @dest, p, screen.pitch);
 
     if KEEP_SCREEN_RATIO = 1 then
@@ -7065,7 +7049,12 @@ begin
       src.w := CENTER_X * 2;
       src.h := CENTER_Y * 2;
       dest := GetRealRect(src, 1);
-      SDL_RenderTexture(render, screenTex, nil, @dest);
+      destf.x := dest.x;
+      destf.y := dest.y;
+      destf.w := dest.w;
+      destf.h := dest.h;
+      //kyslog('%f %f', [destf.x, destf.w]);
+      SDL_RenderTexture(render, screenTex, nil, @destf);
     end
     else
       SDL_RenderTexture(render, screenTex, nil, nil);
@@ -7087,7 +7076,8 @@ end;
 
 procedure SDL_GetMouseState2(var x, y: integer);
 var
-  tempx, tempy, temp: integer;
+  tempx, tempy: single;
+  temp: integer;
   px, py, w, h: integer;
   s: TStretchInfo;
 begin
@@ -7101,8 +7091,8 @@ begin
   if KEEP_SCREEN_RATIO = 1 then
   begin
     s := KeepRatioScale(CENTER_X * 2, CENTER_Y * 2, RESOLUTIONX, RESOLUTIONY);
-    x := ((tempx - s.px) * s.den div s.num);
-    y := ((tempy - s.py) * s.den div s.num);
+    x := round((tempx - s.px) * s.den / s.num);
+    y := round((tempy - s.py) * s.den / s.num);
   end
   else
   begin
@@ -7113,7 +7103,8 @@ end;
 
 procedure SDL_GetMouseState3(var x, y: integer);
 var
-  tempx, tempy, temp: integer;
+  tempx, tempy: single;
+  temp: integer;
   px, py, w, h: integer;
   s: TStretchInfo;
 begin
@@ -7167,7 +7158,7 @@ var
 begin
   w := virtualKeyScr.w;
   h := virtualKeyScr.h;
-  SDL_FillSurfaceRect(virtualKeyScr, nil, SDL_MapRGBA(virtualKeyScr.format, 0, 0, 0, 0));
+  SDL_FillSurfaceRect(virtualKeyScr, nil, SDL_MapSurfaceRGBA(virtualKeyScr, 0, 0, 0, 0));
   if ShowVirtualKey <> 0 then
   begin
     u := 128;
@@ -7274,21 +7265,17 @@ begin
     begin
       event.type_ := SDL_EVENT_KEY_DOWN;
       case event.jhat.Value of
-        SDL_HAT_UP: event.key.keysym.sym := SDLK_UP;
-        SDL_HAT_DOWN: event.key.keysym.sym := SDLK_DOWN;
-        SDL_HAT_LEFT: event.key.keysym.sym := SDLK_LEFT;
-        SDL_HAT_RIGHT: event.key.keysym.sym := SDLK_RIGHT;
+        SDL_HAT_UP: event.key.key := SDLK_UP;
+        SDL_HAT_DOWN: event.key.key := SDLK_DOWN;
+        SDL_HAT_LEFT: event.key.key := SDLK_LEFT;
+        SDL_HAT_RIGHT: event.key.key := SDLK_RIGHT;
       end;
     end;
     SDL_EVENT_FINGER_UP: ;
-    SDL_MULTIGESTURE: ;
-    SDL_QUITEV: QuitConfirm;
-    SDL_WindowEvent:
+    SDL_EVENT_QUIT: QuitConfirm;
+    SDL_EVENT_WINDOW_RESIZED:
     begin
-      if event.window.event = SDL_EVENT_WINDOW_RESIZED then
-      begin
-        ResizeWindow(event.window.data1, event.window.data2);
-      end;
+      ResizeWindow(event.window.data1, event.window.data2);
     end;
     SDL_EVENT_DID_ENTER_FOREGROUND: PlayMP3(nowmusic, -1, 0);
     SDL_EVENT_DID_ENTER_BACKGROUND: StopMP3();
@@ -7317,7 +7304,7 @@ begin
         if VirtualKeyValue <> 0 then
         begin
           event.type_ := SDL_EVENT_KEY_DOWN;
-          event.key.keysym.sym := VirtualKeyValue;
+          event.key.key := VirtualKeyValue;
         end;
       end;
       if event.type_ <> SDL_EVENT_KEY_DOWN then
@@ -7337,7 +7324,7 @@ begin
           //event.button.x := RESOLUTIONX div 2;
           //event.button.y := RESOLUTIONY div 2;
           event.type_ := SDL_EVENT_KEY_UP;
-          event.key.keysym.sym := SDLK_ESCAPE;
+          event.key.key := SDLK_ESCAPE;
           kyslog('Change to escape');
         end
         else if inReturn(x, y) then
@@ -7345,7 +7332,7 @@ begin
           //event.button.x := RESOLUTIONX div 2;
           //event.button.y := RESOLUTIONY div 2;
           event.type_ := SDL_EVENT_KEY_UP;
-          event.key.keysym.sym := SDLK_RETURN;
+          event.key.key := SDLK_RETURN;
           kyslog('Change to return');
         end
         else if (showVirtualKey <> 0) and (inVirtualKey(x, y, VirtualKeyValue) <> 0) then
@@ -7353,7 +7340,7 @@ begin
           if VirtualKeyValue <> 0 then
           begin
             event.type_ := SDL_EVENT_KEY_UP;
-            event.key.keysym.sym := VirtualKeyValue;
+            event.key.key := VirtualKeyValue;
           end;
         end
         else if inSwitchShowVirtualKey(x, y) then
@@ -7369,7 +7356,7 @@ begin
         if FingerCount >= 1 then
           event.button.button := 0;
       end;
-      if (where = 2) and ((event.key.keysym.sym = SDLK_ESCAPE) or (event.button.button = SDL_BUTTON_RIGHT)) then
+      if (where = 2) and ((event.key.key = SDLK_ESCAPE) or (event.button.button = SDL_BUTTON_RIGHT)) then
       begin
         for i := 0 to BRoleAmount - 1 do
         begin
@@ -7383,8 +7370,8 @@ begin
         if (x < 0) or (x >= center_x * 2) or (y < 0) or (y >= center_y * 2) then
           event.type_ := 0;
       end;
-      if event.key.keysym.sym = SDLK_KP_ENTER then
-        event.key.keysym.sym := SDLK_RETURN;
+      if event.key.key = SDLK_KP_ENTER then
+        event.key.key := SDLK_RETURN;
     end;
   end;
   //CheckRenderTextures;
@@ -7405,7 +7392,7 @@ begin
     if AskingQuit then
       exit;
     AskingQuit := True;
-    tempscr := SDL_ConvertSurface(screen, screen.format, screen.flags);
+    tempscr := SDL_ConvertSurface(screen, screen.format);
     SDL_BlitSurface(tempscr, nil, screen, nil);
     DrawRectangleWithoutFrame(0, 0, screen.w, screen.h, 0, 50);
     SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
