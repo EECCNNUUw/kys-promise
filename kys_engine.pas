@@ -175,8 +175,8 @@ procedure SwitchFullscreen;
 
 function InRegion(x, x0, x1: integer): boolean; overload;
 
-procedure ConsoleLog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
-procedure ConsoleLog(formatstring: string = ''; cr: boolean = True); overload;
+procedure kyslog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
+procedure kyslog(formatstring: string = ''; cr: boolean = True); overload;
 
 procedure DrawVirtualKey;
 function CheckBasicEvent: uint32;
@@ -7143,7 +7143,7 @@ begin
     Result := False;
 end;
 
-procedure ConsoleLog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
+procedure kyslog(formatstring: utf8string; content: array of const; cr: boolean = True); overload;
 var
   i: integer;
   str: utf8string;
@@ -7152,7 +7152,7 @@ begin
   SDL_log('%s', [@str[1]]);
 end;
 
-procedure ConsoleLog(formatstring: string = ''; cr: boolean = True); overload;
+procedure kyslog(formatstring: string = ''; cr: boolean = True); overload;
 var
   i: integer;
   str: utf8string;
@@ -7338,7 +7338,7 @@ begin
           //event.button.y := RESOLUTIONY div 2;
           event.type_ := SDL_KEYUP;
           event.key.keysym.sym := SDLK_ESCAPE;
-          ConsoleLog('Change to escape');
+          kyslog('Change to escape');
         end
         else if inReturn(x, y) then
         begin
@@ -7346,7 +7346,7 @@ begin
           //event.button.y := RESOLUTIONY div 2;
           event.type_ := SDL_KEYUP;
           event.key.keysym.sym := SDLK_RETURN;
-          ConsoleLog('Change to return');
+          kyslog('Change to return');
         end
         else if (showVirtualKey <> 0) and (inVirtualKey(x, y, VirtualKeyValue) <> 0) then
         begin
