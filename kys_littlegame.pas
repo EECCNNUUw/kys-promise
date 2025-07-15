@@ -19,7 +19,7 @@ uses
   SDL3,
   SDL3_TTF,
   SDL3_image,
-  SDL3_gfx,
+  kys_gfx,
   kys_engine,
   kys_main;
 
@@ -312,7 +312,7 @@ begin
   angle := Math.degtorad(abs(degree) - 45);
   x1 := r * cos(abs(angle));
 
-  newarrowpic := rotozoomSurface(arrowpic, degree, 1, 1);
+  newarrowpic := rotozoomSurfaceXY(arrowpic, degree, 1,1, 1);
   dstrect.x := round((screen.w div 2) - abs(x1) - step * sin(degtorad(degree)));
   dstrect.y := round(screen.h - abs(x1) - step * cos(degtorad(degree)));
   dstrect.w := newarrowpic.w;
@@ -341,7 +341,7 @@ begin
   angle := Math.degtorad(abs(degree) - 45);
   x1 := r * cos(abs(angle));
 
-  newbowpic := rotozoomSurface(bowpic, degree, 1, 1);
+  newbowpic := rotozoomSurfaceXY(bowpic, degree, 1,1, 1);
   dstrect.x := round((screen.w div 2) - abs(x1));
   dstrect.y := round(screen.h - abs(x1));
   dstrect.w := newbowpic.w;

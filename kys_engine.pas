@@ -19,7 +19,7 @@ uses
   //SDL_mixer,
   iniFiles,
   SDL3_image,
-  SDL3_gfx,
+  kys_gfx,
   kys_battle,
   kys_main,
   bass,
