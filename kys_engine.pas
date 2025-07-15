@@ -25,7 +25,7 @@ uses
   bass,
   bassmidi;
 
-function EventFilter(p: pointer; e: PSDL_Event): longint; cdecl;
+function EventFilter(p: pointer; e: PSDL_Event): boolean; cdecl;
 
 //音频子程
 procedure InitialMusic;
@@ -192,21 +192,23 @@ implementation
 
 uses kys_event;
 
-function EventFilter(p: pointer; e: PSDL_Event): longint; cdecl;
+function EventFilter(p: pointer; e: PSDL_Event): boolean; cdecl;
 begin
-  Result := 1;
+  Result := true;
   {or (e.type_ = SDL_EVENT_FINGER_MOTION)}
   case e.type_ of
     SDL_EVENT_FINGER_UP, SDL_EVENT_FINGER_DOWN, SDL_EVENT_GAMEPAD_AXIS_MOTION, SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDL_EVENT_GAMEPAD_BUTTON_UP:
-      Result := 0;
+      Result := false;
     SDL_EVENT_FINGER_MOTION:
       if CellPhone = 0 then
-        Result := 0;
+        Result := false;
     SDL_EVENT_WINDOW_RESIZED:
     begin
       sdl_getwindowsize(window, @resolutionx, @resolutiony);
-      Result := 0;
+      Result := false;
     end;
+    SDL_EVENT_DID_ENTER_FOREGROUND: PlayMP3(nowmusic, -1, 0);
+    SDL_EVENT_DID_ENTER_BACKGROUND: StopMP3();
   end;
 end;
 

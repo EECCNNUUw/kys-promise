@@ -5,17 +5,6 @@ library kys_promise;
 program kys_promise;
 {$ENDIF}
 
-//{$MODE Delphi}
-{$IFDEF UNIX}
-{$LINKLIB SDL2}
-{$LINKLIB SDL2_ttf}
-{$LINKLIB SDL2_image}
-{$LINKLIB bass}
-{$LINKLIB bassmidi}
-{$ELSE}
-
-{$ENDIF}
-
 //{$APPTYPE GUI}
 
 uses

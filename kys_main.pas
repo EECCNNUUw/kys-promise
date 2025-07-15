@@ -290,6 +290,8 @@ function FileExistsUTF8(filename: ansistring): boolean; overload;
 //function str: WideString: WideString;
 {$ENDIF}
 
+function SDL_GetAndroidExternalStoragePath(): PAnsiChar; cdecl; external 'libSDL3.so';
+
 
 var
   HW: integer = 0;
@@ -637,7 +639,8 @@ begin
   screen := SDL_CreateSurface(CENTER_X * 2, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
   screenTex := SDL_CreateTexture(render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, CENTER_X * 2, CENTER_Y * 2);
   freshscreen := SDL_CreateSurface(CENTER_X * 2, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
-  SDL_SetEventFilter(@EventFilter, nil);
+  //SDL_SetEventFilter(@EventFilter, nil);
+  SDL_AddEventWatch(@EventFilter, nil);
   start;
 
   //DestroyScript;
