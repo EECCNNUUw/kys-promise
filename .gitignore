@@ -31,3 +31,4 @@ kys-promise-androidstudio/app/jni/SDL2_image
 kys-promise-androidstudio/app/jni/SDL2_ttf
 kys-promise-androidstudio/build
 *.so
+*.apk
