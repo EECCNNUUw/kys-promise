@@ -1312,14 +1312,14 @@ begin
         pix3 := (pix shr 16) and $FF;
         //end;
         {$ELSE}
-        pix1 := (pix shr 16) and $FF;
+        pix1 := (pix shr 0) and $FF;
         pix2 := (pix shr 8) and $FF;
-        pix3 := (pix shr 0) and $FF;
+        pix3 := (pix shr 16) and $FF;
         {$ENDIF}
         alpha := (c shr 24) and $FF;
-        col1 := (c shr 16) and $FF;
+        col1 := (c shr 0) and $FF;
         col2 := (c shr 8) and $FF;
-        col3 := (c shr 0) and $FF;
+        col3 := (c shr 16) and $FF;
 
         //   c := 0 ;
 
@@ -1356,15 +1356,15 @@ begin
         end;
 
 
-        pix1 := (alpha * col3 + (255 - alpha) * pix1) div 255;
+        pix1 := (alpha * col1 + (255 - alpha) * pix1) div 255;
         pix2 := (alpha * col2 + (255 - alpha) * pix2) div 255;
-        pix3 := (alpha * col1 + (255 - alpha) * pix3) div 255;
+        pix3 := (alpha * col3 + (255 - alpha) * pix3) div 255;
         {$IFDEF darwin}
         {c := pix1 shl 24 + pix2 shl 16 + pix3 shl 8;
         if fullscreen = 1 then}
         c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
         {$ELSE}
-        c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + 255 shl 24;
+        c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16 + 255 shl 24;
         {$ENDIF}
         PUint32(p)^ := c;
 
@@ -4347,9 +4347,9 @@ begin
           pix3 := (pix shr 16) and $FF;
           //end;
           {$ELSE}
-          pix1 := (pix shr 16) and $FF;
+          pix1 := (pix shr 0) and $FF;
           pix2 := (pix shr 8) and $FF;
-          pix3 := pix and $FF;
+          pix3 := (pix shr 16) and $FF;
           {$ENDIF}
           //{$ifdef unix}
           //SDL_getRGB(pix, screen.format, @pix3, @pix2, @pix1);
@@ -4374,7 +4374,7 @@ begin
           //if fullscreen = 1 then
           c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
           {$ELSE}
-          c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + 255 shl 24;
+          c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16 + 255 shl 24;
           {$ENDIF}
           //{$ifdef unix}
           //c := SDL_MapSurfaceRGB(screen, pix3, pix2, pix1);
@@ -4391,6 +4391,7 @@ function ReadPicFromByte(p_byte: pbyte; size: integer): Psdl_Surface;
 begin
   //writeln(uint8(p_byte[0]));
   Result := IMG_Load_IO(SDL_IOFromMem(p_byte, size), True);
+  Result := SDL_ConvertSurface(Result, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
   {if (p_byte[0]=$89) then
     Result := IMG_LoadTyped_RW(SDL_IOFromMem(p_byte, size), 1, 'PNG')
   else
@@ -5482,8 +5483,8 @@ begin
   w := trunc(pic.pic.w * i);
   h := trunc(pic.pic.h * i);
   black := pic.black;
-  //pic1.pic := zoomSurface(pic.pic, i, i, 0);
-  pic1.pic := pic.pic;
+  pic1.pic := rotozoomSurfaceXY(pic.pic, 0, i, i, 0);
+  //pic1.pic := pic.pic;
   if black <> 0 then
   begin
     for yy := 0 to h - 1 do
@@ -5524,9 +5525,9 @@ begin
 
               pix := pix1 shl 8 + pix2 shl 16 + pix3 shl 24 + pix4 shl 0;
               {$ELSE}
-              pix03 := pix0 and $FF;
+              pix01 := pix0 and $FF;
               pix02 := pix0 shr 8 and $FF;
-              pix01 := pix0 shr 16 and $FF;
+              pix03 := pix0 shr 16 and $FF;
               pix04 := pix0 shr 24 and $FF;
 
               pix1 := pix and $FF;
@@ -5588,9 +5589,9 @@ begin
 
               pix := pix1 shl 8 + pix2 shl 16 + pix3 shl 24 + pix4 shl 0;
               {$ELSE}
-              pix03 := pix0 and $FF;
+              pix01 := pix0 and $FF;
               pix02 := pix0 shr 8 and $FF;
-              pix01 := pix0 shr 16 and $FF;
+              pix03 := pix0 shr 16 and $FF;
               pix04 := pix0 shr 24 and $FF;
               pix1 := pix and $FF;
               pix2 := pix shr 8 and $FF;
@@ -5610,7 +5611,7 @@ begin
         end;
     end;
   end;
-  //SDL_DestroySurface(pic1.pic);
+  SDL_DestroySurface(pic1.pic);
 end;
 
 procedure ZoomPic(scr: Psdl_surface; angle: double; x, y, w, h: integer);
@@ -5691,7 +5692,7 @@ begin
         ZoomPic(MOV.pic, 0, 0, 0, screen.w, screen.h);
         sdl_delay(20);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-        //SDL_DestroySurface(MOV.pic);
+        SDL_DestroySurface(MOV.pic);
       end;
     end
     else
@@ -5722,7 +5723,7 @@ begin
 
         sdl_delay(1);
         SDL_UpdateRect2(screen, 0, 0, screen.w, screen.h);
-        //SDL_DestroySurface(MOV.pic);这里是移除gfx后导致的zoom指针free顺序的复杂问题，不管了
+        SDL_DestroySurface(MOV.pic);//这里是移除gfx后导致的zoom指针free顺序的复杂问题，不管了
       end;
     end;
     fileclose(grp);
