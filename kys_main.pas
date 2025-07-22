@@ -1726,6 +1726,10 @@ begin
           SwitchFullscreen;
           Kys_ini.WriteInteger('set', 'fullscreen', fullscreen);
         end;
+        if (event.key.key = sdlk_f6) then
+        begin
+          //rotoSpellPicture(0, 100);
+        end;
         CheckHotkey(event.key.key);
       end;
       //如按下鼠标左键, 设置状态为行走
