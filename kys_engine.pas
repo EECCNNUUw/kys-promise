@@ -7216,7 +7216,7 @@ var
 
   function inReturn(x, y: integer): boolean; inline;
   begin
-    Result := (x > CENTER_X * 2 - 100) and (y > CENTER_Y * 2 - 100);
+    Result := (x > virtualKeyScr.w - 100) and (y > virtualKeyScr.h - 100);
   end;
 
   function inEscape(x, y: integer): boolean; inline;

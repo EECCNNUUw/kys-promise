@@ -1720,7 +1720,6 @@ begin
           end;
           setlength(Menustring, 0);
         end;
-
         if (event.key.key = sdlk_f5) then
         begin
           SwitchFullscreen;
