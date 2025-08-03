@@ -692,10 +692,8 @@ var
   r, i, i1, b, j, s, len, grp, idx, menu, col, acunum, trytime, accu, actime, chance, xm, ym: integer;
   //accu is a value to accurate
 begin
-
   chance := 3;
   if GetPetSkill(4, 2) then chance := 6;
-
   setlength(goal, n);
   setlength(select, n);
   if (FileExists(AppPath + GAME_file) { *Converted from FileExists*  }) then
@@ -756,15 +754,11 @@ begin
   for i := 0 to acunum - 1 do
   begin
     drawpngpic(gamepic, 40, 400, 20, 20, AcupunctureList[2 * (i + 3)] - 10, AcupunctureList[2 * (i + 3) + 1] - 10, 0);
-
   end;
-
-
   for i := 0 to n - 1 do
   begin
     r := random(acunum);
     goal[i] := r;
-
     drawpngpic(gamepic,
       AcupunctureList[2 * (r + 3)] - 10 - AcupunctureList[0],
       AcupunctureList[2 * (r + 3) + 1] - 10 - AcupunctureList[1],
@@ -795,7 +789,6 @@ begin
   Result := False; //it's surely a symbol 2 show the result
   for trytime := 0 to chance - 1 do
   begin
-
     redraw;
     //draw person
     DrawRectangle(AcupunctureList[2], AcupunctureList[3], abs(AcupunctureList[4] - AcupunctureList[2]),
@@ -805,14 +798,12 @@ begin
     begin
       drawpngpic(gamepic, 40, 400, 20, 20, AcupunctureList[2 * (i + 3)] - 10,
         AcupunctureList[2 * (i + 3) + 1] - 10, 0);
-
     end;
     DrawRectangle(AcupunctureList[2], AcupunctureList[3], 17 + (chance + 1) * 20, 28, 0, colcolor(255), 50);
     for i := 0 to chance - 1 do
       DrawRectangle(AcupunctureList[2] + 17 + i * 20,
         AcupunctureList[3] + 2 + 5, 15, 15,
         colcolor($14), colcolor($FF), 0);
-
     DrawRectangle(AcupunctureList[2] + trytime * 20 + 17,
       AcupunctureList[3] + 2 + 5, 15, 15,
       colcolor($14), colcolor($14), 100);
@@ -823,7 +814,7 @@ begin
       while (SDL_WaitEvent(@event)) do
       begin
         CheckBasicEvent;
-        if (event.type_ = SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask)) then
+        if (event.type_ = SDL_EVENT_MOUSE_BUTTON_UP) then
         begin
           SDL_GetMouseState2(xm, ym);
           for i := 0 to acunum - 1 do

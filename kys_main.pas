@@ -584,6 +584,7 @@ begin
   {$ENDIF}
 
   //CellPhone := 1;
+
   ReadFiles;
   //初始化字体
   TTF_Init();
@@ -1728,6 +1729,7 @@ begin
         if (event.key.key = sdlk_f6) then
         begin
           //rotoSpellPicture(0, 100);
+          //Acupuncture(3);
         end;
         CheckHotkey(event.key.key);
       end;
@@ -5770,6 +5772,7 @@ function MenuDifficult: boolean;
 var
   str: widestring;
   menu: integer;
+  r: array [0..5] of integer = (0, 20, 100, 500, 1000, 2000);
 begin
   str := ' 選擇難度';
   redraw;

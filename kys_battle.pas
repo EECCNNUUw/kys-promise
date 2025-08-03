@@ -6268,7 +6268,7 @@ begin
   if GetPetSkill(2, 2) then
   begin
     kf := 50;
-    word1 := ' 阿醜偷竊物品成功';
+    word1 := ' 阿丑偷竊物品成功';
     for i := 0 to length(warsta.GetItems) - 1 do
     begin
       if (warsta.GetItems[i] > -1) then
@@ -6286,7 +6286,7 @@ begin
   end;
   if GetPetSkill(2, 0) then
   begin
-    word1 := ' 阿醜偷竊金錢成功';
+    word1 := ' 阿丑偷竊金錢成功';
     n := warsta.GetMoney div 2 + random(warsta.GetMoney div 2);
     if n > 0 then
     begin

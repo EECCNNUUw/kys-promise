@@ -5102,7 +5102,6 @@ begin
         end;
         event.key.key := 0;
         event.button.button := 0;
-
       end;
 
       SDL_EVENT_MOUSE_BUTTON_UP:
