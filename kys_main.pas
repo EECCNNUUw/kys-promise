@@ -637,6 +637,12 @@ begin
   freshscreen := SDL_CreateSurface(CENTER_X * 2, CENTER_Y * 2, SDL_GetPixelFormatForMasks(32, Rmask, Gmask, Bmask, Amask));
   //SDL_SetEventFilter(@EventFilter, nil);
   SDL_AddEventWatch(@EventFilter, nil);
+
+  if CellPhone = 1 then
+  begin
+    SDL_SetWindowFullscreen(window, true);
+  end;
+
   start;
 
   //DestroyScript;
