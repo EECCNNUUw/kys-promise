@@ -5011,7 +5011,7 @@ begin
       Inc(n);
       setlength(menustring, n);
       setlength(battlestate, n);
-      menustring[n - 1] := GBKtoUnicode(@str[i][1]);
+      menustring[n - 1] := utf8decode(str[i]);
       battlestate[n - 1] := i;
     end;
   end;

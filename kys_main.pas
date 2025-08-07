@@ -3009,13 +3009,13 @@ begin
   begin
     if i = menu then
     begin
-      drawshadowtext(@menustring[i][1], x - 17, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
+      drawshadowtext(@menustring[i][1], x - 7, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
       if p = 1 then
         drawengshadowtext(@menuengstring[i][1], x + 73, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
     end
     else
     begin
-      drawshadowtext(@menustring[i][1], x - 17, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
+      drawshadowtext(@menustring[i][1], x - 7, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
       if p = 1 then
         drawengshadowtext(@menuengstring[i][1], x + 73, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
     end;
@@ -5993,7 +5993,7 @@ begin
   w := tw;
 
   DrawRectangle(tx, ty, tw, 28, 0, colcolor(0, 255), 30);
-  DrawShadowText(word, tx - 17, ty + 2, color1, color2);
+  DrawShadowText(word, tx - 7, ty + 2, color1, color2);
   //showmessage(inttostr(y));
   m := min(maxshow, max + 1);
   DrawRectangle(x, y, w, m * 22 + 6, 0, colcolor(255), 30);
@@ -6005,13 +6005,13 @@ begin
   begin
     if i = menu then
     begin
-      drawshadowtext(@menustring[i][1], x - 17, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
+      drawshadowtext(@menustring[i][1], x - 7, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
       if p = 1 then
         drawengshadowtext(@menuengstring[i][1], x + 73, y + 2 + 22 * (i - menutop), colcolor($64), colcolor($66));
     end
     else
     begin
-      drawshadowtext(@menustring[i][1], x - 17, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
+      drawshadowtext(@menustring[i][1], x - 7, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
       if p = 1 then
         drawengshadowtext(@menuengstring[i][1], x + 73, y + 2 + 22 * (i - menutop), colcolor($5), colcolor($7));
     end;

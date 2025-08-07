@@ -970,7 +970,6 @@ var
   c: uint32;
   pix1, pix2, pix3, col1, col2, col3, col4: byte;
 begin
-
   if num >= 3 then
   begin
     b := 0;
@@ -1015,9 +1014,9 @@ begin
             {$ENDIF}
 
             alpha := (c shr 24) and $FF;
-            col3 := (c shr 16) and $FF;
+            col1 := (c shr 16) and $FF;
             col2 := (c shr 8) and $FF;
-            col1 := c and $FF;
+            col3 := c and $FF;
 
             if (where = 1) then
             begin
@@ -1134,7 +1133,7 @@ begin
             //if fullscreen = 1 then
             c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
             {$ELSE}
-            c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0;
+            c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + AMASK;
             {$ENDIF}
             PUint32(p)^ := c;
 
@@ -1167,9 +1166,7 @@ end;
 
 procedure InitialSPic(num, px, py, x, y, w, h: integer);
 begin
-
   InitialSPic(num, px, py, x, y, w, h, 0);
-
 end;
 
 procedure InitNewPic(num, px, py, x, y, w, h: integer); overload;
@@ -1206,7 +1203,6 @@ begin
             pix := SceneImg[i1 + x1, i2 + y1];
             if c and $FF000000 <> 0 then
             begin
-
               if mask = 1 then
               begin
                 MaskArray[x1 + i1, y1 + i2] := 1;
@@ -1229,9 +1225,9 @@ begin
               pix3 := pix and $FF;
               {$ENDIF}
               alpha := (c shr 24) and $FF;
-              col3 := (c shr 16) and $FF;
+              col1 := (c shr 16) and $FF;
               col2 := (c shr 8) and $FF;
-              col1 := c and $FF;
+              col3 := c and $FF;
               if (where = 1) then
               begin
                 if (Rscene[curscene].Pallet = 1) then //调色板1
@@ -1261,7 +1257,7 @@ begin
               //if fullscreen = 1 then
               c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
               {$ELSE}
-              c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0;
+              c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + AMASK;
               {$ENDIF}
               // c:=0;
               SceneImg[i1 + x1, i2 + y1] := c;
