@@ -996,23 +996,9 @@ begin
             c := PUint32(p)^;
             p := Pointer(nativeuint(screen.pixels) + (y1 + i2) * screen.pitch + (x1 + i1) * bpp);
             pix := PUint32(p)^;
-
-            {$IFDEF darwin}
-            {pix1 := (pix shr 24) and $FF;
-            pix2 := (pix shr 16) and $FF;
-            pix3 := (pix shr 8) and $FF;
-            if fullscreen = 1 then
-            begin}
-            pix1 := (pix shr 0) and $FF;
-            pix2 := (pix shr 8) and $FF;
-            pix3 := (pix shr 16) and $FF;
-            //end;
-            {$ELSE}
             pix1 := (pix shr 16) and $FF;
             pix2 := (pix shr 8) and $FF;
             pix3 := pix and $FF;
-            {$ENDIF}
-
             alpha := (c shr 24) and $FF;
             col1 := (c shr 16) and $FF;
             col2 := (c shr 8) and $FF;
@@ -1076,22 +1062,9 @@ begin
 
               p := Pointer(uint32(screen.pixels) + (y1 + i2) * screen.pitch + (x1 + i1 + b) * bpp);
               pix := PUint32(p)^;
-
-              {$IFDEF darwin}
-              {pix1 := (pix shr 24) and $FF;
-              pix2 := (pix shr 16) and $FF;
-              pix3 := (pix shr 8) and $FF;
-              if fullscreen = 1 then
-              begin}
-              pix1 := (pix shr 0) and $FF;
-              pix2 := (pix shr 8) and $FF;
-              pix3 := (pix shr 16) and $FF;
-              //end;
-              {$ELSE}
               pix1 := (pix shr 16) and $FF;
               pix2 := (pix shr 8) and $FF;
               pix3 := pix and $FF;
-              {$ENDIF}
 
               pix1 := (alpha * col1 + (255 - alpha) * pix1) div 255;
               pix2 := (alpha * col2 + (255 - alpha) * pix2) div 255;
@@ -1128,13 +1101,7 @@ begin
               pix3 := (alpha * $FF + (100 - alpha) * pix3) div 100;
 
             end;
-            {$IFDEF darwin}
-            //c := pix1 shl 24 + pix2 shl 16 + pix3 shl 8;
-            //if fullscreen = 1 then
-            c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
-            {$ELSE}
             c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + AMASK;
-            {$ENDIF}
             PUint32(p)^ := c;
 
           end;
@@ -1209,21 +1176,9 @@ begin
                 SceneImg[i1 + x1, i2 + y1] := 0;
                 continue;
               end;
-              {$IFDEF darwin}
-              {pix1 := (pix shr 24) and $FF;
-              pix2 := (pix shr 16) and $FF;
-              pix3 := (pix shr 8) and $FF;
-              if fullscreen = 1 then
-              begin}
-              pix1 := (pix shr 0) and $FF;
-              pix2 := (pix shr 8) and $FF;
-              pix3 := (pix shr 16) and $FF;
-              //end;
-              {$ELSE}
               pix1 := (pix shr 16) and $FF;
               pix2 := (pix shr 8) and $FF;
               pix3 := pix and $FF;
-              {$ENDIF}
               alpha := (c shr 24) and $FF;
               col1 := (c shr 16) and $FF;
               col2 := (c shr 8) and $FF;
@@ -1252,14 +1207,7 @@ begin
               pix1 := (alpha * col1 + (255 - alpha) * pix1) div 255;
               pix2 := (alpha * col2 + (255 - alpha) * pix2) div 255;
               pix3 := (alpha * col3 + (255 - alpha) * pix3) div 255;
-              {$IFDEF darwin}
-              //c := pix1 shl 24 + pix2 shl 16 + pix3 shl 8;
-              //if fullscreen = 1 then
-              c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
-              {$ELSE}
               c := pix1 shl 16 + pix2 shl 8 + pix3 shl 0 + AMASK;
-              {$ENDIF}
-              // c:=0;
               SceneImg[i1 + x1, i2 + y1] := c;
             end;
           end;
@@ -1296,22 +1244,9 @@ begin
         p := Pointer(nativeint(screen.pixels) + (y1 + i2) * screen.pitch + (x1 + i1) * bpp);
         pix := PUint32(p)^;
 
-
-        {$IFDEF darwin}
-        {pix1 := (pix shr 24) and $FF;
-        pix2 := (pix shr 16) and $FF;
-        pix3 := (pix shr 8) and $FF;
-        if fullscreen = 1 then
-        begin}
         pix1 := (pix shr 0) and $FF;
         pix2 := (pix shr 8) and $FF;
         pix3 := (pix shr 16) and $FF;
-        //end;
-        {$ELSE}
-        pix1 := (pix shr 0) and $FF;
-        pix2 := (pix shr 8) and $FF;
-        pix3 := (pix shr 16) and $FF;
-        {$ENDIF}
         alpha := (c shr 24) and $FF;
         col1 := (c shr 0) and $FF;
         col2 := (c shr 8) and $FF;
@@ -1355,13 +1290,8 @@ begin
         pix1 := (alpha * col1 + (255 - alpha) * pix1) div 255;
         pix2 := (alpha * col2 + (255 - alpha) * pix2) div 255;
         pix3 := (alpha * col3 + (255 - alpha) * pix3) div 255;
-        {$IFDEF darwin}
-        {c := pix1 shl 24 + pix2 shl 16 + pix3 shl 8;
-        if fullscreen = 1 then}
-        c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16;
-        {$ELSE}
+
         c := pix1 shl 0 + pix2 shl 8 + pix3 shl 16 + 255 shl 24;
-        {$ENDIF}
         PUint32(p)^ := c;
 
       end;
