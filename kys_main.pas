@@ -40,7 +40,8 @@ uses
   SDL3_image,
   iniFiles,
   //Lua52,
-  bass;
+  bass,
+  fileinfo;
 
 type
   {$ifndef fpc}
@@ -496,7 +497,7 @@ var
   blue: integer = 0;
   gray: integer = 0;
 
-  versionstr: ansistring = '  demo   '; //版本号
+  versionstr: ansistring = 'Promise'; //版本号
   FWay: array[0..479, 0..479] of smallint;
   linex, liney: array[0..480 * 480 - 1] of smallint;
   nowstep: integer;
@@ -613,7 +614,7 @@ begin
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, pansichar(IntToStr(SMOOTH)));
   //SDL_SetHint(SDL_HINT_IME_SHOW_UI, '1');
 
-  title := 'The Story Before That Legend v1.22';
+  title := 'The Story Before That Legend';
   ScreenFlag := SDL_WINDOW_RESIZABLE;
   window := SDL_CreateWindow(pansichar(title), RESOLUTIONX, RESOLUTIONY, ScreenFlag);
 
@@ -640,7 +641,7 @@ begin
 
   if CellPhone = 1 then
   begin
-    SDL_SetWindowFullscreen(window, true);
+    SDL_SetWindowFullscreen(window, True);
   end;
 
   start;
@@ -689,7 +690,18 @@ var
   filename, str: ansistring;
   p: puint16;
   cc: uint16;
+  FileVerInfo: TFileVersionInfo;
 begin
+  FileVerInfo := TFileVersionInfo.Create(nil);
+  try
+    FileVerInfo.FileName := ParamStr(0);
+    FileVerInfo.ReadFileInfo;
+    kyslog('%s', [FileVerInfo.FileName]);
+    versionstr := versionstr + '-' + FileVerInfo.VersionStrings.Values['FileVersion'];
+    kyslog('%s', [versionstr]);
+  finally
+    FileVerInfo.Free;
+  end;
 
   {$IFDEF fpc}
   Filename := AppPath + 'kysmod.ini';
@@ -967,6 +979,7 @@ begin
   PlayBeginningMovie(0, -1);
   //PlayMpeg();
   display_imgfromSurface(BEGIN_PIC, 0, 0);
+  DrawGBKShadowText(@versionstr[1], 5, CENTER_Y * 2 - 30, ColColor($64), ColColor($66));
   MStep := 0;
   // fullscreen := 0;
   where := 3;

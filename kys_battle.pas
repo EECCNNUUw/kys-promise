@@ -5292,6 +5292,7 @@ begin
   temphurt := 0;
   for i := curX - 1 downto curX - distance do
   begin
+    if i < 0 then continue;
     ebnum := Bfield[2, i, curY];
     if (ebnum >= 0) and (Brole[ebnum].Dead = 0) and (Brole[ebnum].Team <> myteam) then
     begin
@@ -5310,6 +5311,7 @@ begin
   temphurt := 0;
   for i := curX + 1 to curX + distance do
   begin
+    if i >= 64 then continue;
     ebnum := Bfield[2, i, curY];
     if (ebnum >= 0) and (Brole[ebnum].Dead = 0) and (Brole[ebnum].Team <> myteam) then
     begin
@@ -5328,6 +5330,7 @@ begin
   temphurt := 0;
   for i := curY - 1 downto curY - distance do
   begin
+    if i < 0 then continue;
     ebnum := Bfield[2, curX, i];
     if (ebnum >= 0) and (Brole[ebnum].Dead = 0) and (Brole[ebnum].Team <> myteam) then
     begin
@@ -5346,6 +5349,7 @@ begin
   temphurt := 0;
   for i := curY + 1 to curY + distance do
   begin
+    if i >= 64 then continue;
     ebnum := Bfield[2, curX, i];
     if (ebnum >= 0) and (Brole[ebnum].Dead = 0) and (Brole[ebnum].Team <> myteam) then
     begin

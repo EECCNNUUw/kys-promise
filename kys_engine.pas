@@ -1886,6 +1886,7 @@ begin
     3: begin
       display_imgfromSurface(BEGIN_PIC.pic, 0, 0);
       //DrawVirtualKey;
+      DrawGBKShadowText(@versionstr[1], 5, CENTER_Y * 2 - 30, ColColor($64), ColColor($66));
     end;
     4: begin
       display_imgfromSurface(DEATH_PIC.pic, 0, 0);

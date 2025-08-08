@@ -23,7 +23,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="22"/>
-      <BuildNr Value="1"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="20"/>
     </VersionInfo>
     <BuildModes Count="2">
       <Item1 Name="Release" Default="True"/>
