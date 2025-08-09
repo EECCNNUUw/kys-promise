@@ -1547,7 +1547,7 @@ begin
         y_pos := y_pos + 19;
       end;
       Text := TTF_RenderGlyph_blended(engfont, pword[1], tempcolor);
-      dest.x := x_pos + 20;
+      dest.x := x_pos + 10;
       dest.y := y_pos + 4;
       SDL_BlitSurface(Text, nil, sur, @dest);
       x_pos := x_pos + 10;
